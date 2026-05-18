@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Viewer Packager</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1e293b;min-height:100vh}
+/* ── 공통 ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:background .15s,opacity .15s}
+.btn-primary{background:#2563eb;color:#fff}.btn-primary:hover{background:#1d4ed8}
+.btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+.btn-secondary{background:#fff;color:#374151;border:1px solid #d1d5db}.btn-secondary:hover{background:#f3f4f6}
+.btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}.btn-danger:hover{background:#fecaca}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:#2563eb;color:#fff}
+/* ── PKG 헤더 ── */
+#pkg-header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+#pkg-header h1{font-size:18px;font-weight:700;color:#1e293b}
+#pkg-header .subtitle{font-size:13px;color:#64748b}
+/* ── PKG 화면 ── */
+.pkg-screen{display:none;max-width:900px;margin:32px auto;padding:0 24px}
+.pkg-screen.active{display:block}
+/* ── 업로드 영역 ── */
+.upload-zone{border:2px dashed #cbd5e1;border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fff}
+.upload-zone.dragover{border-color:#2563eb;background:#eff6ff}
+.upload-zone svg{width:40px;height:40px;color:#94a3b8;margin-bottom:12px}
+.upload-zone p{color:#64748b;font-size:14px;margin-bottom:8px}
+.upload-zone small{color:#94a3b8;font-size:12px}
+/* ── 파일 목록 ── */
+.section-title{font-size:14px;font-weight:600;color:#374151;margin:24px 0 10px}
+.file-table{width:100%;background:#fff;border-radius:8px;border:1px solid #e2e8f0;overflow:hidden}
+.file-table table{width:100%;border-collapse:collapse}
+.file-table th{padding:10px 14px;background:#f8fafc;font-size:12px;font-weight:600;color:#64748b;text-align:left;border-bottom:1px solid #e2e8f0}
+.file-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f1f5f9}
+.file-table tr:last-child td{border-bottom:none}
+.file-table select{padding:4px 8px;border-radius:4px;border:1px solid #d1d5db;font-size:12px;background:#fff}
+.file-size{color:#94a3b8;font-size:12px}
+/* ── 매핑 ── */
+.mapping-options{display:flex;gap:16px;margin-bottom:14px}
+.mapping-options label{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
+.mapping-table-wrap{background:#fff;border-radius:8px;border:1px solid #e2e8f0;overflow:auto}
+.mapping-table th{padding:8px 12px;background:#f8fafc;font-size:12px;font-weight:600;color:#64748b;text-align:left;border-bottom:1px solid #e2e8f0}
+.mapping-table td{padding:8px 12px;font-size:13px;border-bottom:1px solid #f1f5f9}
+.mapping-table tr.mapped{background:#f0fdf4}
+.mapping-table tr.unmapped{background:#fefce8}
+/* ── 빌드 설정 ── */
+.build-config{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:16px;margin-top:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.build-config label{font-size:14px;font-weight:500;color:#374151;white-space:nowrap}
+.build-config input[type=text]{flex:1;min-width:200px;padding:8px 12px;border-radius:6px;border:1px solid #d1d5db;font-size:14px}
+#btn-build{margin-left:auto}
+/* ── PKG-002 결과 ── */
+.build-steps{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:20px;margin-bottom:20px}
+.build-step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+.build-step:last-child{border-bottom:none}
+.step-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.step-icon.done{background:#dcfce7;color:#16a34a}
+.step-icon.running{background:#dbeafe;color:#2563eb;animation:pulse 1s infinite}
+.step-icon.pending{background:#f1f5f9;color:#94a3b8}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.build-result{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:24px;margin-bottom:20px}
+.build-result h2{font-size:16px;font-weight:700;margin-bottom:16px;color:#16a34a}
+.result-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.result-meta-item{background:#f8fafc;border-radius:6px;padding:12px;text-align:center}
+.result-meta-item .val{font-size:22px;font-weight:700;color:#2563eb}
+.result-meta-item .lbl{font-size:12px;color:#64748b;margin-top:2px}
+.result-actions{display:flex;gap:10px;flex-wrap:wrap}
+/* ── 공통 유틸 ── */
+.empty-state{text-align:center;padding:32px;color:#94a3b8;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PACKAGER UI
+════════════════════════════════════════════ -->
+<header id="pkg-header">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+  <h1>Spec Viewer Packager</h1>
+  <span class="subtitle">MD + HTML → 단일 뷰어 파일 생성기</span>
+</header>
+
+<!-- PKG-001 -->
+<div id="screen-pkg001" class="pkg-screen active">
+
+  <!-- ① 업로드 -->
+  <p class="section-title">① 파일 업로드</p>
+  <label class="upload-zone" id="upload-zone" for="file-input" style="display:block;cursor:pointer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+    <p><strong>파일을 드래그하거나 클릭해서 선택</strong></p>
+    <small>.md / .html / .htm 파일 허용</small>
+  </label>
+  <input type="file" id="file-input" multiple accept=".md,.html,.htm,text/markdown,text/html,text/plain" style="position:absolute;opacity:0;width:0;height:0;overflow:hidden">
+
+  <!-- ② 파일 목록 -->
+  <p class="section-title">② 등록된 파일</p>
+  <div class="file-table" id="file-list-wrap">
+    <div class="empty-state">등록된 파일이 없습니다.</div>
+  </div>
+
+  <!-- ③ 매핑 -->
+  <p class="section-title">③ 화면 매핑 설정</p>
+  <div class="mapping-options">
+    <label><input type="radio" name="mapping-mode" value="auto" checked> 자동 매핑</label>
+    <label><input type="radio" name="mapping-mode" value="manual"> 자동 + 수동 보완</label>
+  </div>
+  <div class="mapping-table-wrap" id="mapping-table-wrap">
+    <div class="empty-state">파일을 등록하면 매핑 테이블이 생성됩니다.</div>
+  </div>
+
+  <!-- ④ 출력 + 빌드 -->
+  <div class="build-config">
+    <label for="output-name">출력 파일명</label>
+    <input type="text" id="output-name" value="spec-viewer.html" placeholder="spec-viewer.html">
+    <button class="btn btn-primary" id="btn-build" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+      빌드 실행
+    </button>
+  </div>
+</div>
+
+<!-- PKG-002 -->
+<div id="screen-pkg002" class="pkg-screen">
+  <p class="section-title" style="margin-top:0">빌드 진행 상황</p>
+  <div class="build-steps" id="build-steps">
+    <div class="build-step" id="step-0"><div class="step-icon pending">○</div><span>MD 파일 파싱</span></div>
+    <div class="build-step" id="step-1"><div class="step-icon pending">○</div><span>HTML 변환</span></div>
+    <div class="build-step" id="step-2"><div class="step-icon pending">○</div><span>프로토타입 임베딩</span></div>
+    <div class="build-step" id="step-3"><div class="step-icon pending">○</div><span>검색 인덱스 생성</span></div>
+    <div class="build-step" id="step-4"><div class="step-icon pending">○</div><span>단일 파일 패키징</span></div>
+  </div>
+  <div class="build-result" id="build-result" style="display:none">
+    <h2>✅ 빌드 완료</h2>
+    <div class="result-meta" id="result-meta"></div>
+    <div class="result-actions">
+      <button class="btn btn-primary" id="btn-download">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        다운로드
+      </button>
+      <button class="btn btn-secondary" id="btn-rebuild">← 다시 빌드</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   PACKAGER LOGIC
+═══════════════════════════════════════════ */
+const state = {
+  files: [],       // {file, name, type, text}
+  mappings: [],    // {screenId, docId, sectionId, protoId}
+  builtBlob: null,
+  builtName: ''
+};
+
+/* 파일 유형 자동 분류 */
+function classifyFile(name) {
+  const n = name.toLowerCase();
+  if (/spec|설계|화면/.test(n)) return '화면설계서';
+  if (/prd/.test(n)) return 'PRD';
+  if (/요구|requirement/.test(n)) return '요구사항정의서';
+  if (/storyboard|스토리/.test(n)) return '스토리보드';
+  if (/\.(html?|htm)$/i.test(name)) return '프로토타입';
+  return '화면설계서';
+}
+
+/* SCR-NNN 추출 */
+function extractScreenIds(text) {
+  const re = /\bSCR-\d{3,}\b/g;
+  return [...new Set(text.match(re) || [])];
+}
+
+/* 업로드 존 */
+const uploadZone = document.getElementById('upload-zone');
+const fileInput  = document.getElementById('file-input');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  handleFiles([...e.dataTransfer.files]);
+});
+fileInput.addEventListener('change', e => { handleFiles([...e.target.files]); e.target.value=''; });
+
+async function handleFiles(files) {
+  for (const f of files) {
+    if (!/\.(md|html?)$/i.test(f.name)) continue;
+    if (state.files.find(x => x.name === f.name)) continue;
+    const text = await f.text();
+    state.files.push({ file: f, name: f.name, type: classifyFile(f.name), text });
+  }
+  renderFileList();
+  buildMappings();
+  document.getElementById('btn-build').disabled = state.files.length === 0;
+}
+
+function renderFileList() {
+  const wrap = document.getElementById('file-list-wrap');
+  if (state.files.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">등록된 파일이 없습니다.</div>';
+    return;
+  }
+  const types = ['화면설계서','PRD','요구사항정의서','스토리보드','프로토타입'];
+  wrap.innerHTML = `<table><thead><tr>
+    <th>파일명</th><th>유형</th><th>크기</th><th></th>
+  </tr></thead><tbody>${state.files.map((f,i) => `
+    <tr>
+      <td>${f.name}</td>
+      <td><select onchange="changeType(${i},this.value)">${types.map(t=>`<option${t===f.type?' selected':''}>${t}</option>`).join('')}</select></td>
+      <td class="file-size">${fmtSize(f.file.size)}</td>
+      <td><button class="btn btn-danger" style="padding:4px 10px;font-size:12px" onclick="removeFile(${i})">삭제</button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function changeType(i, val) {
+  state.files[i].type = val;
+  buildMappings();
+}
+
+function removeFile(i) {
+  state.files.splice(i, 1);
+  renderFileList();
+  buildMappings();
+  document.getElementById('btn-build').disabled = state.files.length === 0;
+}
+
+function fmtSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+/* 매핑 */
+function buildMappings() {
+  state.mappings = [];
+  const docs   = state.files.filter(f => f.type !== '프로토타입');
+  const protos = state.files.filter(f => f.type === '프로토타입');
+
+  // 문서에서 SCR-NNN 수집
+  const docScreens = {}; // screenId -> {docIdx, sectionId}
+  docs.forEach((d, di) => {
+    extractScreenIds(d.text).forEach(sid => {
+      docScreens[sid] = { docIdx: di, sectionId: sid.toLowerCase().replace('-','') };
+    });
+  });
+
+  // 프로토타입 파일명에서 SCR-NNN 추출
+  const protoScreens = {}; // screenId -> protoIdx
+  protos.forEach((p, pi) => {
+    const m = p.name.match(/SCR-\d+/i);
+    if (m) protoScreens[m[0].toUpperCase()] = pi;
+  });
+
+  const allIds = [...new Set([...Object.keys(docScreens), ...Object.keys(protoScreens)])].sort();
+  state.mappings = allIds.map(sid => ({
+    screenId: sid,
+    docId:    docScreens[sid]  !== undefined ? `doc-${docScreens[sid].docIdx}`   : null,
+    sectionId:docScreens[sid]  !== undefined ? docScreens[sid].sectionId         : null,
+    protoId:  protoScreens[sid]!== undefined ? `proto-${protoScreens[sid]}`      : null
+  }));
+
+  renderMappingTable();
+}
+
+function renderMappingTable() {
+  const wrap = document.getElementById('mapping-table-wrap');
+  if (state.mappings.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">파일을 등록하면 매핑 테이블이 생성됩니다.</div>';
+    return;
+  }
+  const docs   = state.files.filter(f => f.type !== '프로토타입');
+  const protos = state.files.filter(f => f.type === '프로토타입');
+  wrap.innerHTML = `<table class="mapping-table" style="width:100%;border-collapse:collapse">
+    <thead><tr><th>화면 ID</th><th>문서섹션</th><th>프로토타입파일</th></tr></thead>
+    <tbody>${state.mappings.map(m => `
+      <tr class="${m.docId && m.protoId ? 'mapped' : 'unmapped'}">
+        <td><span class="badge">${m.screenId}</span></td>
+        <td>${m.docId ? docs[parseInt(m.docId.split('-')[1])].name : '<span style="color:#94a3b8">미연결</span>'}</td>
+        <td>${m.protoId ? protos[parseInt(m.protoId.split('-')[1])].name : '<span style="color:#94a3b8">미연결</span>'}</td>
+      </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+/* 빌드 */
+document.getElementById('btn-build').addEventListener('click', startBuild);
+document.getElementById('btn-rebuild').addEventListener('click', () => {
+  document.getElementById('screen-pkg002').classList.remove('active');
+  document.getElementById('screen-pkg001').classList.add('active');
+  resetSteps();
+});
+document.getElementById('btn-download').addEventListener('click', () => {
+  if (!state.builtBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(state.builtBlob);
+  a.download = state.builtName;
+  a.click();
+});
+
+function resetSteps() {
+  for (let i=0;i<5;i++) {
+    const s = document.getElementById(`step-${i}`);
+    s.querySelector('.step-icon').className = 'step-icon pending';
+    s.querySelector('.step-icon').textContent = '○';
+  }
+  document.getElementById('build-result').style.display = 'none';
+}
+
+function setStep(i, status) {
+  const s = document.getElementById(`step-${i}`);
+  const ic = s.querySelector('.step-icon');
+  if (status === 'running') { ic.className='step-icon running'; ic.textContent='⏳'; }
+  else if (status === 'done') { ic.className='step-icon done'; ic.textContent='✅'; }
+}
+
+async function startBuild() {
+  const t0 = Date.now();
+  document.getElementById('screen-pkg001').classList.remove('active');
+  document.getElementById('screen-pkg002').classList.add('active');
+  resetSteps();
+
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+  const docs   = state.files.filter(f => f.type !== '프로토타입');
+  const protos = state.files.filter(f => f.type === '프로토타입');
+
+  // Step 0: MD 파싱
+  setStep(0,'running'); await delay(200);
+  const parsedDocs = docs.map((d,i) => {
+    const toc = [];
+    const lines = d.text.split('\n');
+    lines.forEach(line => {
+      const hm = line.match(/^(#{1,6})\s+(.*)/);
+      if (hm) {
+        const level = hm[1].length;
+        const text  = hm[2].trim();
+        const id    = text.toLowerCase().replace(/[^a-z0-9가-힣]+/g,'-').replace(/^-|-$/g,'');
+        toc.push({level, text, id});
+      }
+    });
+    return { id:`doc-${i}`, name:d.name, type:d.type, raw:d.text, toc,
+             screenIds: extractScreenIds(d.text) };
+  });
+  setStep(0,'done');
+
+  // Step 1: HTML 변환 (간이 MD→HTML)
+  setStep(1,'running'); await delay(200);
+  parsedDocs.forEach(d => { d.html = simpleMarkdown(d.raw); });
+  setStep(1,'done');
+
+  // Step 2: 프로토타입 임베딩
+  setStep(2,'running'); await delay(200);
+  const parsedProtos = protos.map((p,i) => ({
+    id:`proto-${i}`, name:p.name,
+    screenId: (p.name.match(/SCR-\d+/i)||[''])[0].toUpperCase() || '',
+    content: p.text
+  }));
+  setStep(2,'done');
+
+  // Step 3: 검색 인덱스
+  setStep(3,'running'); await delay(200);
+  const searchIndex = [];
+  parsedDocs.forEach(d => {
+    d.toc.forEach(h => {
+      searchIndex.push({ docId:d.id, sectionId:h.id, heading:h.text,
+        text: extractSectionText(d.raw, h.text) });
+    });
+  });
+  setStep(3,'done');
+
+  // Step 4: 패키징
+  setStep(4,'running'); await delay(300);
+  const mappingObj = {};
+  state.mappings.forEach(m => {
+    mappingObj[m.screenId] = { docId:m.docId, sectionId:m.sectionId, protoId:m.protoId };
+  });
+
+  const specData = {
+    version: '1.0',
+    buildDate: new Date().toISOString().slice(0,10),
+    documents: parsedDocs.map(d => ({
+      id:d.id, name:d.name, type:d.type, html:d.html, toc:d.toc, screenIds:d.screenIds
+    })),
+    prototypes: parsedProtos,
+    mappings: mappingObj,
+    searchIndex
+  };
+
+  const viewerHtml = buildViewerHtml(specData);
+  const blob = new Blob([viewerHtml], {type:'text/html'});
+  state.builtBlob = blob;
+  state.builtName = document.getElementById('output-name').value || 'spec-viewer.html';
+  setStep(4,'done');
+
+  const elapsed = ((Date.now()-t0)/1000).toFixed(1);
+  document.getElementById('result-meta').innerHTML = `
+    <div class="result-meta-item"><div class="val">${parsedDocs.length}</div><div class="lbl">포함 문서</div></div>
+    <div class="result-meta-item"><div class="val">${parsedProtos.length}</div><div class="lbl">프로토타입</div></div>
+    <div class="result-meta-item"><div class="val">${state.mappings.filter(m=>m.docId&&m.protoId).length}</div><div class="lbl">매핑 화면ID</div></div>
+    <div class="result-meta-item"><div class="val">${fmtSize(blob.size)}</div><div class="lbl">파일 크기</div></div>
+    <div class="result-meta-item"><div class="val">${elapsed}s</div><div class="lbl">소요 시간</div></div>`;
+  document.getElementById('build-result').style.display = 'block';
+}
+
+/* 간이 섹션 텍스트 추출 */
+function extractSectionText(md, heading) {
+  const lines = md.split('\n');
+  let inSection = false, out = [];
+  for (const line of lines) {
+    if (line.match(new RegExp('^#+\\s+'+escapeRegExp(heading)+'\\s*$'))) { inSection=true; continue; }
+    if (inSection && /^#+\s/.test(line)) break;
+    if (inSection) out.push(line);
+  }
+  return out.join(' ').replace(/<[^>]+>/g,'').substring(0,200);
+}
+function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+/* ── 간이 MD→HTML 변환기 ── */
+function simpleMarkdown(md) {
+  let html = md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // 코드블록
+    .replace(/```(\w*)\n([\s\S]*?)```/g, (_,lang,code)=>`<pre><code class="language-${lang}">${code}</code></pre>`)
+    // 인라인 코드
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    // 제목 (앵커 포함)
+    .replace(/^#{6}\s+(.*)/gm, (_,t)=>headingHtml(6,t))
+    .replace(/^#{5}\s+(.*)/gm, (_,t)=>headingHtml(5,t))
+    .replace(/^#{4}\s+(.*)/gm, (_,t)=>headingHtml(4,t))
+    .replace(/^#{3}\s+(.*)/gm, (_,t)=>headingHtml(3,t))
+    .replace(/^#{2}\s+(.*)/gm, (_,t)=>headingHtml(2,t))
+    .replace(/^#{1}\s+(.*)/gm, (_,t)=>headingHtml(1,t))
+    // 굵게/이탤릭
+    .replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    // 링크/이미지
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1">')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>')
+    // 수평선
+    .replace(/^[-*_]{3,}\s*$/gm,'<hr>')
+    // 블록쿼트
+    .replace(/^&gt;\s*(.*)/gm,'<blockquote>$1</blockquote>')
+    // 표 처리
+    .replace(/^(\|.+\|)\n\|[-| :]+\|\n((?:\|.+\|\n?)*)/gm, parseTable)
+    // 리스트 (비순서)
+    .replace(/((?:^[-*+] .+\n?)+)/gm, s=>'<ul>'+s.replace(/^[-*+] (.+)/gm,'<li>$1</li>')+'</ul>')
+    // 리스트 (순서)
+    .replace(/((?:^\d+\. .+\n?)+)/gm, s=>'<ol>'+s.replace(/^\d+\. (.+)/gm,'<li>$1</li>')+'</ol>')
+    // 단락
+    .replace(/\n{2,}/g,'</p><p>')
+    .replace(/\n/g,'<br>');
+  return '<p>'+html+'</p>';
+}
+function headingHtml(level, text) {
+  const id = text.trim().toLowerCase().replace(/[^a-z0-9가-힣]+/g,'-').replace(/^-|-$/g,'');
+  const scrMatch = text.match(/SCR-\d+/i);
+  const badge = scrMatch ? `<span class="screen-id-badge">${scrMatch[0].toUpperCase()}</span> ` : '';
+  return `<h${level} id="${id}">${badge}${text.trim()}</h${level}>`;
+}
+function parseTable(match) {
+  const lines = match.trim().split('\n').filter(l=>!/^[-| :]+$/.test(l.trim()));
+  return '<table class="md-table"><thead><tr>'+
+    lines[0].split('|').filter(c=>c.trim()).map(c=>`<th>${c.trim()}</th>`).join('')+
+    '</tr></thead><tbody>'+
+    lines.slice(1).map(l=>'<tr>'+l.split('|').filter(c=>c.trim()).map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>').join('')+
+    '</tbody></table>';
+}
+
+/* ═══════════════════════════════════════════
+   VIEWER HTML 템플릿 빌더
+═══════════════════════════════════════════ */
+function buildViewerHtml(specData) {
+  const dataJson = JSON.stringify(specData);
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spec Viewer — ${specData.buildDate}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --toolbar-h:56px;--sidebar-w:240px;--accent:#2563eb;--accent-dark:#1d4ed8;
+  --bg:#f8f9fa;--surface:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --success-bg:#f0fdf4;--warn-bg:#fefce8;
+}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+
+/* TOOLBAR */
+#toolbar{
+  position:fixed;top:0;left:0;right:0;height:var(--toolbar-h);
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:12px;z-index:200
+}
+#toolbar .logo{font-weight:700;font-size:15px;white-space:nowrap;color:var(--text)}
+#toolbar .logo span{color:var(--accent)}
+#search-wrap{flex:1;max-width:400px;position:relative}
+#search-input{width:100%;padding:7px 12px 7px 34px;border-radius:6px;border:1px solid var(--border);font-size:13px;background:var(--bg)}
+#search-input:focus{outline:none;border-color:var(--accent)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.tb-btn{width:36px;height:36px;border-radius:6px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--muted)}
+.tb-btn:hover{background:var(--bg)}
+#btn-hamburger{margin-right:4px}
+
+/* SIDEBAR */
+#sidebar{
+  position:fixed;top:var(--toolbar-h);left:0;bottom:0;width:var(--sidebar-w);
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:150;transition:transform .25s
+}
+#sidebar.hidden{transform:translateX(-100%)}
+.sidebar-section{padding:12px 8px 4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sidebar-files{overflow-y:auto;border-bottom:1px solid var(--border)}
+.sidebar-toc{flex:1;overflow-y:auto;padding:4px 0}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:13px;cursor:pointer;border-radius:4px;margin:1px 4px}
+.sidebar-item:hover{background:var(--bg)}
+.sidebar-item.active{background:#eff6ff;color:var(--accent);font-weight:500}
+.sidebar-item .doc-type{font-size:10px;padding:1px 5px;border-radius:3px;background:#e2e8f0;color:var(--muted);flex-shrink:0}
+.toc-item{padding:5px 12px 5px;font-size:12px;cursor:pointer;color:var(--muted);border-left:2px solid transparent;margin-left:8px}
+.toc-item:hover{color:var(--text)}
+.toc-item.active{border-left-color:var(--accent);color:var(--accent);font-weight:500}
+.toc-item.lv2{padding-left:12px}
+.toc-item.lv3{padding-left:24px;font-size:11px}
+.toc-item.lv4{padding-left:36px;font-size:11px}
+
+/* MAIN */
+#main{
+  position:fixed;top:var(--toolbar-h);left:var(--sidebar-w);right:0;bottom:0;
+  overflow:hidden;transition:left .25s
+}
+#main.full{left:0}
+
+/* CONTENT PANES */
+.content-pane{position:absolute;inset:0;overflow:auto;display:none;padding:32px 40px}
+.content-pane.active{display:block}
+
+/* HOME (SCR-001) */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:32px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:box-shadow .15s}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.card-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.card-meta{font-size:12px;color:var(--muted)}
+.card-starred{font-size:18px;float:right}
+.section-title{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.recent-list .recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:13px}
+.recent-list .recent-item:hover{background:var(--bg)}
+.all-docs-list .doc-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;font-size:13px;background:var(--surface);border:1px solid var(--border);margin-bottom:8px}
+.all-docs-list .doc-row:hover{border-color:var(--accent)}
+
+/* DOC VIEWER (SCR-002) */
+#doc-viewer-wrap{display:flex;gap:0;height:100%;overflow:hidden}
+#doc-content{flex:1;overflow-y:auto;padding:32px 40px}
+#doc-toc-panel{width:200px;flex-shrink:0;padding:24px 16px;overflow-y:auto;border-left:1px solid var(--border);font-size:12px}
+#doc-toc-panel h3{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.doc-toc-item{padding:4px 0 4px 8px;cursor:pointer;color:var(--muted);border-left:2px solid transparent;margin-bottom:2px;line-height:1.4}
+.doc-toc-item:hover{color:var(--text)}
+.doc-toc-item.active{border-left-color:var(--accent);color:var(--accent)}
+.doc-toc-item.lv3{padding-left:20px;font-size:11px}
+
+/* MD 스타일 */
+#doc-content h1,#doc-content h2,#doc-content h3,#doc-content h4,#doc-content h5,#doc-content h6{margin:1.4em 0 .6em;line-height:1.3}
+#doc-content h1{font-size:26px;border-bottom:2px solid var(--border);padding-bottom:8px}
+#doc-content h2{font-size:20px;padding:12px 16px;background:#f8fafc;border-left:4px solid var(--accent);border-radius:0 6px 6px 0;margin-top:2em}
+#doc-content h3{font-size:16px}
+#doc-content p{line-height:1.75;margin-bottom:.9em;font-size:14px}
+#doc-content ul,#doc-content ol{margin:.6em 0 .6em 1.4em}
+#doc-content li{line-height:1.7;font-size:14px}
+#doc-content code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:13px;font-family:'SFMono-Regular',Consolas,monospace}
+#doc-content pre{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto;margin:1em 0}
+#doc-content pre code{background:none;color:inherit;font-size:13px}
+#doc-content blockquote{border-left:3px solid var(--accent);padding:.5em 1em;background:#f0f6ff;margin:1em 0;color:var(--muted);font-size:14px}
+#doc-content table.md-table{width:100%;border-collapse:collapse;margin:1em 0;font-size:13px}
+#doc-content table.md-table th{background:#f8fafc;padding:8px 12px;border:1px solid var(--border);font-weight:600}
+#doc-content table.md-table td{padding:8px 12px;border:1px solid var(--border)}
+#doc-content hr{border:none;border-top:1px solid var(--border);margin:1.5em 0}
+#doc-content img{max-width:100%;border-radius:6px}
+#doc-content a{color:var(--accent)}
+.screen-id-badge{background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;margin-right:4px}
+.section-actions{display:inline-flex;gap:6px;margin-left:8px;vertical-align:middle}
+.section-actions button{padding:3px 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer;color:var(--muted)}
+.section-actions button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* PROTO VIEWER (SCR-003) */
+#proto-toolbar{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.device-btn{padding:5px 12px;border-radius:4px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer}
+.device-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+#proto-iframe-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;background:#e5e7eb}
+#proto-iframe{border:none;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.15);border-radius:4px;transition:width .2s,height .2s}
+#proto-container{display:flex;flex-direction:column;height:100%;overflow:hidden}
+
+/* SPLIT VIEW (SCR-004) */
+#split-container{display:flex;height:100%;overflow:hidden}
+#split-left{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:300px}
+#split-divider{width:6px;background:var(--border);cursor:col-resize;flex-shrink:0;position:relative}
+#split-divider:hover,#split-divider.dragging{background:var(--accent)}
+#split-right{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:300px}
+#split-left-content{flex:1;overflow-y:auto;padding:24px 32px}
+#split-right-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* SEARCH (SCR-005) */
+#search-results-pane{padding:32px 40px;overflow-y:auto;height:100%}
+.search-result-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.search-result-item:hover{border-color:var(--accent)}
+.search-result-item .result-heading{font-size:15px;font-weight:600;margin-bottom:4px}
+.search-result-item .result-meta{font-size:12px;color:var(--muted);margin-bottom:6px}
+.search-result-item .result-snippet{font-size:13px;line-height:1.6;color:#374151}
+mark{background:#fef08a;padding:0 1px;border-radius:2px}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer}
+.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* COMMENTS (SCR-006) */
+#comment-drawer{
+  position:fixed;top:var(--toolbar-h);right:0;bottom:0;width:320px;
+  background:var(--surface);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:180;transform:translateX(100%);transition:transform .25s
+}
+#comment-drawer.open{transform:translateX(0)}
+#comment-drawer-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+#comment-drawer-header h3{font-size:14px;font-weight:700}
+#comment-list{flex:1;overflow-y:auto;padding:12px}
+.comment-item{background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px}
+.comment-item .comment-author{font-weight:600;font-size:12px;color:var(--muted);margin-bottom:4px}
+.comment-item .comment-text{line-height:1.5}
+.comment-item .comment-time{font-size:11px;color:var(--muted);margin-top:4px}
+#comment-form{padding:12px;border-top:1px solid var(--border)}
+#comment-form input,#comment-form textarea{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;margin-bottom:6px}
+#comment-form textarea{resize:vertical;min-height:60px}
+.comment-actions{display:flex;gap:8px}
+.comment-io{display:flex;gap:6px;margin-top:8px}
+.comment-io button{flex:1;padding:5px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer}
+
+/* UTILITY */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg)}
+.empty-state{text-align:center;padding:48px;color:var(--muted);font-size:14px}
+
+/* RESPONSIVE */
+@media(max-width:1279px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.overlay-open{transform:translateX(0);box-shadow:4px 0 16px rgba(0,0,0,.1)}
+  #main{left:0}
+  #doc-toc-panel{display:none}
+}
+@media(max-width:767px){
+  body::after{content:"⚠ 모바일 환경은 지원되지 않습니다.\\A데스크톱 브라우저(1280px+)에서 열어주세요.";white-space:pre;display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:var(--surface);text-align:center;font-size:14px;padding:32px;z-index:9999}
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <button class="tb-btn" id="btn-hamburger" title="사이드바">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="logo">Spec<span>Viewer</span></div>
+  <div class="search-wrap" id="search-wrap" style="flex:1;max-width:420px;position:relative">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search-input" placeholder="키워드 또는 SCR-NNN 검색…">
+  </div>
+  <div style="margin-left:auto;display:flex;gap:4px">
+    <button class="tb-btn" id="btn-comment-toggle" title="코멘트">💬</button>
+    <button class="tb-btn" id="btn-settings" title="설정">⚙</button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sidebar-section">문서</div>
+  <div class="sidebar-files" id="sidebar-files"></div>
+  <div class="sidebar-section">목차</div>
+  <div class="sidebar-toc" id="sidebar-toc"></div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SCR-001 홈 -->
+  <div class="content-pane active" id="pane-home">
+    <div style="max-width:900px;margin:0 auto">
+      <div style="margin-bottom:24px">
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">홈</h1>
+        <p style="color:var(--muted);font-size:13px">빌드 날짜: ${specData.buildDate} · 문서 ${specData.documents.length}개 · 프로토타입 ${specData.prototypes.length}개</p>
+      </div>
+      <div class="section-title">즐겨찾기</div>
+      <div class="home-grid" id="bookmark-grid"><div class="card" style="color:var(--muted);font-size:13px;cursor:default">즐겨찾기가 없습니다.</div></div>
+      <div class="section-title">최근 열람</div>
+      <div class="recent-list" id="recent-list"></div>
+      <div class="section-title" style="margin-top:24px">전체 문서</div>
+      <div class="all-docs-list" id="all-docs-list"></div>
+    </div>
+  </div>
+
+  <!-- SCR-002 문서뷰어 -->
+  <div class="content-pane" id="pane-doc" style="padding:0">
+    <div id="doc-viewer-wrap">
+      <div id="doc-content"></div>
+      <div id="doc-toc-panel"><h3>목차</h3><div id="doc-toc-items"></div></div>
+    </div>
+  </div>
+
+  <!-- SCR-003 프로토타입 뷰어 -->
+  <div class="content-pane" id="pane-proto" style="padding:0">
+    <div id="proto-container">
+      <div id="proto-toolbar">
+        <span style="font-size:13px;font-weight:600;color:var(--muted)" id="proto-title">프로토타입</span>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <button class="device-btn active" data-w="375" data-h="812">📱 Mobile</button>
+          <button class="device-btn" data-w="768" data-h="1024">📟 Tablet</button>
+          <button class="device-btn" data-w="1440" data-h="900">🖥 Desktop</button>
+          <button class="device-btn" data-w="0" data-h="0">Custom</button>
+          <div id="custom-size-wrap" style="display:none;gap:4px;align-items:center">
+            <input type="number" id="cw" placeholder="W" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px" value="800">
+            <span style="font-size:12px;color:var(--muted)">×</span>
+            <input type="number" id="ch" placeholder="H" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px" value="600">
+            <button class="btn btn-secondary" style="padding:4px 8px;font-size:12px" id="btn-apply-custom">적용</button>
+          </div>
+          <button class="btn btn-secondary" id="btn-to-split" style="margin-left:8px">문서+프로토 스플릿</button>
+          <button class="btn btn-secondary" id="btn-to-doc-from-proto">문서보기</button>
+        </div>
+      </div>
+      <div id="proto-iframe-wrap">
+        <iframe id="proto-iframe" width="375" height="812"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCR-004 스플릿 뷰 -->
+  <div class="content-pane" id="pane-split" style="padding:0">
+    <div id="split-container">
+      <div id="split-left">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted)">📄 문서</div>
+        <div id="split-left-content"></div>
+      </div>
+      <div id="split-divider"></div>
+      <div id="split-right">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted)">🖼 프로토타입</div>
+        <div id="split-right-content">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;background:#e5e7eb;overflow:auto;padding:12px">
+            <iframe id="split-iframe" style="border:none;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);border-radius:4px;max-width:100%;max-height:100%"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCR-005 검색 -->
+  <div class="content-pane" id="pane-search" style="padding:0">
+    <div id="search-results-pane">
+      <h2 style="font-size:18px;margin-bottom:16px">검색 결과</h2>
+      <div class="filter-chips" id="filter-chips"></div>
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- SCR-006 코멘트 드로어 -->
+<div id="comment-drawer">
+  <div id="comment-drawer-header">
+    <h3>💬 코멘트</h3>
+    <button class="tb-btn" id="btn-comment-close">✕</button>
+  </div>
+  <div id="comment-list"></div>
+  <div id="comment-form">
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">화면 ID: <span id="comment-screen-id">—</span></div>
+    <input type="text" id="comment-author" placeholder="작성자">
+    <textarea id="comment-text" placeholder="코멘트를 입력하세요…"></textarea>
+    <div class="comment-actions">
+      <button class="btn btn-primary" id="btn-comment-submit" style="flex:1">등록</button>
+    </div>
+    <div class="comment-io">
+      <button id="btn-comment-export">JSON 내보내기</button>
+      <button id="btn-comment-import">JSON 가져오기</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="comment-import-file" accept=".json" style="display:none">
+
+<script>
+/* ═══════════════════════════ DATA ═══════════════════════════ */
+const SPEC_DATA = ${dataJson};
+
+/* ═══════════════════════════ STATE ═════════════════════════ */
+const S = {
+  currentPane: 'home',
+  currentDocId: null,
+  currentProtoId: null,
+  sidebarOpen: window.innerWidth >= 1280,
+  searchQuery: '',
+  searchFilter: 'all'
+};
+
+/* ═══════════════════════════ LS HELPERS ════════════════════ */
+const LS = {
+  get:(k,d)=>{ try{ return JSON.parse(localStorage.getItem(k))||d }catch{ return d } },
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+};
+
+/* ═══════════════════════════ SIDEBAR ══════════════════════ */
+function renderSidebar() {
+  const filesEl = document.getElementById('sidebar-files');
+  filesEl.innerHTML = \`
+    <div class="sidebar-item\${S.currentPane==='home'?' active':''}" onclick="showPane('home')">
+      🏠 <span>홈</span>
+    </div>
+    \${SPEC_DATA.documents.map(d=>\`
+      <div class="sidebar-item\${S.currentDocId===d.id&&S.currentPane==='doc'?' active':''}"
+           onclick="openDoc('\${d.id}')">
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">\${d.name}</span>
+        <span class="doc-type">\${d.type}</span>
+      </div>\`).join('')}
+    \${SPEC_DATA.prototypes.map(p=>\`
+      <div class="sidebar-item\${S.currentProtoId===p.id&&S.currentPane==='proto'?' active':''}"
+           onclick="openProto('\${p.id}')">
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">\${p.name}</span>
+        <span class="doc-type" style="background:#fef9c3">프로토</span>
+      </div>\`).join('')}
+  \`;
+}
+
+function renderToc(docId) {
+  const doc = SPEC_DATA.documents.find(d=>d.id===docId);
+  const el = document.getElementById('sidebar-toc');
+  if (!doc||!doc.toc||!doc.toc.length) { el.innerHTML='<div style="padding:12px 16px;font-size:12px;color:var(--muted)">목차 없음</div>'; return; }
+  el.innerHTML = doc.toc.filter(h=>h.level<=4).map(h=>\`
+    <div class="toc-item lv\${h.level}" onclick="scrollToHeading('\${h.id}')">\${h.text}</div>
+  \`).join('');
+}
+
+/* ═══════════════════════════ PANE SWITCH ═══════════════════ */
+function showPane(name) {
+  S.currentPane = name;
+  document.querySelectorAll('.content-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+name).classList.add('active');
+  renderSidebar();
+}
+
+/* ═══════════════════════════ HOME (SCR-001) ════════════════ */
+function renderHome() {
+  renderBookmarks();
+  renderRecent();
+  renderAllDocs();
+}
+
+function renderBookmarks() {
+  const bm = LS.get('sv_bookmarks',[]);
+  const el = document.getElementById('bookmark-grid');
+  if (!bm.length) { el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0">즐겨찾기가 없습니다. ⭐ 버튼으로 추가하세요.</div>'; return; }
+  el.innerHTML = bm.map(b=>\`
+    <div class="card" onclick="openDoc('\${b.docId}','\${b.sectionId}')">
+      <span class="card-starred">⭐</span>
+      <div class="card-title">\${b.heading}</div>
+      <div class="card-meta">\${b.docName}</div>
+    </div>\`).join('');
+}
+
+function renderRecent() {
+  const rc = LS.get('sv_recent',[]).slice(0,5);
+  const el = document.getElementById('recent-list');
+  if (!rc.length) { el.innerHTML='<div class="empty-state" style="padding:16px">최근 열람 없음</div>'; return; }
+  el.innerHTML = rc.map(r=>\`
+    <div class="recent-item" onclick="openDoc('\${r.docId}')">
+      📄 <span>\${r.name}</span><span style="margin-left:auto;font-size:11px;color:var(--muted)">\${r.time}</span>
+    </div>\`).join('');
+}
+
+function renderAllDocs() {
+  const el = document.getElementById('all-docs-list');
+  el.innerHTML = SPEC_DATA.documents.map(d=>\`
+    <div class="doc-row" onclick="openDoc('\${d.id}')">
+      📄 <strong>\${d.name}</strong>
+      <span style="margin-left:8px;font-size:11px;padding:2px 6px;background:#e2e8f0;border-radius:3px;color:var(--muted)">\${d.type}</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--muted)">\${d.screenIds.length}개 화면</span>
+    </div>\`).join('')
+    + SPEC_DATA.prototypes.map(p=>\`
+    <div class="doc-row" onclick="openProto('\${p.id}')">
+      🖼 <strong>\${p.name}</strong>
+      <span style="margin-left:8px;font-size:11px;padding:2px 6px;background:#fef9c3;border-radius:3px;color:var(--muted)">프로토타입</span>
+      \${p.screenId?'<span class="screen-id-badge">'+p.screenId+'</span>':''}
+    </div>\`).join('');
+}
+
+/* ═══════════════════════════ DOC VIEWER (SCR-002) ══════════ */
+function openDoc(docId, sectionId) {
+  const doc = SPEC_DATA.documents.find(d=>d.id===docId);
+  if (!doc) return;
+  S.currentDocId = docId;
+
+  // 최근열람 저장
+  const rc = LS.get('sv_recent',[]).filter(r=>r.docId!==docId);
+  rc.unshift({docId, name:doc.name, time: new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  LS.set('sv_recent', rc.slice(0,10));
+
+  const contentEl = document.getElementById('doc-content');
+  contentEl.innerHTML = doc.html;
+
+  // 화면ID 섹션에 액션 버튼 삽입
+  contentEl.querySelectorAll('h1,h2,h3').forEach(h => {
+    const scrMatch = h.textContent.match(/SCR-\\d+/i);
+    if (!scrMatch) return;
+    const sid = scrMatch[0].toUpperCase();
+    const mapping = SPEC_DATA.mappings[sid];
+    const hasProto = mapping && mapping.protoId;
+    const actEl = document.createElement('span');
+    actEl.className = 'section-actions';
+    actEl.innerHTML = \`
+      <button onclick="toggleBookmark('\${docId}','\${h.id}','\${h.textContent.replace(/'/g,"\\\\'")}','\${doc.name}')" title="즐겨찾기">⭐</button>
+      <button onclick="openCommentFor('\${sid}')" title="코멘트">💬</button>
+      \${hasProto?'<button onclick="openProto(\\''+mapping.protoId+'\\')">🔗 프로토</button>':''}
+      \${hasProto?'<button onclick="openSplit(\\''+docId+'\\',\\''+mapping.protoId+'\\')">⧉ 스플릿</button>':''}
+    \`;
+    h.appendChild(actEl);
+  });
+
+  renderToc(docId);
+  showPane('doc');
+
+  if (sectionId) {
+    setTimeout(()=>scrollToHeading(sectionId), 80);
+  }
+
+  // 스크롤 추적
+  setupScrollTracking(contentEl, doc.toc);
+}
+
+function scrollToHeading(id) {
+  const el = document.getElementById('doc-content').querySelector('#'+id) ||
+             document.getElementById('doc-content').querySelector('[id="'+id+'"]');
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function setupScrollTracking(contentEl, toc) {
+  const tocItems = document.getElementById('doc-toc-items');
+  if (!toc||!toc.length) { tocItems.innerHTML=''; return; }
+  tocItems.innerHTML = toc.filter(h=>h.level<=3).map(h=>\`
+    <div class="doc-toc-item lv\${h.level}" id="dtoc-\${h.id}" onclick="scrollToHeading('\${h.id}')">\${h.text}</div>
+  \`).join('');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.doc-toc-item').forEach(el=>el.classList.remove('active'));
+        const t = document.getElementById('dtoc-'+id);
+        if (t) { t.classList.add('active'); t.scrollIntoView({block:'nearest'}); }
+        document.querySelectorAll('.toc-item').forEach(el=>el.classList.remove('active'));
+        document.querySelectorAll('.toc-item').forEach(el=>{
+          if (el.textContent.trim()===toc.find(h=>h.id===id)?.text) el.classList.add('active');
+        });
+      }
+    });
+  },{rootMargin:'-20% 0px -70% 0px'});
+
+  toc.forEach(h=>{
+    const el = contentEl.querySelector('#'+h.id);
+    if (el) obs.observe(el);
+  });
+}
+
+/* ═══════════════════════════ PROTO (SCR-003) ═══════════════ */
+function openProto(protoId) {
+  const proto = SPEC_DATA.prototypes.find(p=>p.id===protoId);
+  if (!proto) return;
+  S.currentProtoId = protoId;
+  document.getElementById('proto-title').textContent = proto.name;
+  const iframe = document.getElementById('proto-iframe');
+  iframe.srcdoc = proto.content;
+  renderSidebar();
+  showPane('proto');
+}
+
+/* 디바이스 버튼 */
+document.querySelectorAll('.device-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.device-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const w = parseInt(btn.dataset.w), h = parseInt(btn.dataset.h);
+    const cw = document.getElementById('custom-size-wrap');
+    if (w === 0) { cw.style.display='flex'; return; }
+    cw.style.display='none';
+    setProtoSize(w, h);
+  });
+});
+document.getElementById('btn-apply-custom').addEventListener('click',()=>{
+  const w=parseInt(document.getElementById('cw').value)||800;
+  const h=parseInt(document.getElementById('ch').value)||600;
+  setProtoSize(w,h);
+});
+function setProtoSize(w,h) {
+  const f = document.getElementById('proto-iframe');
+  f.style.width = w+'px'; f.style.height = h+'px';
+  f.width = w; f.height = h;
+}
+document.getElementById('btn-to-split').addEventListener('click',()=>{
+  if (S.currentDocId && S.currentProtoId) openSplit(S.currentDocId, S.currentProtoId);
+});
+document.getElementById('btn-to-doc-from-proto').addEventListener('click',()=>{
+  if (S.currentDocId) openDoc(S.currentDocId);
+  else if (S.currentProtoId) {
+    const p = SPEC_DATA.prototypes.find(x=>x.id===S.currentProtoId);
+    const m = SPEC_DATA.mappings[p?.screenId];
+    if (m?.docId) openDoc(m.docId, m.sectionId);
+  }
+});
+
+/* ═══════════════════════════ SPLIT (SCR-004) ═══════════════ */
+function openSplit(docId, protoId) {
+  const doc   = SPEC_DATA.documents.find(d=>d.id===docId);
+  const proto = SPEC_DATA.prototypes.find(p=>p.id===protoId);
+  if (!doc||!proto) return;
+
+  document.getElementById('split-left-content').innerHTML = doc.html;
+  const sf = document.getElementById('split-iframe');
+  sf.srcdoc = proto.content;
+
+  // 저장된 비율 복원
+  const ratio = LS.get('sv_split', 50);
+  applySplitRatio(ratio);
+
+  showPane('split');
+  setupSplitDrag();
+}
+
+function applySplitRatio(pct) {
+  const c = document.getElementById('split-container');
+  const l = document.getElementById('split-left');
+  const r = document.getElementById('split-right');
+  l.style.flex = 'none'; l.style.width = pct+'%';
+  r.style.flex = '1';
+  LS.set('sv_split', pct);
+}
+
+function setupSplitDrag() {
+  const divider = document.getElementById('split-divider');
+  let dragging = false;
+  divider.onmousedown = e => { dragging=true; divider.classList.add('dragging'); e.preventDefault(); };
+  document.onmousemove = e => {
+    if (!dragging) return;
+    const c = document.getElementById('split-container');
+    const rect = c.getBoundingClientRect();
+    let pct = ((e.clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(20, Math.min(80, pct));
+    applySplitRatio(pct);
+  };
+  document.onmouseup = () => { dragging=false; divider.classList.remove('dragging'); };
+}
+
+/* ═══════════════════════════ SEARCH (SCR-005) ══════════════ */
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('input', e => {
+  S.searchQuery = e.target.value.trim();
+  if (S.searchQuery) performSearch();
+});
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && S.searchQuery) performSearch();
+});
+
+function performSearch() {
+  const q = S.searchQuery;
+  // SCR-NNN 직접이동
+  const scrMatch = q.match(/^SCR-\\d+$/i);
+  if (scrMatch) {
+    const sid = scrMatch[0].toUpperCase();
+    const mapping = SPEC_DATA.mappings[sid];
+    if (mapping?.docId) { openDoc(mapping.docId, mapping.sectionId); return; }
+  }
+
+  showPane('search');
+  renderFilters();
+  renderSearchResults(q, S.searchFilter);
+}
+
+function renderFilters() {
+  const types = ['all',...new Set(SPEC_DATA.documents.map(d=>d.type))];
+  document.getElementById('filter-chips').innerHTML = types.map(t=>\`
+    <div class="filter-chip\${S.searchFilter===t?' active':''}" onclick="setFilter('\${t}')">\${t==='all'?'전체':t}</div>
+  \`).join('');
+}
+
+function setFilter(t) {
+  S.searchFilter = t;
+  renderFilters();
+  renderSearchResults(S.searchQuery, t);
+}
+
+function renderSearchResults(q, filter) {
+  const ql = q.toLowerCase();
+  const results = SPEC_DATA.searchIndex.filter(item => {
+    const doc = SPEC_DATA.documents.find(d=>d.id===item.docId);
+    if (filter !== 'all' && doc?.type !== filter) return false;
+    return item.heading.toLowerCase().includes(ql) || item.text.toLowerCase().includes(ql);
+  });
+
+  const el = document.getElementById('search-results');
+  if (!results.length) { el.innerHTML='<div class="empty-state">검색 결과가 없습니다.</div>'; return; }
+
+  el.innerHTML = results.map(r => {
+    const doc = SPEC_DATA.documents.find(d=>d.id===r.docId);
+    const snippet = highlight(r.text.substring(0,150),q);
+    const heading = highlight(r.heading,q);
+    return \`<div class="search-result-item" onclick="openDoc('\${r.docId}','\${r.sectionId}')">
+      <div class="result-heading">\${heading}</div>
+      <div class="result-meta">\${doc?.name} · \${doc?.type}</div>
+      <div class="result-snippet">\${snippet}...</div>
+    </div>\`;
+  }).join('');
+}
+
+function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp('('+q.replace(/[.*+?^\${}()|[\\]\\\\]/g,'\\\\$&')+')','gi');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+/* ═══════════════════════════ COMMENTS (SCR-006) ════════════ */
+let currentCommentScreenId = '';
+
+document.getElementById('btn-comment-toggle').addEventListener('click',()=>{
+  document.getElementById('comment-drawer').classList.toggle('open');
+});
+document.getElementById('btn-comment-close').addEventListener('click',()=>{
+  document.getElementById('comment-drawer').classList.remove('open');
+});
+
+function openCommentFor(screenId) {
+  currentCommentScreenId = screenId;
+  document.getElementById('comment-screen-id').textContent = screenId;
+  renderComments(screenId);
+  document.getElementById('comment-drawer').classList.add('open');
+}
+
+function renderComments(screenId) {
+  const all = LS.get('sv_comments',{});
+  const list = all[screenId] || [];
+  const el = document.getElementById('comment-list');
+  if (!list.length) { el.innerHTML='<div class="empty-state" style="padding:20px">코멘트가 없습니다.</div>'; return; }
+  el.innerHTML = list.map((c,i)=>\`
+    <div class="comment-item">
+      <div class="comment-author">\${c.author}</div>
+      <div class="comment-text">\${c.text}</div>
+      <div class="comment-time">\${c.time} <button onclick="deleteComment('\${screenId}',\${i})" style="float:right;background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px">삭제</button></div>
+    </div>\`).join('');
+}
+
+document.getElementById('btn-comment-submit').addEventListener('click',()=>{
+  const author = document.getElementById('comment-author').value.trim() || '익명';
+  const text   = document.getElementById('comment-text').value.trim();
+  if (!text || !currentCommentScreenId) return;
+  const all = LS.get('sv_comments',{});
+  if (!all[currentCommentScreenId]) all[currentCommentScreenId]=[];
+  all[currentCommentScreenId].push({
+    author, text,
+    time: new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+  });
+  LS.set('sv_comments', all);
+  document.getElementById('comment-text').value='';
+  renderComments(currentCommentScreenId);
+});
+
+function deleteComment(sid, idx) {
+  const all = LS.get('sv_comments',{});
+  if (all[sid]) { all[sid].splice(idx,1); LS.set('sv_comments',all); renderComments(sid); }
+}
+
+document.getElementById('btn-comment-export').addEventListener('click',()=>{
+  const all = LS.get('sv_comments',{});
+  const blob = new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='comments.json'; a.click();
+});
+
+document.getElementById('btn-comment-import').addEventListener('click',()=>{
+  document.getElementById('comment-import-file').click();
+});
+document.getElementById('comment-import-file').addEventListener('change', e=>{
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const all = LS.get('sv_comments',{});
+      Object.assign(all, data);
+      LS.set('sv_comments', all);
+      renderComments(currentCommentScreenId);
+      alert('가져오기 완료!');
+    } catch { alert('올바른 JSON 파일이 아닙니다.'); }
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+
+/* ═══════════════════════════ BOOKMARKS ════════════════════ */
+function toggleBookmark(docId, sectionId, heading, docName) {
+  const bm = LS.get('sv_bookmarks',[]);
+  const idx = bm.findIndex(b=>b.docId===docId&&b.sectionId===sectionId);
+  if (idx>=0) bm.splice(idx,1); else bm.unshift({docId,sectionId,heading,docName});
+  LS.set('sv_bookmarks', bm);
+  renderBookmarks();
+  alert(idx>=0?'즐겨찾기에서 제거되었습니다.':'즐겨찾기에 추가되었습니다. ⭐');
+}
+
+/* ═══════════════════════════ HAMBURGER ════════════════════ */
+document.getElementById('btn-hamburger').addEventListener('click',()=>{
+  const sidebar = document.getElementById('sidebar');
+  const main    = document.getElementById('main');
+  if (window.innerWidth >= 1280) {
+    sidebar.classList.toggle('hidden');
+    main.classList.toggle('full');
+  } else {
+    sidebar.classList.toggle('overlay-open');
+  }
+});
+
+/* ═══════════════════════════ INIT ════════════════════════ */
+renderHome();
+renderSidebar();
+
+// 첫 문서 자동 열기 (있으면)
+if (SPEC_DATA.documents.length > 0) {
+  // 홈 화면 유지
+}
+${'</'}script>
+</body>
+</html>`;
+}
+
+</script>
+</body>
+</html>
