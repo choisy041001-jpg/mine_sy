@@ -11,3 +11,6 @@ desktop.ini
 # 편집기
 .vscode/
 *.swp
+
+# Claude Code worktrees (로컬 전용)
+.claude/worktrees/
