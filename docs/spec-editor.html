@@ -431,9 +431,42 @@ body{background:#c8cdd6;font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe
 
 <script>
 /* ════════════════════════════════════════════
+   INDEXED DB  — localStorage(5MB 제한) 대체
+════════════════════════════════════════════ */
+const IDB_NAME  = 'spec-editor';
+const IDB_VER   = 1;
+const IDB_STORE = 'state';
+const IDB_KEY   = 'se_v3';
+
+function _openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VER);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+async function idbGet(key) {
+  const db = await _openDB();
+  return new Promise((res, rej) => {
+    const req = db.transaction(IDB_STORE,'readonly').objectStore(IDB_STORE).get(key);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+async function idbSet(key, val) {
+  const db = await _openDB();
+  return new Promise((res, rej) => {
+    const req = db.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).put(val, key);
+    req.onsuccess = () => res();
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+/* ════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════ */
-const LS_KEY = 'se_v2';
+const LS_KEY = 'se_v2'; /* 구버전 마이그레이션용으로만 유지 */
 
 /* 페이지 구조 */
 const LOCK_PW = '1128';
@@ -463,17 +496,23 @@ function page() { return pages[cur]; }
 /* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem(LS_KEY);
-  if (saved) {
-    try {
-      const d = JSON.parse(saved);
-      pages = d.pages || [newPage()];
-      cur = d.cur || 0;
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    /* IndexedDB 우선 로드 */
+    let d = await idbGet(IDB_KEY);
+    /* 구버전 localStorage 마이그레이션 */
+    if (!d) {
+      const old = localStorage.getItem(LS_KEY);
+      if (old) { try { d = JSON.parse(old); } catch(e) {} }
+    }
+    if (d) {
+      pages  = d.pages  || [newPage()];
+      cur    = Math.min(d.cur || 0, pages.length - 1);
       mdText = d.mdText || null;
       if (mdText) document.getElementById('btn-md').textContent = 'MD ✓';
-    } catch(e) { pages = [newPage()]; }
-  }
+    }
+  } catch(e) { pages = [newPage()]; }
+
   const k = localStorage.getItem('se_apikey');
   if (k) document.getElementById('tb-api-key').value = k;
 
@@ -1024,15 +1063,15 @@ function autoSave() {
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(save, 900);
 }
-function save() {
+async function save() {
   try {
-    localStorage.setItem(LS_KEY, JSON.stringify({ pages, cur, mdText }));
+    await idbSet(IDB_KEY, { pages, cur, mdText });
     const k = document.getElementById('tb-api-key').value.trim();
     if (k) localStorage.setItem('se_apikey', k);
-  } catch(e) {}
+  } catch(e) { console.warn('저장 실패:', e); }
 }
-function exportPage() {
-  save();
+async function exportPage() {
+  await save();
   alert('저장되었습니다.\n(브라우저 새로고침 후에도 유지됩니다)');
 }
 
