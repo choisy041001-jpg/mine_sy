@@ -49,6 +49,12 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1
 .build-config label{font-size:14px;font-weight:500;color:#374151;white-space:nowrap}
 .build-config input[type=text]{flex:1;min-width:200px;padding:8px 12px;border-radius:6px;border:1px solid #d1d5db;font-size:14px}
 #btn-build{margin-left:auto}
+/* ── AI 설정 ── */
+.ai-config{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px 16px;margin-top:4px}
+.ai-config-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ai-key-input{flex:1;min-width:240px;padding:8px 12px;border-radius:6px;border:1px solid #d1d5db;font-size:13px;font-family:monospace;letter-spacing:.04em}
+.ai-status{font-size:12px;min-width:80px}.ai-status.ok{color:#16a34a;font-weight:600}.ai-status.err{color:#dc2626;font-weight:600}
+.ai-hint{font-size:11px;color:#94a3b8;margin-top:6px}
 /* ── PKG-002 결과 ── */
 .build-steps{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:20px;margin-bottom:20px}
 .build-step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
@@ -108,7 +114,24 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1
     <div class="empty-state">파일을 등록하면 매핑 테이블이 생성됩니다.</div>
   </div>
 
-  <!-- ④ 출력 + 빌드 -->
+  <!-- ④ AI 화면설계서 자동 생성 (선택) -->
+  <p class="section-title">④ AI 화면설계서 자동 생성 <small style="font-weight:400;color:#94a3b8">선택 — Claude API Key 입력 시 활성화</small></p>
+  <div class="ai-config">
+    <div class="ai-config-row">
+      <span style="font-size:13px;font-weight:600;white-space:nowrap">Anthropic API Key</span>
+      <input type="password" id="ai-api-key" class="ai-key-input" placeholder="sk-ant-api03-...">
+      <button class="btn btn-secondary" id="btn-test-api" style="padding:7px 14px;font-size:12px;white-space:nowrap">연결 테스트</button>
+      <span id="ai-status" class="ai-status"></span>
+    </div>
+    <div class="ai-hint">
+      <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer">
+        <input type="checkbox" id="ai-save-key"> 이 기기에 키 저장 (localStorage)
+      </label>
+      &nbsp;— 키는 생성된 뷰어 파일에 포함되지 않으며 API 호출에만 사용됩니다.
+    </div>
+  </div>
+
+  <!-- ⑤ 출력 + 빌드 -->
   <div class="build-config">
     <label for="output-name">출력 파일명</label>
     <input type="text" id="output-name" value="spec-viewer.html" placeholder="spec-viewer.html">
@@ -128,6 +151,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1
     <div class="build-step" id="step-2"><div class="step-icon pending">○</div><span>프로토타입 임베딩</span></div>
     <div class="build-step" id="step-3"><div class="step-icon pending">○</div><span>검색 인덱스 생성</span></div>
     <div class="build-step" id="step-4"><div class="step-icon pending">○</div><span>단일 파일 패키징</span></div>
+    <div class="build-step" id="step-5"><div class="step-icon pending">○</div><span id="step-5-label">AI 화면설계서 초안 생성</span></div>
   </div>
   <div class="build-result" id="build-result" style="display:none">
     <h2>✅ 빌드 완료</h2>
@@ -372,7 +396,6 @@ async function startBuild() {
   state.mappings.forEach(m => {
     mappingObj[m.screenId] = { docId:m.docId, sectionId:m.sectionId, protoId:m.protoId };
   });
-
   const specData = {
     version: '1.0',
     buildDate: new Date().toISOString().slice(0,10),
@@ -381,20 +404,40 @@ async function startBuild() {
     })),
     prototypes: parsedProtos,
     mappings: mappingObj,
-    searchIndex
+    searchIndex,
+    aiSpecPages: []
   };
+  setStep(4,'done');
+
+  // Step 5: AI 화면설계서 자동 생성
+  const apiKey = document.getElementById('ai-api-key').value.trim();
+  const step5Label = document.getElementById('step-5-label');
+  if (apiKey) {
+    setStep(5,'running');
+    try {
+      step5Label.textContent = 'AI 분석 중…';
+      specData.aiSpecPages = await runAISpecGeneration(parsedDocs, parsedProtos, mappingObj, apiKey);
+      step5Label.textContent = `AI 화면설계서 초안 생성 완료 (${specData.aiSpecPages.length}페이지)`;
+    } catch(e) {
+      step5Label.textContent = 'AI 생성 건너뜀: ' + e.message.slice(0,60);
+    }
+  } else {
+    step5Label.textContent = 'AI 화면설계서 초안 생성 (API Key 없음)';
+  }
+  setStep(5,'done');
 
   const viewerHtml = buildViewerHtml(specData);
   const blob = new Blob([viewerHtml], {type:'text/html'});
   state.builtBlob = blob;
   state.builtName = document.getElementById('output-name').value || 'spec-viewer.html';
-  setStep(4,'done');
 
   const elapsed = ((Date.now()-t0)/1000).toFixed(1);
+  const aiCount = specData.aiSpecPages.length;
   document.getElementById('result-meta').innerHTML = `
     <div class="result-meta-item"><div class="val">${parsedDocs.length}</div><div class="lbl">포함 문서</div></div>
     <div class="result-meta-item"><div class="val">${parsedProtos.length}</div><div class="lbl">프로토타입</div></div>
     <div class="result-meta-item"><div class="val">${state.mappings.filter(m=>m.docId&&m.protoId).length}</div><div class="lbl">매핑 화면ID</div></div>
+    ${aiCount ? `<div class="result-meta-item"><div class="val" style="color:#16a34a">${aiCount}</div><div class="lbl">AI 설계서 페이지</div></div>` : ''}
     <div class="result-meta-item"><div class="val">${fmtSize(blob.size)}</div><div class="lbl">파일 크기</div></div>
     <div class="result-meta-item"><div class="val">${elapsed}s</div><div class="lbl">소요 시간</div></div>`;
   document.getElementById('build-result').style.display = 'block';
@@ -463,6 +506,205 @@ function parseTable(match) {
     '</tr></thead><tbody>'+
     lines.slice(1).map(l=>'<tr>'+l.split('|').filter(c=>c.trim()).map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>').join('')+
     '</tbody></table>';
+}
+
+/* ═══════════════════════════════════════════
+   AI 화면설계서 생성 파이프라인
+═══════════════════════════════════════════ */
+
+/* API Key 저장/복원 */
+(function initApiKey(){
+  const saved = localStorage.getItem('sv_ai_key');
+  if (saved) {
+    document.getElementById('ai-api-key').value = saved;
+    document.getElementById('ai-save-key').checked = true;
+  }
+  document.getElementById('ai-save-key').addEventListener('change', e => {
+    if (e.target.checked) localStorage.setItem('sv_ai_key', document.getElementById('ai-api-key').value);
+    else localStorage.removeItem('sv_ai_key');
+  });
+  document.getElementById('ai-api-key').addEventListener('input', e => {
+    if (document.getElementById('ai-save-key').checked) localStorage.setItem('sv_ai_key', e.target.value);
+  });
+})();
+
+document.getElementById('btn-test-api').addEventListener('click', async () => {
+  const key = document.getElementById('ai-api-key').value.trim();
+  const st  = document.getElementById('ai-status');
+  if (!key) { st.className='ai-status err'; st.textContent='키를 입력하세요'; return; }
+  st.className='ai-status'; st.textContent='테스트 중…';
+  try {
+    const r = await callClaude('Hi, reply with just "OK"', key, 20);
+    st.className='ai-status ok'; st.textContent='✓ 연결 성공';
+  } catch(e) {
+    st.className='ai-status err'; st.textContent='✗ ' + e.message.slice(0,40);
+  }
+});
+
+/* DOM 분석 — 프로토타입 HTML에서 핵심 UI 요소 추출 */
+function extractUIElements(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script,style,link,noscript,svg,img').forEach(e => e.remove());
+
+  const RULES = [
+    { type:'form',       sel:'form',                                          pri:1 },
+    { type:'input',      sel:'input:not([type=hidden]),textarea',             pri:2 },
+    { type:'select',     sel:'select',                                        pri:2 },
+    { type:'submit-btn', sel:'button[type=submit],[class*=btn-primary],[class*=btn-submit]', pri:1 },
+    { type:'action-btn', sel:'button,a[class*=btn],a[class*=button]',         pri:3 },
+    { type:'table',      sel:'table,[role=grid],[class*=table-wrap]',         pri:1 },
+    { type:'modal',      sel:'[class*=modal],[class*=dialog],[role=dialog]',  pri:1 },
+    { type:'nav',        sel:'nav,[class*=sidebar],[class*=gnb],[class*=lnb]',pri:2 },
+    { type:'card',       sel:'[class*=card],[class*=panel]:not(#app)',        pri:3 },
+    { type:'list-item',  sel:'[class*=list-item],[class*=item-row]',          pri:3 },
+    { type:'badge',      sel:'[class*=badge],[class*=chip],[class*=tag]',     pri:3 },
+    { type:'heading',    sel:'h1,h2,h3',                                      pri:2 },
+  ];
+
+  const seen = new Set();
+  const elements = [];
+  const allEls = [...(doc.body ? doc.body.querySelectorAll('*') : [])];
+
+  RULES.forEach(({ type, sel, pri }) => {
+    doc.querySelectorAll(sel).forEach(el => {
+      const key = type + ':' + (el.id || [...el.classList].slice(0,3).join('.'));
+      if (seen.has(key)) return;
+      seen.add(key);
+      const label = getElLabel(el);
+      if (!label || label.length < 1) return;
+      const pos = allEls.indexOf(el);
+      const yEst = allEls.length ? Math.round((pos / allEls.length) * 100) : 50;
+      const xEst = /left|aside|side|nav|menu/i.test(el.className||'') ? 12
+                 : /right|detail|info/i.test(el.className||'') ? 78 : 45;
+      elements.push({ type, label: label.slice(0,80), yEst, xEst, pri,
+                      id: el.id||null, cls:[...el.classList].slice(0,4).join(' ') });
+    });
+  });
+
+  return elements.sort((a,b) => a.pri-b.pri || a.yEst-b.yEst).slice(0,20);
+}
+
+function getElLabel(el) {
+  return (
+    el.getAttribute('aria-label') ||
+    el.getAttribute('placeholder') ||
+    el.getAttribute('title') ||
+    el.querySelector('label,legend')?.textContent?.trim() ||
+    el.getAttribute('alt') ||
+    el.textContent?.trim().replace(/\s+/g,' ').slice(0,60)
+  ) || '';
+}
+
+/* MD 파싱 — PRD/요구사항에서 기능 요구사항 추출 */
+function extractPRDFeatures(rawMd) {
+  const lines = rawMd.split('\n');
+  const features = [];
+  let cur = null;
+  lines.forEach(line => {
+    const h2 = line.match(/^##\s+(.+)/);
+    const h3 = line.match(/^###\s+(.+)/);
+    const li = line.match(/^[-*]\s+(.+)/);
+    if (h2) { cur = { heading: h2[1].trim(), items:[] }; features.push(cur); }
+    else if (h3 && cur) cur.items.push(h3[1].trim());
+    else if (li  && cur) cur.items.push(li[1].trim());
+  });
+  return features;
+}
+
+/* Claude API 호출 */
+async function callClaude(prompt, apiKey, maxTokens=1500) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'x-api-key': apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'content-type':'application/json'
+    },
+    body: JSON.stringify({
+      model:'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      messages:[{ role:'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Claude API ${res.status}: ${err.slice(0,120)}`);
+  }
+  return (await res.json()).content[0].text;
+}
+
+function extractJSON(text) {
+  const m = text.match(/```(?:json)?\s*([\s\S]+?)\s*```/) ||
+            text.match(/(\{[\s\S]+\}|\[[\s\S]+\])/);
+  return m ? m[1] : text.trim();
+}
+
+/* 단일 프로토타입에 대한 설계서 초안 생성 */
+async function generateSpecSheet(elements, prdFeatures, screenId, apiKey) {
+  const elList = elements.map((e,i)=>`${i+1}. [${e.type}] "${e.label}" (y≈${e.yEst}%, x≈${e.xEst}%)`).join('\n');
+  const prdText = prdFeatures.slice(0,8).map(f=>
+    `## ${f.heading}\n${f.items.slice(0,5).map(i=>'- '+i).join('\n')}`
+  ).join('\n\n');
+
+  const prompt = `You are writing a UX specification document for a Korean B2B SaaS screen.
+
+SCREEN: ${screenId}
+
+UI ELEMENTS (type | label | estimated position):
+${elList || '(no elements detected)'}
+
+PRD REQUIREMENTS:
+${prdText || '(no PRD available)'}
+
+Generate numbered spec badges for the most important functional elements.
+Rules:
+- Maximum 10 badges
+- x,y are 0-100% positions within the screen canvas
+- description must be in Korean, 1-2 sentences explaining purpose and behavior
+- checkConditions: short Korean bullet strings for validation/edge cases (can be empty array)
+
+Output ONLY valid JSON, no explanation:
+{
+  "badges": [
+    {
+      "num": 1,
+      "x": 45,
+      "y": 25,
+      "label": "로그인 버튼",
+      "description": "아이디/비밀번호로 인증 요청. 성공 시 마지막 방문 화면으로 이동.",
+      "checkConditions": ["아이디: 필수, 이메일 형식", "비밀번호: 8자 이상"]
+    }
+  ]
+}`;
+
+  const raw = await callClaude(prompt, apiKey, 2000);
+  const parsed = JSON.parse(extractJSON(raw));
+  return Array.isArray(parsed) ? { badges: parsed } : parsed;
+}
+
+/* 전체 프로토타입 순회하며 AI 설계서 페이지 생성 */
+async function runAISpecGeneration(parsedDocs, parsedProtos, mappingObj, apiKey) {
+  const results = [];
+  for (const proto of parsedProtos) {
+    // 이 프로토에 매핑된 문서 찾기
+    const mapping = Object.values(mappingObj).find(m => m.protoId === proto.id);
+    const doc = mapping && parsedDocs.find(d => d.id === mapping.docId);
+    const elements = extractUIElements(proto.content);
+    const features = doc ? extractPRDFeatures(doc.raw) : [];
+    const screenId = proto.screenId || proto.name.replace(/\.(html?)$/i,'');
+
+    try {
+      document.getElementById('step-5-label').textContent =
+        `AI 분석 중: ${proto.name} (${results.length+1}/${parsedProtos.length})`;
+      const gen = await generateSpecSheet(elements, features, screenId, apiKey);
+      results.push({ protoId: proto.id, screenId, badges: gen.badges || [] });
+    } catch(e) {
+      console.warn('[AI] 건너뜀:', proto.name, e.message);
+      results.push({ protoId: proto.id, screenId, badges: [] });
+    }
+  }
+  return results;
 }
 
 /* ═══════════════════════════════════════════
@@ -652,19 +894,16 @@ mark{background:#fef08a;padding:0 1px;border-radius:2px}
 #specsheet-screen-wrap{position:relative;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2);overflow:hidden;flex-shrink:0}
 #specsheet-iframe-scaler{position:absolute;top:0;left:0;transform-origin:top left}
 #specsheet-iframe{display:block;border:none}
-#specsheet-badge-overlay{position:absolute;inset:0;pointer-events:none;z-index:10}
-#specsheet-badge-overlay.add-mode{pointer-events:auto;cursor:crosshair;background:rgba(37,99,235,.05);outline:2px dashed #2563eb}
+#specsheet-badge-overlay{position:absolute;inset:0;pointer-events:auto;z-index:10;cursor:default}
+#specsheet-badge-overlay.add-mode{cursor:crosshair;background:rgba(37,99,235,.05);outline:2px dashed #2563eb}
 .ss-desc-item.ss-spotlight{animation:ss-spotlight 1.5s ease-out;border-radius:6px}
 @keyframes ss-spotlight{0%,30%{background:#fef3c7}100%{background:transparent}}
-#ss-capture-bar{display:none;align-items:center;gap:8px;padding:6px 12px;background:#fef9c3;border-bottom:1px solid #fde68a;font-size:12px;flex-shrink:0}
-#ss-capture-bar span{font-weight:600;color:#92400e}
-#ss-capture-bar .btn-save-cur{padding:3px 10px;border-radius:4px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer;font-size:11px;font-weight:600}
-#ss-capture-bar .btn-save-new{padding:3px 10px;border-radius:4px;border:1px solid #93c5fd;background:#fff;color:#2563eb;cursor:pointer;font-size:11px;font-weight:600}
-#ss-capture-bar .btn-dismiss{background:none;border:none;color:var(--muted);font-size:16px;padding:0 4px;cursor:pointer;margin-left:auto;line-height:1}
-#ss-snapshot-bar{display:none;align-items:center;gap:8px;padding:4px 12px;background:#f0fdf4;border-bottom:1px solid #86efac;font-size:11px;color:#166534;flex-shrink:0}
-#ss-snapshot-bar button{background:none;border:none;cursor:pointer;color:#166534;font-size:11px;text-decoration:underline;padding:0}
-.ss-badge{position:absolute;width:26px;height:26px;border-radius:50%;background:#e53e3e;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transform:translate(-50%,-50%);pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.35);user-select:none;border:2px solid #fff}
-.ss-badge:hover{background:#c53030;transform:translate(-50%,-50%) scale(1.15)}
+#ss-info-bar{display:none;align-items:center;gap:8px;padding:4px 12px;background:#f0fdf4;border-bottom:1px solid #86efac;font-size:11px;color:#166534;flex-shrink:0}
+#ss-info-bar button{background:none;border:none;cursor:pointer;color:var(--accent);font-size:11px;padding:2px 6px;border:1px solid currentColor;border-radius:3px}
+#ss-ai-badge{font-size:10px;font-weight:700;background:#7c3aed;color:#fff;padding:1px 7px;border-radius:10px}
+.ss-badge{position:absolute;width:26px;height:26px;border-radius:50%;background:#e53e3e;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:grab;transform:translate(-50%,-50%);pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.35);user-select:none;border:2px solid #fff;touch-action:none}
+.ss-badge:hover{background:#c53030;transform:translate(-50%,-50%) scale(1.12)}
+.ss-badge.dragging{cursor:grabbing;transform:translate(-50%,-50%) scale(1.2);box-shadow:0 4px 16px rgba(0,0,0,.5);z-index:30!important}
 #specsheet-add-badge-btn{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;z-index:10;box-shadow:0 2px 8px rgba(37,99,235,.4);white-space:nowrap}
 #specsheet-add-badge-btn.active{background:#e53e3e;box-shadow:0 2px 8px rgba(229,62,62,.4)}
 #specsheet-add-badge-btn:hover{opacity:.9}
@@ -831,17 +1070,11 @@ mark{background:#fef08a;padding:0 1px;border-radius:2px}
         <label>Screen Path</label>
         <input id="ss-screen-path" placeholder="화면 경로 (예: 대시보드 > 메인)">
       </div>
-      <!-- 캡처 알림 바 -->
-      <div id="ss-capture-bar">
-        <span>📸 화면 캡처됨</span>
-        <button class="btn-save-cur" onclick="ssSaveCaptureToCurrentPage()">현재 페이지에 저장</button>
-        <button class="btn-save-new" onclick="ssSaveCaptureAsNewPage()">새 페이지로 추가</button>
-        <button class="btn-dismiss" onclick="ssCloseCaptureBar()" title="닫기">×</button>
-      </div>
-      <!-- 스냅샷 모드 표시 바 -->
-      <div id="ss-snapshot-bar">
-        📸 스냅샷 보기 중 &nbsp;
-        <button onclick="ssClearSnapshot()">🔄 라이브 프로토타입으로 돌아가기</button>
+      <!-- 상태 정보 바 -->
+      <div id="ss-info-bar">
+        <span id="ss-ai-badge" style="display:none">✦ AI 생성</span>
+        <span id="ss-info-msg"></span>
+        <button id="btn-ss-open-live" onclick="ssOpenLiveProto()" title="새 탭에서 인터랙티브 프로토타입 보기" style="display:none">🔗 라이브 프로토</button>
       </div>
       <!-- 본문 -->
       <div id="specsheet-main">
@@ -1334,43 +1567,67 @@ document.getElementById('comment-import-file').addEventListener('change', e=>{
 let ssPages = [];
 let ssCurrentIdx = 0;
 let ssBadgeMode = false;
-let ssPendingCapture = null;
 
 function ssInit() {
   const saved = LS.get('sv_specsheet', null);
   if (saved && saved.pages && saved.pages.length > 0) {
     ssPages = saved.pages;
-  } else {
-    // mappings 기반으로 기능/화면별 페이지 생성 (SCR-NNN 단위)
-    const entries = Object.entries(SPEC_DATA.mappings);
-    if (entries.length > 0) {
-      ssPages = entries.map(([screenId, mapping], i) => ({
-        id: 'ss-'+i,
-        protoId: mapping.protoId || null,
-        screenId: screenId,
-        pageTitle: ssAutoPageTitle(screenId, mapping),
+    ssCurrentIdx = 0;
+    return;
+  }
+
+  // AI 생성 결과 우선 적용
+  const aiPages = SPEC_DATA.aiSpecPages;
+  if (aiPages && aiPages.length > 0) {
+    ssPages = aiPages.map((ap, i) => {
+      const proto = SPEC_DATA.prototypes.find(p => p.id === ap.protoId);
+      const mEntry = Object.entries(SPEC_DATA.mappings).find(([,m]) => m.protoId === ap.protoId);
+      const screenId  = mEntry ? mEntry[0] : (proto ? proto.screenId : '');
+      const mappingDt = mEntry ? mEntry[1] : {};
+      const today = new Date().toISOString().slice(0,10).replace(/-/g,'.');
+      return {
+        id: 'ss-ai-'+i,
+        protoId: ap.protoId,
+        screenId,
+        pageTitle: ssAutoPageTitle(screenId, mappingDt) || (proto ? proto.name.replace(/\.(html?)\$/i,'') : '페이지'+(i+1)),
         screenPath: ssAutoPath(screenId),
-        uiId: '',
-        author: '',
-        date: new Date().toISOString().slice(0,10).replace(/-/g,'.'),
-        descriptions: ssAutoDescs(screenId),
-        checkPoint: '',
-        badges: []
-      }));
-    } else if (SPEC_DATA.prototypes.length > 0) {
-      // fallback: 프로토타입 파일 단위
-      ssPages = SPEC_DATA.prototypes.map((p, i) => ({
-        id: 'ss-'+i, protoId: p.id, screenId: p.screenId||'',
-        pageTitle: p.name.replace(/\.(html?)\$/i,''),
-        screenPath: ssAutoPath(p.screenId), uiId:'', author:'',
-        date: new Date().toISOString().slice(0,10).replace(/-/g,'.'),
-        descriptions: ssAutoDescs(p.screenId), checkPoint:'', badges:[]
-      }));
-    }
-    if (!ssPages.length) {
-      ssPages = [{id:'ss-0',protoId:null,screenId:'',pageTitle:'페이지 1',
-        screenPath:'',uiId:'',author:'',date:'',descriptions:[],checkPoint:'',badges:[]}];
-    }
+        uiId:'', author:'', date: today,
+        badges: (ap.badges||[]).map(b=>({ num:b.num, x:b.x, y:b.y })),
+        descriptions: (ap.badges||[]).map(b=>({ id:b.num, text:b.description||'', badgeId:b.num })),
+        checkPoint: (ap.badges||[]).flatMap(b=>b.checkConditions||[]).join('\\n'),
+        aiGenerated: true
+      };
+    });
+    ssCurrentIdx = 0;
+    return;
+  }
+
+  // mappings 기반 페이지 생성
+  const entries = Object.entries(SPEC_DATA.mappings);
+  if (entries.length > 0) {
+    ssPages = entries.map(([screenId, mapping], i) => ({
+      id: 'ss-'+i,
+      protoId: mapping.protoId || null,
+      screenId,
+      pageTitle: ssAutoPageTitle(screenId, mapping),
+      screenPath: ssAutoPath(screenId),
+      uiId:'', author:'',
+      date: new Date().toISOString().slice(0,10).replace(/-/g,'.'),
+      descriptions: ssAutoDescs(screenId),
+      checkPoint:'', badges:[]
+    }));
+  } else if (SPEC_DATA.prototypes.length > 0) {
+    ssPages = SPEC_DATA.prototypes.map((p, i) => ({
+      id:'ss-'+i, protoId:p.id, screenId:p.screenId||'',
+      pageTitle: p.name.replace(/\.(html?)\$/i,''),
+      screenPath: ssAutoPath(p.screenId), uiId:'', author:'',
+      date: new Date().toISOString().slice(0,10).replace(/-/g,'.'),
+      descriptions: ssAutoDescs(p.screenId), checkPoint:'', badges:[]
+    }));
+  }
+  if (!ssPages.length) {
+    ssPages = [{id:'ss-0',protoId:null,screenId:'',pageTitle:'페이지 1',
+      screenPath:'',uiId:'',author:'',date:'',descriptions:[],checkPoint:'',badges:[]}];
   }
   ssCurrentIdx = 0;
 }
@@ -1432,45 +1689,40 @@ function ssRenderPage() {
 
   ssPopulateProtoSelect();
 
-  // 프로토타입 iframe
-  const iframe   = document.getElementById('specsheet-iframe');
-  const emptyEl  = document.getElementById('ss-empty-state');
-  const wrapEl   = document.getElementById('specsheet-screen-wrap');
-  const addBtn   = document.getElementById('specsheet-add-badge-btn');
+  // info 바 업데이트
+  const infoBar    = document.getElementById('ss-info-bar');
+  const aiBadgeEl  = document.getElementById('ss-ai-badge');
+  const infoMsg    = document.getElementById('ss-info-msg');
+  const liveBtn    = document.getElementById('btn-ss-open-live');
+  if (infoBar) {
+    const hasContent = page.protoId || page.snapshotHtml;
+    infoBar.style.display = hasContent ? 'flex' : 'none';
+    if (aiBadgeEl) aiBadgeEl.style.display = page.aiGenerated ? 'inline' : 'none';
+    if (infoMsg)   infoMsg.textContent = page.aiGenerated ? 'AI가 자동 생성한 초안 — 뱃지를 드래그하거나 설명을 수정하세요.' : '';
+    if (liveBtn)   liveBtn.style.display = page.protoId ? 'inline-block' : 'none';
+  }
 
-  const snapBar = document.getElementById('ss-snapshot-bar');
-  if (page.protoId) {
-    const proto = SPEC_DATA.prototypes.find(p=>p.id===page.protoId);
-    if (proto) {
-      const srcHtml = page.snapshotHtml
-        ? page.snapshotHtml
-        : ssInjectClickCapture(proto.content);
-      // wrap을 즉시 보이도록 초기 크기 설정 (onload 전 빈 화면 방지)
-      iframe.style.width  = '375px';
-      iframe.style.height = '667px';
-      wrapEl.style.width  = '375px';
-      wrapEl.style.height = '667px';
-      iframe.onload = function(){ setTimeout(ssScaleIframe, 50); };
-      iframe.srcdoc = srcHtml;
-      iframe.style.display = 'block';
-      wrapEl.style.display = 'block';
-      emptyEl.style.display = 'none';
-      addBtn.style.display  = 'block';
-      if (snapBar) snapBar.style.display = page.snapshotHtml ? 'flex' : 'none';
-      setTimeout(ssScaleIframe, 200); // 폴백
-    }
-  } else if (page.snapshotHtml) {
+  // 프로토타입 iframe (항상 정적 렌더링)
+  const iframe  = document.getElementById('specsheet-iframe');
+  const emptyEl = document.getElementById('ss-empty-state');
+  const wrapEl  = document.getElementById('specsheet-screen-wrap');
+  const addBtn  = document.getElementById('specsheet-add-badge-btn');
+
+  const srcContent = page.snapshotHtml || (page.protoId
+    ? (() => { const p = SPEC_DATA.prototypes.find(x=>x.id===page.protoId); return p ? ssInjectStaticMode(p.content) : null; })()
+    : null);
+
+  if (srcContent) {
     iframe.style.width  = '375px';
     iframe.style.height = '667px';
     wrapEl.style.width  = '375px';
     wrapEl.style.height = '667px';
     iframe.onload = function(){ setTimeout(ssScaleIframe, 50); };
-    iframe.srcdoc = page.snapshotHtml;
+    iframe.srcdoc = srcContent;
     iframe.style.display = 'block';
     wrapEl.style.display = 'block';
     emptyEl.style.display = 'none';
     addBtn.style.display  = 'block';
-    if (snapBar) snapBar.style.display = 'flex';
     setTimeout(ssScaleIframe, 200);
   } else {
     iframe.srcdoc = '';
@@ -1478,12 +1730,30 @@ function ssRenderPage() {
     wrapEl.style.display  = 'none';
     emptyEl.style.display = 'flex';
     addBtn.style.display  = 'none';
-    if (snapBar) snapBar.style.display = 'none';
   }
 
   ssExitBadgeMode();
   ssRenderBadges();
   ssRenderDescs();
+}
+
+/* 프로토타입 정적 렌더링 — 모든 인터랙션 비활성화 */
+function ssInjectStaticMode(html) {
+  const css = \`<style>
+*{pointer-events:none!important;cursor:default!important;user-select:none!important}
+</style>\`;
+  if (html.includes('</head>')) return html.replace('</head>', css+'</head>');
+  return css + html;
+}
+
+/* 라이브 프로토타입 새 탭으로 열기 */
+function ssOpenLiveProto() {
+  const page = ssPages[ssCurrentIdx];
+  if (!page || !page.protoId) return;
+  const proto = SPEC_DATA.prototypes.find(p=>p.id===page.protoId);
+  if (!proto) return;
+  const blob = new Blob([proto.content], {type:'text/html'});
+  window.open(URL.createObjectURL(blob), '_blank');
 }
 
 function ssDetectProtoDims(iframe) {
@@ -1549,12 +1819,59 @@ function ssScaleIframe() {
 function ssRenderBadges() {
   const page    = ssPages[ssCurrentIdx];
   const overlay = document.getElementById('specsheet-badge-overlay');
-  overlay.innerHTML = (page.badges||[]).map(b=>\`
-    <div class="ss-badge" style="left:\${b.x}%;top:\${b.y}%"
-         onclick="ssSpotlightDesc(\${b.num})"
-         ondblclick="event.stopPropagation();ssRemoveBadge(\${b.num})"
-         title="\${b.num}번 — 클릭: 설명 보기 / 더블클릭: 삭제">\${b.num}</div>
-  \`).join('');
+  overlay.innerHTML = '';
+  (page.badges||[]).forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'ss-badge';
+    el.textContent = b.num;
+    el.title = b.num + '번 — 클릭: 설명 보기 / 더블클릭: 삭제 / 드래그: 위치 이동';
+    el.style.left = b.x + '%';
+    el.style.top  = b.y + '%';
+
+    let dragStarted = false;
+    let startX, startY, startBX, startBY;
+
+    el.addEventListener('pointerdown', function(e) {
+      if (ssBadgeMode) return;
+      e.stopPropagation();
+      dragStarted = false;
+      startX = e.clientX; startY = e.clientY;
+      startBX = b.x; startBY = b.y;
+      el.setPointerCapture(e.pointerId);
+      el.classList.add('dragging');
+    });
+
+    el.addEventListener('pointermove', function(e) {
+      if (!el.hasPointerCapture(e.pointerId)) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!dragStarted && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) dragStarted = true;
+      if (!dragStarted) return;
+      const rect = overlay.getBoundingClientRect();
+      b.x = Math.max(0, Math.min(100, startBX + (dx / rect.width)  * 100));
+      b.y = Math.max(0, Math.min(100, startBY + (dy / rect.height) * 100));
+      el.style.left = b.x + '%';
+      el.style.top  = b.y + '%';
+    });
+
+    el.addEventListener('pointerup', function(e) {
+      el.classList.remove('dragging');
+      if (dragStarted) { ssSave(); return; }
+    });
+
+    el.addEventListener('click', function(e) {
+      if (dragStarted) return;
+      e.stopPropagation();
+      ssSpotlightDesc(b.num);
+    });
+
+    el.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      ssRemoveBadge(b.num);
+    });
+
+    overlay.appendChild(el);
+  });
 }
 
 function ssRenderDescs() {
@@ -1631,61 +1948,6 @@ function ssExitBadgeMode() {
   if (addBtn)  { addBtn.classList.remove('active'); addBtn.textContent='＋ 뱃지 추가'; }
 }
 
-/* 클릭 캡처 스크립트 주입 */
-function ssInjectClickCapture(html) {
-  const script = \`<script>
-(function(){
-  document.addEventListener('click', function(){
-    setTimeout(function(){
-      try { window.parent.postMessage({type:'spec-click', html:document.documentElement.outerHTML}, '*'); } catch(ex){}
-    }, 250);
-  });
-})();
-\${'<'}/script>\`;
-  if (html.includes('</body>')) return html.replace('</body>', script+'</body>');
-  if (html.includes('</html>')) return html.replace('</html>', script+'</html>');
-  return html + script;
-}
-
-/* 클릭 캡처 postMessage 수신 */
-window.addEventListener('message', function(e) {
-  if (!e.data || e.data.type !== 'spec-click') return;
-  if (S.currentPane !== 'specsheet') return;
-  if (ssBadgeMode) return; // 뱃지 추가 모드 중에는 무시
-  ssPendingCapture = e.data.html;
-  ssShowCaptureBar(true);
-});
-
-function ssShowCaptureBar(show) {
-  const bar = document.getElementById('ss-capture-bar');
-  if (bar) bar.style.display = show ? 'flex' : 'none';
-}
-function ssCloseCaptureBar() {
-  ssPendingCapture = null;
-  ssShowCaptureBar(false);
-}
-function ssSaveCaptureToCurrentPage() {
-  if (!ssPendingCapture) return;
-  ssPages[ssCurrentIdx].snapshotHtml = ssPendingCapture;
-  ssSave(); ssCloseCaptureBar(); ssRenderPage();
-}
-function ssSaveCaptureAsNewPage() {
-  if (!ssPendingCapture) return;
-  const src = ssPages[ssCurrentIdx];
-  ssPages.push({
-    id: 'ss-'+Date.now(),
-    protoId: src.protoId||null,
-    snapshotHtml: ssPendingCapture,
-    screenId: src.screenId||'',
-    pageTitle: (src.pageTitle||'페이지') + ' (캡처)',
-    screenPath: src.screenPath||'',
-    uiId:'', author:'',
-    date: new Date().toISOString().slice(0,10).replace(/-/g,'.'),
-    descriptions:[], checkPoint:'', badges:[]
-  });
-  ssCurrentIdx = ssPages.length - 1;
-  ssSave(); ssCloseCaptureBar(); ssRenderPage();
-}
 function ssClearSnapshot() {
   ssPages[ssCurrentIdx].snapshotHtml = null;
   ssSave(); ssRenderPage();
