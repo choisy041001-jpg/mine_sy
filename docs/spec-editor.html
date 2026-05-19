@@ -119,6 +119,12 @@ body{background:#c8cdd6;font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe
   outline:3px dashed rgba(37,99,235,.5);
 }
 
+/* prototype lock overlay */
+#proto-lock-overlay{
+  display:none;position:absolute;inset:0;
+  z-index:50;cursor:not-allowed;
+}
+
 /* empty state */
 #empty-state{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -366,6 +372,7 @@ body{background:#c8cdd6;font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe
         </div>
         <div id="badge-layer"></div>
       </div>
+      <div id="proto-lock-overlay"></div>
       <div id="empty-state">
         <div class="empty-icon">🖼</div>
         <div>화면 HTML을 열어주세요</div>
@@ -726,13 +733,17 @@ function applyLockState() {
 
   doc.classList.toggle('spec-locked', locked);
 
-  /* 기능 화면 관련 버튼들 */
-  [openBtn, addBtn, delBtn].forEach(el => {
+  /* HTML 열기·페이지 삭제 — 현재 페이지 잠금 시 불가 / 페이지 추가는 항상 가능 */
+  [openBtn, delBtn].forEach(el => {
     if (!el) return;
     el.disabled = locked;
     el.style.opacity = locked ? '0.35' : '';
     el.style.pointerEvents = locked ? 'none' : '';
   });
+
+  /* 프로토타입 영역 인터랙션 차단 오버레이 */
+  const protoOverlay = document.getElementById('proto-lock-overlay');
+  if (protoOverlay) protoOverlay.style.display = locked ? 'block' : 'none';
 
   if (locked) {
     btn.textContent = '🔒 수정';
