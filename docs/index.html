@@ -1442,27 +1442,36 @@ function ssRenderPage() {
   if (page.protoId) {
     const proto = SPEC_DATA.prototypes.find(p=>p.id===page.protoId);
     if (proto) {
-      iframe.onload = ssScaleIframe;
-      if (page.snapshotHtml) {
-        iframe.srcdoc = page.snapshotHtml;
-        if (snapBar) snapBar.style.display = 'flex';
-      } else {
-        iframe.srcdoc = ssInjectClickCapture(proto.content);
-        if (snapBar) snapBar.style.display = 'none';
-      }
+      const srcHtml = page.snapshotHtml
+        ? page.snapshotHtml
+        : ssInjectClickCapture(proto.content);
+      // wrap을 즉시 보이도록 초기 크기 설정 (onload 전 빈 화면 방지)
+      iframe.style.width  = '375px';
+      iframe.style.height = '667px';
+      wrapEl.style.width  = '375px';
+      wrapEl.style.height = '667px';
+      iframe.onload = function(){ setTimeout(ssScaleIframe, 50); };
+      iframe.srcdoc = srcHtml;
       iframe.style.display = 'block';
       wrapEl.style.display = 'block';
       emptyEl.style.display = 'none';
       addBtn.style.display  = 'block';
+      if (snapBar) snapBar.style.display = page.snapshotHtml ? 'flex' : 'none';
+      setTimeout(ssScaleIframe, 200); // 폴백
     }
   } else if (page.snapshotHtml) {
-    iframe.onload = ssScaleIframe;
+    iframe.style.width  = '375px';
+    iframe.style.height = '667px';
+    wrapEl.style.width  = '375px';
+    wrapEl.style.height = '667px';
+    iframe.onload = function(){ setTimeout(ssScaleIframe, 50); };
     iframe.srcdoc = page.snapshotHtml;
     iframe.style.display = 'block';
     wrapEl.style.display = 'block';
     emptyEl.style.display = 'none';
     addBtn.style.display  = 'block';
     if (snapBar) snapBar.style.display = 'flex';
+    setTimeout(ssScaleIframe, 200);
   } else {
     iframe.srcdoc = '';
     iframe.style.display = 'none';
