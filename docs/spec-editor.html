@@ -297,7 +297,7 @@ body{background:#c8cdd6;font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe
 <div id="toolbar">
   <span class="logo">📋 SpecEditor</span>
   <span class="tb-sep"></span>
-  <button class="tb-btn primary" onclick="document.getElementById('fp-proto').click()">🗂 HTML 열기</button>
+  <button class="tb-btn primary" id="btn-open-html" onclick="document.getElementById('fp-proto').click()">🗂 HTML 열기</button>
   <button class="tb-btn" id="btn-md" onclick="document.getElementById('fp-md').click()">MD 첨부</button>
   <span id="tb-filename">파일 없음</span>
   <span class="tb-sep"></span>
@@ -305,8 +305,8 @@ body{background:#c8cdd6;font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe
     <button onclick="goPage(-1)">←</button>
     <span id="tb-page-indicator">1 / 1</span>
     <button onclick="goPage(1)">→</button>
-    <button onclick="addPage()" title="페이지 추가">＋</button>
-    <button onclick="delPage()" title="현재 페이지 삭제" style="color:#f87171">🗑</button>
+    <button id="btn-add-page" onclick="addPage()" title="페이지 추가">＋</button>
+    <button id="btn-del-page" onclick="delPage()" title="현재 페이지 삭제" style="color:#f87171">🗑</button>
   </div>
   <span class="tb-sep"></span>
   <button class="tb-btn" id="btn-add-badge" onclick="toggleBadgeMode()">＋ 뱃지 추가</button>
@@ -488,6 +488,7 @@ window.addEventListener('DOMContentLoaded', () => {
 ════════════════════════════════════════════ */
 function onProtoFile(e) {
   const f = e.target.files[0]; if (!f) return;
+  if (page().locked) { e.target.value = ''; return; }
   const r = new FileReader();
   r.onload = ev => {
     page().protoHtml = ev.target.result;
@@ -716,11 +717,23 @@ function toggleLock() {
 
 function applyLockState() {
   const locked = page().locked;
-  const doc    = document.getElementById('spec-doc');
-  const btn    = document.getElementById('btn-lock');
+  const doc      = document.getElementById('spec-doc');
+  const btn      = document.getElementById('btn-lock');
   const badgeBtn = document.getElementById('btn-add-badge');
+  const openBtn  = document.getElementById('btn-open-html');
+  const addBtn   = document.getElementById('btn-add-page');
+  const delBtn   = document.getElementById('btn-del-page');
 
   doc.classList.toggle('spec-locked', locked);
+
+  /* 기능 화면 관련 버튼들 */
+  [openBtn, addBtn, delBtn].forEach(el => {
+    if (!el) return;
+    el.disabled = locked;
+    el.style.opacity = locked ? '0.35' : '';
+    el.style.pointerEvents = locked ? 'none' : '';
+  });
+
   if (locked) {
     btn.textContent = '🔒 수정';
     btn.className   = 'tb-btn unlock-btn';
