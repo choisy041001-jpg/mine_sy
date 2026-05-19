@@ -457,6 +457,7 @@ let badgeMode = false;
 let deletingNum = null;
 let mdText = null;
 let _saveTimer = null;
+let _iframePageId = null; /* 현재 iframe에 로드된 page id — 같은 페이지 재진입 시 srcdoc 재설정 방지 */
 
 function page() { return pages[cur]; }
 
@@ -498,6 +499,7 @@ function onProtoFile(e) {
   if (page().locked) { e.target.value = ''; return; }
   const r = new FileReader();
   r.onload = ev => {
+    _iframePageId = null; /* 새 파일 → 강제 재로드 */
     page().protoHtml = ev.target.result;
     page().protoName = f.name;
     if (!page().title) page().title = f.name.replace(/\.(html?)$/i, '');
@@ -561,8 +563,13 @@ function renderAll() {
   if (pg.protoHtml) {
     document.getElementById('proto-area').style.display = 'block';
     document.getElementById('empty-state').style.display = 'none';
-    loadProto();
+    if (pg.id !== _iframePageId) {
+      loadProto(); /* 다른 페이지 → 새로 로드 */
+    } else {
+      scaleProto(); /* 같은 페이지 → 현재 iframe 상태 유지, 배지만 재렌더 */
+    }
   } else {
+    _iframePageId = null;
     document.getElementById('proto-area').style.display = 'none';
     document.getElementById('empty-state').style.display = 'flex';
     document.getElementById('badge-layer').innerHTML = '';
@@ -626,12 +633,13 @@ ${'<'}/script>`;
 
 function loadProto() {
   const iframe = document.getElementById('proto-iframe');
+  const pg = page();
   /* wide initial size so detectDims can read actual layout */
   document.getElementById('proto-area').style.cssText = 'display:block;width:1280px;height:768px';
   iframe.style.width  = '1280px';
   iframe.style.height = '768px';
-  iframe.onload = () => setTimeout(scaleProto, 150);
-  iframe.srcdoc = injectNav(page().protoHtml);
+  iframe.onload = () => { _iframePageId = pg.id; setTimeout(scaleProto, 150); };
+  iframe.srcdoc = injectNav(pg.protoHtml);
   setTimeout(scaleProto, 500);
 }
 
