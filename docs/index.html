@@ -890,8 +890,8 @@ mark{background:#fef08a;padding:0 1px;border-radius:2px}
 #specsheet-path-row label{font-weight:600;color:var(--muted);font-size:11px;white-space:nowrap}
 #specsheet-path-row input{border:none;outline:none;font-size:12px;flex:1;background:transparent}
 #specsheet-main{display:flex;flex:1;overflow:hidden}
-#specsheet-screen-area{flex:1;background:#d1d5db;display:flex;align-items:flex-start;position:relative;overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--border)}
-#specsheet-screen-wrap{position:relative;background:#fff;overflow:hidden;flex:1 0 auto;align-self:flex-start}
+#specsheet-screen-area{flex:1;background:#d1d5db;display:flex;align-items:center;justify-content:center;position:relative;overflow:auto;border-right:1px solid var(--border)}
+#specsheet-screen-wrap{position:relative;background:#fff;overflow:hidden;flex-shrink:0}
 #specsheet-iframe-scaler{position:absolute;top:0;left:0;transform-origin:top left}
 #specsheet-iframe{display:block;border:none}
 #specsheet-badge-overlay{position:absolute;inset:0;pointer-events:none;z-index:10}
@@ -1788,20 +1788,32 @@ function ssDetectProtoDims(iframe) {
 }
 
 function ssScaleIframe() {
+  const area    = document.getElementById('specsheet-screen-area');
   const scaler  = document.getElementById('specsheet-iframe-scaler');
   const iframe  = document.getElementById('specsheet-iframe');
   const overlay = document.getElementById('specsheet-badge-overlay');
   const wrap    = document.getElementById('specsheet-screen-wrap');
-  if (!iframe || !scaler || !wrap) return;
+  if (!area || !iframe || !scaler || !wrap) return;
 
-  // flex:1 로 이미 확장된 wrap의 실제 너비 사용
-  const availW  = Math.max(wrap.clientWidth || wrap.offsetWidth, 100);
+  const pad    = 24;
+  const availW = Math.max(area.clientWidth  - pad * 2, 100);
+  const availH = Math.max(area.clientHeight - pad * 2, 100);
 
   const dims   = ssDetectProtoDims(iframe);
   const protoW = dims.w;
   const protoH = dims.h;
 
-  const scale   = availW / protoW;          // 너비 꽉 채움, 세로 스크롤
+  let scale;
+  if (protoW <= 480) {
+    // 모바일: 높이 기준으로 맞춤, 너비 초과 시 너비 기준으로 클램프
+    scale = availH / protoH;
+    if (protoW * scale > availW) scale = availW / protoW;
+  } else {
+    // PC: 영역 내 비율 유지 fit (너비·높이 중 더 작은 비율)
+    scale = Math.min(availW / protoW, availH / protoH);
+  }
+
+  const scaledW = Math.round(protoW * scale);
   const scaledH = Math.round(protoH * scale);
 
   iframe.style.width  = protoW + 'px';
@@ -1811,8 +1823,9 @@ function ssScaleIframe() {
   scaler.style.width  = protoW + 'px';
   scaler.style.height = protoH + 'px';
 
-  // wrap 높이만 JS로 제어 (너비는 flex:1 이 담당)
-  wrap.style.height    = scaledH + 'px';
+  wrap.style.width    = scaledW + 'px';
+  wrap.style.height   = scaledH + 'px';
+  overlay.style.width  = scaledW + 'px';
   overlay.style.height = scaledH + 'px';
 
   wrap._scale  = scale;
