@@ -1168,9 +1168,6 @@ function renderSidebar() {
     <div class="sidebar-item\${S.currentPane==='home'?' active':''}" onclick="showPane('home')">
       🏠 <span>홈</span>
     </div>
-    <div class="sidebar-item\${S.currentPane==='specsheet'?' active':''}" onclick="openSpecSheet()">
-      📋 <span>화면설계서</span>
-    </div>
     \${SPEC_DATA.documents.map(d=>\`
       <div class="sidebar-item\${S.currentDocId===d.id&&S.currentPane==='doc'?' active':''}"
            onclick="openDoc('\${d.id}')">
