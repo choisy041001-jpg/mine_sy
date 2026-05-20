@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>MY인사 화면설계서 v1.4</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button,input,textarea,select{font-family:inherit;font-size:inherit}
+button{cursor:pointer}
+:root{
+  --accent:#2363a8;--accent-light:#eff5fa;--accent-mid:#558ec3;
+  --ink:#111118;--muted:#4a4a5a;--dim:#9898a8;
+  --border:#e8e8ef;--surface:#ffffff;--bg:#f7f7fa;
+  --success:#16a34a;--danger:#dc2626;--warning:#d97706;
+  --sidebar:240px;
+}
+html,body{height:100vh;overflow:hidden}
+body{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif;font-size:13px;color:var(--ink);background:var(--bg);display:flex;flex-direction:column}
+
+/* ── Toolbar ── */
+#toolbar{height:46px;background:#0f172a;display:flex;align-items:center;gap:8px;padding:0 14px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--accent-mid));border-radius:7px;display:grid;place-items:center;font-weight:900;font-size:11px;color:#fff;letter-spacing:-.03em}
+.logo-text{font-weight:800;font-size:13px;color:#fff;letter-spacing:-.02em}
+.logo-ver{font-size:10px;color:#64748b;margin-left:2px}
+.tb-sep{width:1px;height:20px;background:#1e3a5f;flex-shrink:0;margin:0 4px}
+.tb-spacer{flex:1}
+#auth-btn{border:none;border-radius:5px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+#auth-btn.ro{background:#1e3a5f;color:#94a3b8}#auth-btn.ro:hover{background:#334155;color:#e2e8f0}
+#auth-btn.ed{background:#166534;color:#86efac}#auth-btn.ed:hover{background:#15803d;color:#fff}
+#dl-btn{background:#1e3a5f;color:#94a3b8;border:none;border-radius:5px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+#dl-btn:hover{background:#2563eb;color:#fff}
+
+/* ── Layout ── */
+#layout{display:flex;flex:1;overflow:hidden}
+
+/* ── Sidebar ── */
+#sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#sidebar::-webkit-scrollbar{width:4px}#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-header{padding:12px 12px 8px;border-bottom:1px solid var(--border)}
+.sb-header h3{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
+.screen-count{font-size:10px;color:var(--dim);margin-top:2px}
+.sb-group{padding:6px 0}
+.sb-group-label{padding:8px 12px 3px;font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:4px}
+.sb-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.sb-item{display:flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;cursor:pointer;border-radius:6px;margin:1px 4px;transition:background .12s;border-left:2px solid transparent}
+.sb-item:hover{background:var(--accent-light)}
+.sb-item.active{background:var(--accent-light);border-left-color:var(--accent)}
+.sb-item .sid{font-size:9px;font-weight:700;color:var(--dim);background:#f1f5f9;border-radius:3px;padding:1px 4px;white-space:nowrap;flex-shrink:0}
+.sb-item.active .sid{background:var(--accent-light);color:var(--accent)}
+.sb-item .sname{font-size:11px;font-weight:500;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-item.active .sname{color:var(--accent);font-weight:700}
+.sb-item .stype{font-size:9px;color:var(--dim)}
+.sb-item .sassign{font-size:9px;color:var(--dim);background:#f1f5f9;border-radius:3px;padding:1px 4px;white-space:nowrap;flex-shrink:0;max-width:80px;overflow:hidden;text-overflow:ellipsis}
+.sb-item.active .sassign{background:rgba(35,99,168,.12);color:var(--accent)}
+
+/* ── Main ── */
+#main{flex:1;display:flex;overflow:hidden}
+
+/* ── Proto pane ── */
+#proto-pane{flex:1;min-width:0;background:#ddd8e8;display:flex;flex-direction:column;overflow:hidden;position:relative;border-right:1px solid var(--border)}
+#proto-label{padding:4px 10px;background:#0f172a;color:#64748b;font-size:10px;font-weight:600;letter-spacing:.06em;flex-shrink:0;display:flex;align-items:center;gap:6px}
+#proto-label .plabel-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#proto-label span{color:#7dd3fc}
+#assign-screen-badge{font-size:9px;color:#4ade80;background:#052e16;border:1px solid #166534;border-radius:3px;padding:1px 6px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+#live-screen-badge{font-size:9px;color:#fbbf24;background:#1c1001;border:1px solid #92400e;border-radius:3px;padding:1px 6px;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+#lock-btn,#assign-btn{border:none;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap;flex-shrink:0}
+#lock-btn.locked{background:#1e3a5f;color:#7dd3fc}
+#lock-btn.locked:hover{background:#2563eb;color:#fff}
+#lock-btn.unlocked{background:#3f1e00;color:#fb923c}
+#lock-btn.unlocked:hover{background:#c2410c;color:#fff}
+#assign-btn{background:#0c4a6e;color:#7dd3fc}
+#assign-btn:hover{background:#0369a1;color:#fff}
+#proto-frame-wrap{flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:16px;position:relative}
+#proto-iframe{border:none;display:block;flex-shrink:0}
+#proto-lock-overlay{display:none;position:absolute;inset:0;z-index:20;cursor:not-allowed}
+#proto-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--dim);font-size:13px}
+#proto-empty svg{opacity:.25}
+
+/* ── Spec pane ── */
+#spec-pane{width:360px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);overflow:hidden}
+#spec-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+#spec-screen-id{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
+#spec-screen-title{font-size:17px;font-weight:800;color:var(--ink);margin:2px 0 6px;letter-spacing:-.02em}
+.spec-meta-row{display:flex;align-items:baseline;gap:6px;margin-bottom:3px}
+.spec-meta-label{font-size:10px;font-weight:700;color:var(--dim);white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:.05em}
+.spec-meta-val{font-size:11px;color:var(--muted);line-height:1.5}
+#spec-body{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+#spec-body::-webkit-scrollbar{width:4px}
+#spec-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.spec-section{padding:10px 14px;border-bottom:1px solid var(--border)}
+.spec-section-title{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.add-desc-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--dim);cursor:pointer;display:none}
+.add-desc-btn:hover{border-color:var(--accent);color:var(--accent)}
+.desc-item{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;position:relative}
+.desc-num{width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.desc-ta{flex:1;border:1px solid transparent;border-radius:5px;padding:4px 6px;font-size:11px;line-height:1.6;resize:none;background:transparent;color:var(--ink);min-height:28px}
+.desc-ta:focus{outline:none;border-color:var(--accent);background:#f8faff}
+.desc-ta[readonly]{cursor:default}
+.desc-del{background:none;border:none;color:#d1d5db;font-size:15px;padding:0 2px;cursor:pointer;flex-shrink:0;line-height:1;margin-top:2px;display:none}
+.desc-del:hover{color:var(--danger)}
+.cp-section{padding:10px 14px;flex:1;display:flex;flex-direction:column}
+.cp-section-title{font-size:10px;font-weight:700;color:#374151;background:#f1f5f9;padding:6px 10px;margin:-10px -14px 8px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+#cp-ta{flex:1;border:1px solid transparent;border-radius:5px;padding:6px 8px;font-size:11px;line-height:1.7;resize:none;background:transparent;color:var(--muted);min-height:80px}
+#cp-ta:focus{outline:none;border-color:var(--accent);background:#f8faff}
+
+/* ── Dialogs ── */
+.dlg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center}
+.dlg.open{display:flex}
+.dlg-box{background:#fff;border-radius:12px;padding:28px 32px;box-shadow:0 16px 48px rgba(0,0,0,.2);text-align:center;min-width:290px}
+.dlg-box h3{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.dlg-box p{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.dlg-inp{width:100%;border:1.5px solid var(--border);border-radius:7px;padding:10px 12px;font-size:16px;text-align:center;letter-spacing:.35em;outline:none;margin-bottom:4px}
+.dlg-inp:focus{border-color:var(--accent)}
+.dlg-err{color:var(--danger);font-size:11px;min-height:16px;margin-bottom:8px}
+.dlg-acts{display:flex;gap:8px;justify-content:center}
+.dlg-acts button{padding:8px 22px;border-radius:7px;border:none;font-size:13px;font-weight:700;cursor:pointer}
+.btn-ok{background:var(--accent);color:#fff}
+.btn-ok:hover{background:#1a4a7a}
+.btn-cancel{background:#e2e8f0;color:#374151}
+.btn-cancel:hover{background:#cbd5e1}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <div class="logo">
+    <div class="logo-mark">MY</div>
+    <span class="logo-text">MY인사 화면설계서</span>
+    <span class="logo-ver">v1.4</span>
+  </div>
+  <span class="tb-sep"></span>
+  <span id="tb-screen-name" style="font-size:12px;color:#64748b"></span>
+  <span class="tb-spacer"></span>
+  <button id="dl-btn" onclick="downloadHtml()">⬇ HTML 저장</button>
+  <span class="tb-sep"></span>
+  <button id="auth-btn" class="ro" onclick="toggleAuth()">🔒 보기 전용</button>
+</div>
+
+<div id="layout">
+  <nav id="sidebar">
+    <div class="sb-header">
+      <h3>화면 목록</h3>
+      <div class="screen-count" id="screen-count"></div>
+    </div>
+    <div id="sb-list"></div>
+  </nav>
+
+  <div id="main">
+    <div id="proto-pane">
+      <div id="proto-label"><span class="plabel-name">PROTOTYPE — <span id="proto-screen-name">선택 없음</span></span><span id="assign-screen-badge" style="display:none"></span><span id="live-screen-badge" style="display:none"></span><button id="lock-btn" class="unlocked" onclick="toggleLock()">🔓 인터랙션</button><button id="assign-btn" onclick="assignScreen()" style="display:none" title="현재 보이는 화면을 이 항목에 저장">현재 화면으로 지정</button></div>
+      <div id="proto-frame-wrap">
+        <iframe id="proto-iframe" style="display:none"></iframe>
+        <div id="proto-lock-overlay"></div>
+        <div id="proto-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+          <div>좌측에서 화면을 선택하세요</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="spec-pane">
+      <div id="spec-header">
+        <div id="spec-screen-id">—</div>
+        <div id="spec-screen-title">화면을 선택하세요</div>
+        <div id="spec-meta"></div>
+      </div>
+      <div id="spec-body">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:12px;padding:32px">화면 목록에서 항목을 선택하면<br>사양이 표시됩니다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dlg" id="dlg-auth">
+  <div class="dlg-box">
+    <h3>🔐 편집 모드</h3>
+    <p>4자리 비밀번호를 입력하세요</p>
+    <input class="dlg-inp" id="auth-inp" type="password" maxlength="4" placeholder="••••" oninput="if(this.value.length===4)confirmAuth()" onkeydown="if(event.key==='Enter')confirmAuth()">
+    <div class="dlg-err" id="auth-err"></div>
+    <div class="dlg-acts">
+      <button class="btn-ok" onclick="confirmAuth()">확인</button>
+      <button class="btn-cancel" onclick="closeDlg('dlg-auth')">취소</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 화면 데이터 ── */
+const SCREENS = [
+  /* ── 인증 ── */
+  {id:'M-001',g:'인증',title:'로그인',type:'mobile',screen:'login',
+   purpose:'사용자가 아이디·비밀번호로 인증하고, 소속 사업장을 선택하여 앱에 진입한다.',
+   enter:'앱 최초 실행 / 로그아웃 후 / 세션 만료(자동 로그인 미설정) 시 — 하단 탭바 미표시',
+   next:'M-001-P 사업장 선택 팝업',
+   descs:[
+     '로고 영역/앱 아이콘 + 앱 이름: 파란 원형 아이콘 + "MY인사"',
+     '입력 영역/아이디 입력 필드: placeholder "이메일 또는 사번" / 최대 100자 / 영문·숫자·특수문자',
+     '입력 영역/비밀번호 입력 필드: 텍스트 가림 처리 + 우측 표시/숨기기 토글 아이콘 / 최대 50자',
+     '옵션 영역/자동 로그인 체크박스: 기본값 미체크',
+     '액션 영역/[로그인] 버튼: 화면 전체 너비',
+     '액션 영역/비밀번호 찾기 링크: 버튼 하단 중앙 정렬',
+   ],
+   cp:'자동 로그인 체크 시 다음 앱 실행 시 로그인 화면 건너뛰고 사업장 선택 팝업 또는 마지막 사업장으로 바로 진입\n비밀번호 표시/숨기기 토글 아이콘 탭마다 전환\n아이디 또는 비밀번호 불일치 → 비밀번호 필드 하단 "아이디 또는 비밀번호가 올바르지 않습니다" / 비밀번호 필드 초기화 후 화면 유지\n아이디 미입력 또는 비밀번호 미입력 상태로 [로그인] 탭 불가 (필수 항목)'},
+  {id:'M-001-P',g:'인증',title:'사업장 선택 팝업',type:'mobile',screen:'login',
+   purpose:'로그인 성공 후 해당 계정에 연결된 사업장 중 하나를 선택하여 해당 사업장 기준으로 앱을 사용한다.',
+   enter:'로그인 버튼 탭 → 인증 성공 시 현재 화면 위에 오버레이 표시',
+   next:'M-002 게시판 홈',
+   descs:[
+     '헤더 영역/소제목: "로그인"',
+     '헤더 영역/제목: "사업장을 선택하세요"',
+     '헤더 영역/부제: "{이름} 님이 소속된 사업장 목록입니다"',
+     '사업장 목록/항목: 사업장명 / 사업자번호 · 가입 제품명(we경리나라) + 우측 화살표(→)',
+     '하단 버튼/[취소] 버튼: 팝업 닫기, 로그인 화면 유지',
+   ],
+   cp:'소속 사업장이 1개뿐인 경우 팝업 없이 바로 해당 사업장으로 진입\n소속 사업장이 2개 이상인 경우 팝업 표시\n목록이 일정 높이 초과 시 내부 스크롤 처리\n사업장 항목 탭 → 해당 사업장으로 로그인 → 게시판 홈(M-002) 이동\n[취소] 탭 → 팝업 닫힘, 로그인 화면 유지'},
+
+  /* ── 게시판 ── */
+  {id:'M-002',g:'게시판',title:'게시판 홈',type:'mobile',screen:'board',
+   purpose:'전 게시판의 최근 게시글을 피드 형태로 보여주는 앱의 기본 진입 화면.',
+   enter:'로그인 → 사업장 선택 후 / 하단 탭바 [게시판] 탭 탭',
+   next:'M-003 게시글 목록 / M-005 글 작성',
+   descs:[
+     '상단 영역/타이틀: "게시판"',
+     '상단 영역/부제: "우리 회사 소식과 자유로운 대화"',
+     '상단 영역/필터 아이콘(≡): 우측 상단 — 게시판 선택 시트 열기',
+     '게시글 목록/게시글 행: 제목 / NEW 뱃지 / 게시판명·작성자 / 날짜 / 화살표',
+     '게시판 선택 시트/바텀 시트: 전체 / 자유게시판 / 경영지원부서 공지 / 경조사게시판 / 일일업무현황 / 사내규정&세칙',
+     '하단/글쓰기 FAB(+): 화면 우하단 고정',
+   ],
+   cp:'선택한 게시판에 게시글이 없을 때 "등록된 게시글이 없습니다. 첫 번째 글을 작성해 보세요!" 빈 상태 표시\n게시판 필터 선택 후 필터 아이콘 테두리 색 강조 표시 (필터 적용 중 알림)\nNEW 뱃지: 읽지 않은 새 게시글에 빨간 원형 N 표시\n게시글 행 탭 → 게시글 목록(M-003) 이동\nFAB(+) 탭 → 글 작성(M-005) 이동'},
+  {id:'M-003',g:'게시판',title:'게시글 목록',type:'mobile',screen:'post-list',
+   purpose:'특정 게시판의 게시글 전체 목록 조회.',
+   enter:'게시판 홈(M-002)에서 게시글 행 탭',
+   next:'M-004 게시글 상세 / M-005 글 작성',
+   descs:[
+     '상단 내비게이션/[← 뒤로] 버튼 + 게시판명',
+     '게시글 목록/공지 글: 핀(📌) 아이콘으로 구분, 항상 상단 고정',
+     '게시글 목록/일반 글: 제목 / 작성자 / 날짜 / 댓글 수',
+     '하단/글쓰기 FAB(+): 화면 우하단 고정',
+   ],
+   cp:'인사 FAQ 채널에서는 글쓰기 FAB 표시하지 않음 (인사담당자만 FAQ 등록 가능)\n게시글 행 탭 → 게시글 상세(M-004)\nFAB(+) 탭 → 글 작성(M-005)'},
+  {id:'M-004',g:'게시판',title:'게시글 상세',type:'mobile',screen:'post-detail',
+   purpose:'게시글 본문을 조회하고, 댓글을 읽거나 작성한다.',
+   enter:'게시글 목록(M-003)에서 게시글 행 탭',
+   next:'없음 (현재 화면 내 처리)',
+   descs:[
+     '상단 내비게이션/[← 뒤로] + 게시판명',
+     '게시글 영역/게시판 구분 뱃지 / 제목 / 작성자·날짜 / 본문 내용 / 첨부 이미지',
+     '댓글 영역/댓글 수 표시 + 댓글 목록: 작성자 아바타 + 이름 + 내용 + 작성 시간',
+     '하단 고정/텍스트 입력창 + [등록] 버튼: 최대 300자 / 다중 라인 / 카운터 표시 / 빈 입력 시 [등록] 비활성화',
+   ],
+   cp:'본문에 이미지가 없으면 이미지 영역 표시 안 함\n댓글 입력 후 [등록] 탭 → 댓글 목록에 추가, 화면 유지\n빈 댓글 입력 시 [등록] 버튼 비활성화\n[← 뒤로] 탭 → 게시글 목록(M-003) 복귀'},
+  {id:'M-005',g:'게시판',title:'글 작성',type:'mobile',screen:'compose',
+   purpose:'직원이 원하는 게시판에 새 게시글을 작성하고 등록한다.',
+   enter:'게시판 홈(M-002) 또는 게시글 목록(M-003)의 FAB(+) 탭',
+   next:'M-003 게시글 목록',
+   descs:[
+     '상단 내비게이션/[취소] 버튼(좌) + "글 작성" 타이틀(중앙) + [등록] 버튼(우, 강조)',
+     '입력 폼/게시판 선택 드롭다운: 자유게시판 / 경영지원부서 공지 / 경조사게시판 / 일일업무현황 / 사내규정&세칙 — 필수',
+     '입력 폼/제목 입력 필드: 필수 / 최대 100자 / 단일 라인',
+     '입력 폼/본문 텍스트 입력 영역: 필수 / 최대 3,000자 / 다중 라인 / 카운터 표시',
+     '입력 폼/이미지 첨부 버튼: 카메라 촬영 또는 갤러리 선택 — 선택 / 최대 5장 / JPG·PNG / 파일당 최대 10 MB / 썸네일 가로 스크롤 미리보기 / 각 썸네일 × 버튼으로 개별 삭제 가능',
+   ],
+   cp:'게시판 미선택 / 제목 미입력 / 본문 미입력 시 [등록] 비활성화 또는 해당 필드 오류 표시, 진행 불가\n이미지 파일 형식 오류(JPG·PNG 외) 선택 시 "JPG, PNG 파일만 첨부 가능합니다" 안내 후 선택 취소\n이미지 5장 초과 선택 시 "이미지는 최대 5장까지 첨부 가능합니다" 안내 후 초과분 차단\n이미지 10 MB 초과 시 "파일은 최대 10 MB까지 첨부 가능합니다" 안내 후 해당 파일 첨부 취소\n[취소] 탭 → 이전 화면 복귀 (작성 내용 초기화)'},
+
+  /* ── FAQ ── */
+  {id:'M-006',g:'FAQ',title:'FAQ 목록',type:'mobile',screen:'faq',
+   purpose:'인사 관련 자주 묻는 질문 목록을 카테고리별로 확인한다. 직원은 읽기 전용.',
+   enter:'더보기(M-040) → [인사 FAQ] 메뉴 탭',
+   next:'M-008 FAQ 상세',
+   descs:[
+     '상단 내비게이션/[← 뒤로] + "자주 묻는 질문"',
+     'FAQ 카드 목록/카테고리 뱃지: 연차 / 증명서 / 급여 / 기타',
+     'FAQ 카드 목록/질문 제목 / 작성자·날짜',
+   ],
+   cp:'FAQ는 인사담당자(관리자)가 PC에서 직접 등록·관리. 직원은 조회 전용\n목록이 없을 경우 빈 상태 안내 표시\nFAQ 카드 탭 → FAQ 상세(M-008)'},
+  {id:'M-008',g:'FAQ',title:'FAQ 상세',type:'mobile',screen:'faq-detail',
+   purpose:'특정 FAQ의 질문 내용과 인사담당자 답변을 함께 확인한다.',
+   enter:'FAQ 목록(M-006)에서 카드 탭',
+   next:'없음',
+   descs:[
+     '상단 내비게이션/[← 뒤로] + "FAQ 상세"',
+     '메타 정보/카테고리 뱃지 + 답변 상태 뱃지',
+     '질문 영역/제목 / 내용 / 작성자·부서·작성일시',
+     '답변 영역/답변완료: 답변 내용 / 답변자·부서·답변일시',
+     '답변 영역/답변대기: "아직 답변이 등록되지 않았습니다" 안내',
+   ],
+   cp:'답변 영역 노출 조건: 답변완료 상태일 때만 답변 내용 표시\n답변대기 상태일 때 "아직 답변이 등록되지 않았습니다" 안내 표시'},
+
+  /* ── 연차 ── */
+  {id:'M-010',g:'연차',title:'연차 관리',type:'mobile',screen:'leave-approval',
+   purpose:'나의 잔여 연차 현황을 확인하고, 결재 상태별 신청 이력을 관리한다.',
+   enter:'하단 탭바 [연차] 탭',
+   next:'M-011 / M-013 / M-014 / M-015·016·017',
+   descs:[
+     '상단 영역/타이틀: "연차 관리"',
+     '잔여 연차 카드/잔여 일수: 크게 강조 표시',
+     '잔여 연차 카드/총 연차 · 사용 일수 · 진행 막대',
+     '결재 현황 목록/문서 구분: 휴가신청서 / 연차사용계획서',
+     '결재 현황 목록/신청 날짜 · 종류(종일/반차) · 일수',
+     '결재 현황 목록/상신일 · 결재자',
+     '결재 현황 목록/처리 상태 뱃지: 진행중(주황) / 승인(초록) / 반려(빨강)',
+     '하단/연차 FAB(+): 연차 신청 / 취소 신청 / 연차사용계획서',
+   ],
+   cp:'결재 현황이 없을 경우 "신청한 연차 내역이 없습니다" 빈 상태 표시\n잔여 연차 0일: 현황 카드의 진행 막대 0% 표시\n결재 현황 카드 탭: 진행중 → M-015 / 승인 → M-016 / 반려 → M-017\nFAB(+) 탭 → [연차 신청] → M-011 / [취소 신청] → M-014 / [연차사용계획서] → M-013'},
+  {id:'M-011',g:'연차',title:'연차 신청',type:'mobile',screen:'leave-apply',
+   purpose:'캘린더에서 날짜를 선택하고 휴가 종류·사유를 입력하여 연차 결재를 상신한다.',
+   enter:'연차 관리(M-010) FAB → [연차 신청]',
+   next:'M-010 연차 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "휴가신청서"',
+     '기간 입력/시작일 ~ 종료일: 날짜 선택 필드',
+     '캘린더/이전·다음 월 이동 버튼',
+     '캘린더/날짜 탭 또는 드래그로 범위 선택: 선택 구간 하이라이트',
+     '캘린더/이미 승인된 연차 날짜: 점(●) 표시',
+     '휴가 종류/단일 선택 토글: 종일 / 오전 반차(0.5일) / 오후 반차(0.5일) — 필수',
+     '사유 입력/텍스트 영역: 필수 · 최대 200자 · 다중 라인 · 카운터',
+     '비상 연락망/텍스트 필드: 선택 · 최대 20자 · 숫자만 · 하이픈 자동 삽입',
+     '잔여 연차 미리보기: 신청 시 차감 후 잔여 일수',
+     '결재선: 신청자 → 결재자 (경리나라 자동 지정 안내)',
+     '하단/[신청하기] 버튼: 전체 너비',
+   ],
+   cp:'날짜 미선택 → "날짜를 선택하세요" 안내 / 잔여 연차 부족 → "잔여 연차가 부족합니다" 경고 + [신청하기] 비활성화\n사유 미입력 → 해당 필드 오류 표시'},
+  {id:'M-013',g:'연차',title:'연차사용계획서',type:'mobile',screen:'leave-plan',
+   purpose:'월 단위로 사용 예정인 연차 날짜를 미리 계획하여 제출한다.',
+   enter:'연차 관리(M-010) FAB → [연차사용계획서]',
+   next:'M-010 연차 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "연차사용계획서"',
+     '기간 헤더: 현재 월 표시 (YYYY년 M월) + 이전/다음 월 이동 버튼 — 월별 보기만 지원 (분기별 탭 없음)',
+     '캘린더: 날짜 개별 탭 또는 드래그로 다중 날짜 선택 / 선택일 강조',
+     '선택 현황: 선택 날짜 수 + 잔여 연차 수',
+     '메모/계획 사유: 선택 · 최대 200자 · 다중 라인 · 카운터',
+     '결재선: 신청자 → 결재자 표시',
+     '하단/[제출하기] 버튼',
+   ],
+   cp:'날짜 미선택 → [제출하기] 비활성화\n선택 일수 > 잔여 연차 → "선택한 날짜가 잔여 연차를 초과합니다" 안내 + 제출 불가\n연속 선택 30일 초과 → "최대 30일까지 선택 가능합니다" 안내 후 차단'},
+  {id:'M-014',g:'연차',title:'연차 취소 신청',type:'mobile',screen:'leave-cancel',
+   purpose:'이미 승인된 연차 중 취소할 날짜를 선택하여 취소 결재를 상신한다.',
+   enter:'연차 관리(M-010) FAB → [취소 신청]',
+   next:'M-010 연차 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "연차 취소 신청"',
+     '안내 문구: "이미 승인된 연차 중 취소할 날짜를 선택하세요. ● 표시된 날짜가 취소 가능한 연차"',
+     '캘린더: 승인된 연차 날짜에 점(●) 표시 / 탭 또는 드래그로 취소 날짜 선택',
+     '선택 날짜 표시: 선택한 날짜 목록',
+     '취소 사유/사전 정의 버튼: 일정 변경 / 업무 일정 / 개인 사정 / 기타 — 단일 선택 필수',
+     '결재선: 신청자 → 결재자 표시',
+     '하단/[상신하기] 버튼',
+   ],
+   cp:'날짜 미선택 → [상신하기] 비활성화\n취소 사유 미선택 → 오류 표시 후 진행 불가'},
+  {id:'M-015',g:'연차',title:'휴가신청서 — 진행중',type:'mobile',screen:'leave-detail-wait',
+   purpose:'결재 진행 중인 휴가 신청서 상세 내용과 처리 상태를 확인한다.',
+   enter:'연차 관리(M-010) → 진행중 카드 탭',
+   next:'없음 (읽기 전용)',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "휴가신청서"',
+     '처리 상태 뱃지: 진행중(주황)',
+     '안내 문구: "결재 진행중 / {결재자명} 확인 전입니다"',
+     '결재선: 신청자 → 결재자 (처리 전 상태)',
+     '신청 내용: 신청 날짜 / 종류(종일/반차) / 사유',
+   ],
+   cp:'읽기 전용. [← 뒤로] 탭으로만 복귀 가능'},
+  {id:'M-016',g:'연차',title:'휴가신청서 — 승인',type:'mobile',screen:'leave-detail-done',
+   purpose:'승인 완료된 휴가 신청서 내용과 결재선 완료 상태를 확인한다.',
+   enter:'연차 관리(M-010) → 승인 카드 탭',
+   next:'없음',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "휴가신청서"',
+     '처리 상태 뱃지: 승인(초록)',
+     '안내 문구: "{결재자명}이 승인하였습니다"',
+     '결재선: 신청 완료 체크 표시',
+     '신청 내용: 날짜 / 종류 / 사유',
+   ],
+   cp:'읽기 전용'},
+  {id:'M-017',g:'연차',title:'휴가신청서 — 반려',type:'mobile',screen:'leave-detail-reject',
+   purpose:'반려된 신청서의 사유를 확인하고 재신청할 수 있다.',
+   enter:'연차 관리(M-010) → 반려 카드 탭',
+   next:'M-011 연차 신청',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "휴가신청서"',
+     '처리 상태 뱃지: 반려(빨강)',
+     '안내 문구: "{결재자명}이 반려하였습니다"',
+     '반려 사유 박스: 결재자 메시지 + 처리 일시',
+     '[재신청] 버튼 → M-011 연차 신청으로 이동',
+   ],
+   cp:'[재신청] 탭 → 연차 신청(M-011) 이동'},
+
+  /* ── 영수증 / 결의서 ── */
+  {id:'M-020',g:'영수증/결의서',title:'영수증 관리',type:'mobile',screen:'expense-hub',
+   purpose:'등록된 영수증 목록을 날짜별로 조회하고, 결의서 작성을 위해 영수증을 선택한다.',
+   enter:'하단 탭바 [영수증] 탭',
+   next:'M-022 영수증 상세 / M-021 영수증 등록 / M-023 결의서 작성',
+   descs:[
+     '상단 영역/타이틀: "영수증 관리"',
+     '영수증 목록/날짜 헤더 + 영수증 카드: 사용처 / 용도 / 사용자 / 금액',
+     '영수증 목록/"결의서 있음" 뱃지: 이미 결의서에 포함된 영수증에 표시',
+     '하단/영수증 FAB(+): 영수증 등록 / 결의서 작성 (선택 모드 진입)',
+     '선택 모드/선택 체크박스: 각 카드 좌측에 표시',
+     '선택 모드/"결의서 있음" 영수증: 선택 불가 (회색 처리)',
+     '선택 모드/[결의서 작성 (N건)] 버튼: 선택 건수 실시간 반영, 하단 고정',
+   ],
+   cp:'선택 모드에서 "결의서 있음" 영수증 탭 시: 선택 불가, 시각적 비활성만 표시 (별도 안내 없음)\n영수증이 없을 경우: 빈 상태 안내\n[결의서 작성] 버튼: 선택 건수 0이면 비활성화'},
+  {id:'M-021',g:'영수증/결의서',title:'영수증 등록',type:'mobile',screen:'receipt-form',
+   purpose:'경비 영수증 이미지와 사용 정보를 입력하여 등록한다. 경리나라 자동 저장.',
+   enter:'영수증 FAB → [영수증 등록] / 영수증 상세(M-022) → [수정]',
+   next:'M-020 영수증 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "영수증 등록"',
+     '상단 배너: 경리나라 자동 저장 안내',
+     '이미지 첨부: 탭 시 팝업 — 카메라 촬영 / 갤러리 선택',
+     '입력 폼/사용일자: 필수 · 달력 picker · 과거 포함 모든 날짜 선택 가능',
+     '입력 폼/금액 (원 단위): 필수 · 숫자만 · 최대 12자리 · 3자리 콤마 자동 삽입',
+     '입력 폼/사용처: 필수 · 최대 100자',
+     '입력 폼/용도: 선택 · 최대 100자',
+     '입력 폼/사용자 검색: 이름·부서 입력 → 드롭다운 자동완성 (300ms 디바운스)',
+     '입력 폼/지급수단: 개인 경비 / 회사 현금으로 지급 / 전도금으로 지급 — 단일 선택 필수 · 기본값: 개인 경비',
+     '입력 폼/메모: 선택 · 최대 200자 · 다중 라인 · 카운터',
+     '하단/[등록하기] 버튼: 전체 너비',
+   ],
+   cp:'사용일자·금액·사용처 미입력 → 해당 항목 오류 표시, 등록 불가\n이미지 파일 용량 초과 (10MB) → "파일은 최대 10 MB까지 첨부 가능합니다" 안내 후 첨부 취소\n0원 금액 입력 → 등록 불가'},
+  {id:'M-022',g:'영수증/결의서',title:'영수증 상세',type:'mobile',screen:'receipt-detail',
+   purpose:'개별 영수증의 상세 정보와 처리 이력을 확인하고 수정·삭제·결의서 작성을 진행한다.',
+   enter:'영수증 관리(M-020) → 영수증 카드 탭 (일반 모드)',
+   next:'M-020 / M-021 / M-023',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "영수증 상세"',
+     '상태 정보: 처리 상태 뱃지 + 금액(크게) + 사용처',
+     '영수증 이미지: 탭 시 확대 보기',
+     '상세 정보 목록: 사용일시 / 사용처 / 용도 / 사용자 / 지급수단 / 사용금액',
+     '메모: 등록 시 입력했을 경우 표시',
+     '처리 이력: 타임라인 형태 (등록 → 결의서 포함 → 승인)',
+     '안내 배너: 경리나라 연동 안내',
+     '하단 버튼 3종: [삭제] · [수정] · [결의서 작성]',
+   ],
+   cp:'[삭제]: 탭 시 "삭제하시겠습니까?" 확인 팝업 → 확인 시 삭제 후 M-020 복귀\n[수정]: 영수증 등록(M-021)으로 이동, 기존 정보 자동 입력 상태\n[결의서 작성]: 해당 영수증 1건 선택된 상태로 M-023 이동'},
+  {id:'M-023',g:'영수증/결의서',title:'결의서 작성',type:'mobile',screen:'expense-form',
+   purpose:'선택된 영수증을 묶어 경비 결의서를 작성하고 결재를 상신한다.',
+   enter:'영수증 관리(M-020) 선택 모드 → [결의서 작성] / 영수증 상세(M-022) → [결의서 작성]',
+   next:'M-020 영수증 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "결의서 작성"',
+     '입력 폼/결의서 제목: 필수 · 최대 100자 · 단일 라인',
+     '입력 폼/내용 텍스트: 필수 · 최대 1,000자 · 다중 라인 · 카운터',
+     '영수증 내역 섹션: 사용일시·사용처·용도·금액 — 읽기 전용',
+     '합계 금액: 영수증 금액 합산 자동 계산',
+     '결재선: 신청자 → 결재자 표시',
+     '하단/[상신하기] 버튼: 전체 너비',
+   ],
+   cp:'제목·내용 미입력 → 오류 표시, 상신 불가\n영수증 0건 → 이전 화면(M-020)에서 진입 자체 차단'},
+
+  /* ── 증명서 ── */
+  {id:'M-030',g:'증명서',title:'증명서 관리',type:'mobile',screen:'cert-status',
+   purpose:'증명서 종류를 선택하여 신청하거나, 이전 발급 이력을 확인한다.',
+   enter:'하단 탭바 [증명서] 탭',
+   next:'M-031 / M-032 / M-033 / M-034 / M-035',
+   descs:[
+     '상단 영역/타이틀: "증명서 관리"',
+     '증명서 종류 카드/재직증명서: 아이콘 + 설명 문구',
+     '증명서 종류 카드/경력증명서: 아이콘 + 설명 문구',
+     '증명서 종류 카드/기타증명서: 아이콘 + 설명 문구',
+     '발급 이력 섹션: 섹션 타이틀 + [전체 보기] 링크',
+     '발급 이력 섹션/최근 이력 목록: 종류 / 용도 / 부수 / 신청일 / 상태 뱃지 (최대 3건)',
+   ],
+   cp:'종류 카드 탭 → 증명서 신청(M-031)\n이력 항목 탭: 진행중 → M-033 / 발급완료 → M-034 / 반려 → M-035\n[전체 보기] 탭 → M-032\n발급 이력 없을 경우: "신청한 증명서 내역이 없습니다" 안내\n최근 이력은 최대 3건 표시'},
+  {id:'M-031',g:'증명서',title:'증명서 신청',type:'mobile',screen:'cert-form',
+   purpose:'선택한 종류의 증명서를 신청한다.',
+   enter:'증명서 관리(M-030) → 종류 카드 탭',
+   next:'M-033 증명서 상세 — 진행중',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "{종류명} 신청"',
+     '입력 폼/용도: 필수 · 최대 100자 · 단일 라인 · placeholder "예: 은행 제출용"',
+     '입력 폼/발급 매수: 필수 · 1~10 정수 · 스테퍼 버튼(−/+)과 직접 입력 병행 · 기본값 1',
+     '입력 폼/파일 첨부: 기타증명서일 때만 표시 — PDF·JPG·PNG, 최대 10MB — 필수',
+     '하단/[신청하기] 버튼',
+   ],
+   cp:'용도 미입력 → 오류 표시, 신청 불가\n기타증명서 파일 미첨부 → [신청하기] 비활성화\n파일 용량 초과 → "파일은 최대 10 MB까지 첨부 가능합니다" 안내\n파일 첨부 영역: 종류가 "기타증명서"일 때만 노출 (재직·경력 숨김)'},
+  {id:'M-032',g:'증명서',title:'증명서 발급 이력',type:'mobile',screen:'cert-status',
+   purpose:'증명서 신청·발급 전체 이력을 상태별로 조회한다.',
+   enter:'증명서 관리(M-030) → [전체 보기] 링크 탭',
+   next:'M-033 / M-034 / M-035',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "증명서 발급 이력" + 우측 [신청+] 버튼',
+     '탭 필터: 전체 / 진행중 / 발급완료 / 반려',
+     "이력 목록 카드: 종류 / 상태 뱃지 / 용도·부수 합산('용도 · N부') / 신청·발급·반려 일시 / 처리 상태 텍스트",
+   ],
+   cp:'탭 선택 시 해당 상태 이력만 표시\n이력이 없을 경우: 빈 상태 안내'},
+  {id:'M-033',g:'증명서',title:'증명서 상세 — 진행중',type:'mobile',screen:'cert-status-detail',
+   purpose:'처리 진행 상태를 타임라인으로 확인한다.',
+   enter:'증명서 목록에서 진행중 항목 탭',
+   next:'없음',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "신청 상세"',
+     '처리 상태 뱃지: 진행중(주황)',
+     '신청 정보: 증명서 종류 / 용도 / 부수 / 신청일시 / 담당부서',
+     '처리 진행 타임라인: 접수 → 검토 → 발급',
+   ],
+   cp:'읽기 전용, 하단 버튼 없음'},
+  {id:'M-034',g:'증명서',title:'증명서 상세 — 발급완료',type:'mobile',screen:'cert-done',
+   purpose:'발급 완료된 증명서를 PDF 저장 또는 이메일로 전송한다.',
+   enter:'증명서 목록에서 발급완료 항목 탭',
+   next:'없음',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "발급 완료"',
+     '처리 상태 뱃지: 발급완료(초록)',
+     '신청 정보: 증명서 종류 / 용도 / 부수 / 신청일시 / 담당부서',
+     '발급 정보: 발급일시 / 처리 담당자 / 직인 적용 여부',
+     '하단 버튼: [PDF 저장] · [이메일 전송]',
+   ],
+   cp:''},
+  {id:'M-035',g:'증명서',title:'증명서 상세 — 반려',type:'mobile',screen:'cert-reject-detail',
+   purpose:'반려 사유를 확인하고 재신청한다.',
+   enter:'증명서 목록에서 반려 항목 탭',
+   next:'M-030 증명서 관리',
+   descs:[
+     '상단 내비게이션: [← 뒤로] + "반려 상세"',
+     '처리 상태 뱃지: 반려(빨강)',
+     '신청 정보: 증명서 종류 / 용도 / 부수 / 신청일시 / 담당부서',
+     '반려 사유 박스: 담당자 메시지',
+     '[재신청] 버튼 → M-030 이동',
+   ],
+   cp:''},
+
+  /* ── 더보기 ── */
+  {id:'M-040',g:'더보기',title:'더보기',type:'mobile',screen:'more',
+   purpose:'프로필 정보를 확인하고, 앱 내 설정 및 추가 메뉴에 접근한다.',
+   enter:'하단 탭바 [더보기 ···] 탭',
+   next:'M-041 / M-006 / M-043 / M-040-P / M-001',
+   descs:[
+     '상단 영역/타이틀: "더보기"',
+     '프로필 카드: 프로필 사진 + 이름(강조) + 소속 사업장명 + 직급·소속 팀',
+     '메뉴 그룹 1: 내 정보 / 인사 FAQ / 버전 정보 (우측 현재 버전 표시)',
+     '메뉴 그룹 2: 사업장 전환하기(파란 텍스트) / 로그아웃(빨간 텍스트)',
+     '하단 저작권 문구',
+   ],
+   cp:'[내 정보] → M-041 / [인사 FAQ] → M-006 / [버전 정보] → M-043\n[사업장 전환하기] → 사업장 전환 팝업(M-040-P)\n[로그아웃] → M-001 (세션 초기화, 자동 로그인 해제)\n프로필 사진 없음 → 이름 이니셜 표시\n사업장명: 사업장 전환 시 즉시 업데이트'},
+  {id:'M-040-P',g:'더보기',title:'사업장 전환 팝업',type:'mobile',screen:'more',
+   purpose:'현재 로그인된 사업장을 다른 사업장으로 전환한다.',
+   enter:'더보기(M-040) → [사업장 전환하기] 탭',
+   next:'팝업 내 처리 (화면 이동 없음)',
+   descs:[
+     '헤더 영역/소제목: "사업장 전환"',
+     '헤더 영역/제목: "사업장을 전환하세요"',
+     '헤더 영역/부제: "현재: {현재 사업장명}"',
+     '전환 목록: 사업장명 / 사업자번호·가입 제품명 + 우측 화살표 (현재 로그인 사업장 제외)',
+     '하단/[취소] 버튼',
+   ],
+   cp:'전환 가능 사업장이 없을 경우: "전환 가능한 다른 사업장이 없습니다" 안내\n전환 완료 시: 하단 토스트 "{사업장명}으로 전환되었습니다" 잠시 후 자동 사라짐'},
+  {id:'M-041',g:'더보기',title:'내 정보',type:'mobile',screen:'myinfo',
+   purpose:'나의 인사 기본 정보를 조회한다. 수정 불가.',
+   enter:'더보기(M-040) → [내 정보]',
+   next:'없음',
+   descs:[
+     '상단: [← 뒤로] + "내 정보"',
+     '프로필 요약: 사진 + 이름 + 직급·부서',
+     '인사 정보 (읽기 전용): 이름 / 아이디 / 사번 / 입사일 / 근속 기간 / 부서 / 직급 / 이메일 / 연락처 / 결재 상사',
+   ],
+   cp:'수정 불가 (조회 전용)'},
+  {id:'M-042',g:'더보기',title:'매뉴얼',type:'mobile',screen:'manual',
+   purpose:'이용 가이드 목록을 확인하고 PDF를 다운로드한다.',
+   enter:'더보기(M-040) → [매뉴얼]',
+   next:'없음',
+   descs:[
+     '상단: [← 뒤로] + "매뉴얼"',
+     '항목: MY인사 시작하기 / 연차 사용 가이드 / 증명서 발급 가이드 / 게시판 사용법',
+     '[전체 매뉴얼 PDF 다운로드] 버튼',
+   ],
+   cp:''},
+  {id:'M-043',g:'더보기',title:'버전 정보',type:'mobile',screen:'version',
+   purpose:'현재 앱 버전 및 업데이트 이력을 확인한다.',
+   enter:'더보기(M-040) → [버전 정보]',
+   next:'없음',
+   descs:[
+     '상단: [← 뒤로] + "버전 정보"',
+     '현재 버전: v5.0.0',
+     '업데이트 변경 이력: 버전별 날짜 + 변경 내용 목록',
+   ],
+   cp:''},
+
+  /* ── PC 관리자 ── */
+  {id:'P-001',g:'PC — 관리자',title:'관리자 대시보드',type:'pc',screen:'dashboard',
+   purpose:'인사담당자가 주요 처리 현황을 한눈에 파악하고 업무를 신속히 처리한다.',
+   enter:'관리자 계정 로그인 시 기본 화면 / 사이드바 [대시보드] 클릭',
+   next:'P-002 / P-003 / P-004',
+   descs:[
+     'KPI 카드/대기중 연차 결재: 클릭 시 연차 관리(P-002) 이동',
+     'KPI 카드/미답변 FAQ: 클릭 시 FAQ 관리(P-004) 이동',
+     'KPI 카드/미처리 증명서: 클릭 시 업무신청관리(P-003) 이동',
+     'KPI 카드/총 직원수: 클릭 불가',
+     '미처리 업무 패널(좌)/미답변 FAQ 목록: 직원명·부서·경과 시간·[답변] 버튼',
+     '미처리 업무 패널(좌)/대기 증명서·연차 신청 행: 직원명·관련 정보 + [발급]/[승인] 버튼',
+     '직원 현황 패널(우)/탭: 전체 / 재직 / 휴직 / 퇴직',
+     '직원 현황 패널(우)/테이블: 이름·부서·직급·입사일·연락처·상태',
+   ],
+   cp:'KPI 카드 클릭 → 해당 관리 페이지 이동\nFAQ [답변] 버튼 또는 목록 클릭 → FAQ 답변 팝업 오픈\n증명서/연차 행 → 해당 처리 페이지 이동'},
+  {id:'P-002',g:'PC — 관리자',title:'연차 관리',type:'pc',screen:'leave',
+   purpose:'전 직원의 연차 현황을 월별로 조회하고, 결재 대기 중인 신청을 승인 또는 반려 처리한다.',
+   enter:'사이드바 [연차 관리] / 대시보드 KPI 카드 클릭',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '상단 툴바/연도 선택: 2026 / 2025',
+     '상단 툴바/부서 선택: 드롭다운 — 전체 + 사업장 내 부서 목록',
+     '상단 툴바/직원명 검색: 최대 50자 · 1자 이상 입력 시 실시간 필터링 (300ms 디바운스)',
+     '상단 툴바/[+ 일반근로자 불러오기] 버튼: 경리나라 직원관리 일반근로자 목록 호출',
+     '상단 툴바/[엑셀 다운로드] 버튼',
+     '안내 문구: "총연차를 클릭하시면 연차를 등록할 수 있습니다"',
+     '연차 현황 테이블/열 구성: 직원명 / 부서 / 총 연차 / 사용 / 1월~12월 / 잔여',
+     '연차 현황 테이블/총 연차 셀: 더블클릭 시 직접 편집 (인사급여 연동 고객사 비활성화)',
+     '연차 현황 테이블/월별 셀: 마우스 오버 시 해당 월 사용 이력 툴팁',
+     '우측 상세 패널: 직원명 클릭 시 슬라이드 오픈 / 연차 통계·결재 이력 / [승인]·[반려] 버튼',
+   ],
+   cp:'직원명 클릭 → 우측 상세 패널 오픈\n패널 [승인] → 승인 처리 후 목록 상태 업데이트\n패널 [반려] → 반려 사유 입력 팝업 (필수 · 최대 300자 · 카운터) → 반려 처리\n[+ 일반근로자 불러오기] → 경리나라 직원관리 일반근로자 목록 조회 → 일괄 등록 팝업\n인사급여 연동 고객사: 연차 데이터 자동 동기화, 총 연차 수동 편집 비활성화\n결재 이력 없는 직원 패널: "이력 없음" 안내'},
+  {id:'P-003',g:'PC — 관리자',title:'업무신청관리',type:'pc',screen:'cert',
+   purpose:'직원이 신청한 증명서 목록을 관리하고 발급 처리 또는 반려 처리를 진행한다.',
+   enter:'사이드바 [업무신청관리] / 대시보드 KPI 카드 클릭',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '상단 필터: 증명서 종류 / 처리 상태 / 기간 (날짜 범위) + [엑셀 다운로드]',
+     '신청 목록 테이블/열 구성: 신청일 / 신청자 / 증명서 종류 / 부수 / 용도 / 처리 상태 / 액션 버튼',
+     '신청 목록 테이블/대기 상태: [발급처리] 버튼',
+     '신청 목록 테이블/발급완료 상태: [이력보기] 버튼',
+     '신청 목록 테이블/반려 상태: [사유보기] 버튼',
+     '발급처리 팝업: 안내 문구 + PDF 파일 첨부(필수) + 메모(선택 · 최대 300자 · 카운터) + [반려]·[발급 완료] 버튼',
+   ],
+   cp:'발급처리 팝업 PDF 미첨부 → [발급 완료] 버튼 비활성화\n[반려] 클릭 → 반려 사유 입력 필수\n발급 완료/반려 처리 → 직원 앱 알림 발송'},
+  {id:'P-004',g:'PC — 관리자',title:'FAQ 관리',type:'pc',screen:'faq',
+   purpose:'인사 FAQ를 등록·수정·삭제하고, 직원 질문에 답변을 등록한다.',
+   enter:'사이드바 [FAQ 관리]',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '상단 영역: 카테고리 필터 칩(전체·연차·증명서·급여·기타) + [+ FAQ 등록] 버튼',
+     'FAQ 목록 테이블: 카테고리 / 질문 내용 / 답변 요약 / 노출 상태(활성화↔비활성화 토글) / [수정] 버튼',
+     'FAQ 등록 팝업: 카테고리 선택 / 노출 상태 / 질문(필수·최대 200자) / 답변(필수·최대 2,000자·카운터)',
+     'FAQ 수정 팝업: 기존 내용 불러와 편집 / [저장]·[삭제] 버튼 (등록과 동일 입력 제약)',
+     '삭제 확인 팝업: [삭제] 클릭 시 표시',
+   ],
+   cp:'[+ FAQ 등록] → 등록 팝업 오픈 → 입력 후 [저장] → 목록 반영\n[수정] → 수정 팝업 오픈 → [저장] 또는 [삭제]\n[삭제] → 확인 팝업 → 확인 시 삭제\n직원 질문 답변: 대시보드 [답변] 또는 목록 클릭 → 답변 팝업 오픈'},
+
+  /* ── PC 공통 ── */
+  {id:'P-005',g:'PC — 공통',title:'MY인사 소개',type:'pc',screen:'intro',
+   purpose:'서비스 주요 기능과 가격 정책을 소개한다.',
+   enter:'사이드바 하단 [MY인사 소개]',
+   next:'없음',
+   descs:[
+     '기능 소개 카드 4종: 연차 관리 / 증명서 발급 / 영수증 경비 / FAQ 게시판',
+     '가격 정책: 도입비 면제 · 월 사용료 면제 · 사용자당 월 10,000원',
+   ],
+   cp:''},
+  {id:'P-006',g:'PC — 공통',title:'모바일 안내',type:'pc',screen:'onboard',
+   purpose:'직원들이 모바일 앱을 설치하도록 QR·링크 안내 및 카카오톡 발송을 지원한다.',
+   enter:'사이드바 하단 [모바일 안내]',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '앱 설치 안내/QR 코드 + 설치 URL: my-insa.app/install',
+     '앱 설치 안내/설치 단계: QR 스캔 → 앱 설치 → 사번 로그인',
+     '앱 설치 안내/[QR 다운로드] · [링크 복사] 버튼',
+     '직원 설치 현황 테이블/열 구성: 이름 / 부서 / 직급 / 연락처 / 설치 상태 / 최근 활동 / [카카오톡 발송] 버튼',
+     '직원 설치 현황 테이블/필터: 전체 / 미설치만 / 설치 완료만',
+     '[일괄 발송] 버튼: 미설치 직원 전체 선택 후 발송',
+     '카카오톡 발송 팝업: 수신자 표시 + 메시지 편집(최대 500자·카운터) + 미리보기 + [발송] 버튼',
+   ],
+   cp:''},
+
+  /* ── PC 직원 ── */
+  {id:'P-010',g:'PC — 직원',title:'직원 대시보드',type:'pc',screen:'emp-dashboard',
+   purpose:'직원이 잔여 연차·사용 이력을 확인하고, 증명서 신청으로 빠르게 이동한다.',
+   enter:'직원 계정 로그인 시 기본 화면 / 사이드바 [대시보드]',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '잔여 연차 카드: 잔여 일수(크게) + 총·사용 일수 + 진행 막대',
+     '앱 설치 QR 카드: 모바일 앱 설치 안내',
+     '연차 사용 이력 테이블: 날짜 / 구분 / 일수 / 사유 / 처리 상태',
+     '증명서 관리 패널: 최근 신청 내역 + [증명서 신청] 버튼',
+   ],
+   cp:''},
+  {id:'P-011',g:'PC — 직원',title:'직원 업무신청',type:'pc',screen:'emp-cert',
+   purpose:'직원이 PC에서 증명서를 신청하고, 이력을 조회·관리한다.',
+   enter:'사이드바 [업무신청]',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '상단 영역: 필터(종류·상태) + [증명서 신청] 버튼',
+     '이력 테이블/열 구성: 신청일 / 종류 / 용도 / 부수 / 처리 상태 / 액션 버튼',
+     '이력 테이블/대기 상태: [신청 취소] 버튼',
+     '이력 테이블/발급완료 상태: [다운로드] 버튼',
+     '이력 테이블/반려 상태: [사유보기] 버튼',
+     '증명서 신청 팝업: 종류 선택 라디오(재직/경력/기타) + 용도(필수·최대 100자) + 부수(필수·1~10, 기본값 1)',
+     '증명서 신청 팝업/기타증명서 선택 시: 명칭 입력 필드 추가 표시 (필수·최대 50자)',
+   ],
+   cp:''},
+  {id:'P-012',g:'PC — 직원',title:'직원 프로필 관리',type:'pc',screen:'emp-profile',
+   purpose:'인사 기본 정보를 조회하고, 수정 가능한 개인 정보·인사 정보를 편집한다.',
+   enter:'사이드바 [프로필 관리]',
+   next:'없음 (현재 페이지 내 처리)',
+   descs:[
+     '좌측 패널: 프로필 사진 + 인사 기본 정보(사번/입사일/부서/직급/고용형태) — 읽기 전용',
+     '우측 패널/개인 정보/이름: 최대 30자',
+     '우측 패널/개인 정보/영문 이름: 최대 50자 · 영문·공백·하이픈만 허용',
+     '우측 패널/개인 정보/이메일: 최대 100자 · 이메일 형식 검증',
+     '우측 패널/개인 정보/연락처: 최대 20자 · 숫자만 · 하이픈 자동 삽입',
+     '우측 패널/내 인사 정보: 자격증 / 학력 / 어학 (항목당 최대 100자 · 다중 항목 추가 · 항목별 삭제)',
+     '하단/[수정] 버튼: 클릭 시 편집 모드 전환 (입력 필드 활성화 + 사진 변경 버튼)',
+     '편집 모드/[저장] · [취소] 버튼',
+   ],
+   cp:'인사 기본 정보: 읽기 전용, 수정 불가\n[취소] 클릭: 변경 내용 초기화, 저장 전 원본 데이터 복원\n프로필 사진: 편집 모드에서만 변경 가능'},
+];
+
+/* ── 상수 / 상태 ── */
+const PW = '1128';
+const LS_KEY = 'myinsa-spec-v14';
+let cur = null, em = false, _saveT = null;
+
+/* 저장 데이터: {[screenId]: {descs:[str,...], cp:str}} */
+let saved = {};
+
+/* ── 초기화 ── */
+window.addEventListener('DOMContentLoaded', () => {
+  // 저장된 데이터 로드
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) saved = JSON.parse(raw);
+  } catch(e) {}
+
+  // 임베디드 데이터 확인 (다운로드 파일)
+  if (window.__SAVED_SPEC__) {
+    saved = window.__SAVED_SPEC__;
+  }
+
+  document.getElementById('dlg-auth').addEventListener('click', e => {
+    if (e.target.id === 'dlg-auth') closeDlg('dlg-auth');
+  });
+  window.addEventListener('resize', () => { if (cur) applyProtoSize(); });
+
+  initAssignments();
+  renderSidebar();
+  document.getElementById('screen-count').textContent = `모바일 ${SCREENS.filter(s=>s.type==='mobile').length}개 · PC ${SCREENS.filter(s=>s.type==='pc').length}개`;
+
+  protosReady = initProtos();
+});
+
+/* ── 프로토타입 ── */
+const LS_ASSIGN = 'myinsa_v14_assign';
+const iframe = document.getElementById('proto-iframe');
+
+let assignments = {};         // { specId: protoScreenName }
+let mobileProtoHtml = null, pcProtoHtml = null;
+let mobileBlobUrl = null, pcBlobUrl = null;
+let protosReady = null;
+let currentProtoType = null;
+let _locked = false;
+let _liveScreen = null;       // 현재 proto에 표시 중인 화면 이름 (postMessage 추적)
+let _lastTarget = null;       // navigateTo에 마지막으로 요청한 화면 이름 (폴백용)
+
+// proto 내부에서 화면 전환 시 알림 수신
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'se-screen-changed') return;
+  _liveScreen = e.data.screen || null;
+  // 라이브 화면 배지 갱신
+  const live = document.getElementById('live-screen-badge');
+  if (live) {
+    live.textContent = _liveScreen ? `▶ ${_liveScreen}` : '';
+    live.style.display = _liveScreen ? 'inline-block' : 'none';
+  }
+});
+
+// proto 내부 주입 스크립트: 화면 전환 인터셉트 + 부모에 알림
+const NAV_SCRIPT = `<scr`+`ipt>
+(function(){
+  function notify(s){
+    if(!s)return;
+    try{window.parent.postMessage({type:'se-screen-changed',screen:s},'*');}catch(e){}
+  }
+  // 화면 이동 요청 수신
+  window.addEventListener('message',function(e){
+    var d=e.data;if(!d||d.type!=='se-nav')return;
+    var s=d.screen||d.page||'';if(!s)return;
+    if(window.showScreen){showScreen(s);return;}
+    if(window.goPageByName){goPageByName(s);return;}
+    var el=document.querySelector('.nav-item[data-page="'+s+'"]');if(el)el.click();
+  });
+  // showScreen / goPage 래핑 — DOMContentLoaded 이후 함수가 정의된 뒤 실행
+  document.addEventListener('DOMContentLoaded',function(){
+    if(window.showScreen){
+      var _o=window.showScreen;
+      window.showScreen=function(n,h){_o.call(this,n,h);notify(n);};
+    }
+    if(window.goPage){
+      var _g=window.goPage;
+      window.goPage=function(el){_g.call(this,el);notify(el&&el.dataset&&el.dataset.page);};
+    }
+    // 초기 화면 알림
+    setTimeout(function(){
+      var el=document.querySelector('.screen.active')||document.querySelector('.nav-item.active');
+      if(el)notify(el.dataset.screen||el.dataset.page);
+    },50);
+  });
+})();
+</scr`+`ipt>`;
+
+// localStorage에서 assignments 로드 (없으면 SCREENS 기본값)
+function initAssignments() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(LS_ASSIGN) || '{}'); } catch(e) {}
+  SCREENS.forEach(s => { assignments[s.id] = saved[s.id] || s.screen; });
+}
+
+function saveAssignments() {
+  localStorage.setItem(LS_ASSIGN, JSON.stringify(assignments));
+}
+
+function refreshSidebarBadge(id) {
+  const el = document.querySelector(`.sassign[data-assign-id="${id}"]`);
+  if (el) el.textContent = assignments[id] || '';
+}
+
+// 타입별 단일 blob URL 생성
+function createProtoBlobUrl(html) {
+  const modified = html.includes('</body>')
+    ? html.replace('</body>', NAV_SCRIPT + '</body>')
+    : html + NAV_SCRIPT;
+  return URL.createObjectURL(new Blob([modified], {type:'text/html'}));
+}
+
+async function initProtos() {
+  try {
+    const r = await fetch('./MY인사_모바일_v70_proto_only.html');
+    mobileProtoHtml = await r.text();
+    mobileBlobUrl = createProtoBlobUrl(mobileProtoHtml);
+  } catch(e) { console.warn('모바일 proto 로드 실패', e); }
+  try {
+    const r = await fetch('./MY인사_PC_v31.html');
+    pcProtoHtml = await r.text();
+    pcBlobUrl = createProtoBlobUrl(pcProtoHtml);
+  } catch(e) { console.warn('PC proto 로드 실패', e); }
+}
+
+// blob URL(same-origin)에서 직접 contentWindow 접근으로 화면 이동
+function navigateTo(screen, type) {
+  if (!screen) return;
+  _lastTarget = screen;
+  try {
+    if (type === 'mobile') {
+      iframe.contentWindow.showScreen(screen);
+    } else {
+      if (typeof iframe.contentWindow.goPageByName === 'function') {
+        iframe.contentWindow.goPageByName(screen);
+      } else {
+        const el = iframe.contentWindow.document.querySelector(`.nav-item[data-page="${screen}"]`);
+        if (el) el.click();
+      }
+    }
+  } catch(e) {
+    try { iframe.contentWindow.postMessage({type:'se-nav', screen, page: screen}, '*'); } catch(e2) {}
+  }
+  // 래퍼가 동작하지 않아도 최소한 마지막 요청 화면을 _liveScreen에 보장
+  if (!_liveScreen) _liveScreen = screen;
+}
+
+// 현재 proto 화면 읽기: DOM 직접 접근 → postMessage 추적값 → 마지막 요청값 순으로 시도
+function readCurrentScreen(type) {
+  try {
+    if (type === 'mobile') {
+      const el = iframe.contentWindow.document.querySelector('.screen.active')
+               || iframe.contentWindow.document.querySelector('[data-screen].active');
+      if (el?.dataset.screen) return el.dataset.screen;
+    } else {
+      const el = iframe.contentWindow.document.querySelector('.nav-item.active')
+               || iframe.contentWindow.document.querySelector('[data-page].active');
+      if (el?.dataset.page) return el.dataset.page;
+    }
+  } catch(e) {}
+  return _liveScreen || _lastTarget;
+}
+
+// 현재 화면을 선택된 spec 항목에 저장
+function assignScreen() {
+  if (!cur) return;
+  const s = SCREENS.find(x => x.id === cur);
+  if (!s) return;
+  const screen = readCurrentScreen(s.type);
+  if (!screen) {
+    showToast('화면을 읽을 수 없습니다. 🔓 인터랙션 모드에서 화면을 먼저 이동하세요.', 'warn');
+    return;
+  }
+  assignments[cur] = screen;
+  saveAssignments();
+  updateAssignUI(cur);
+  refreshSidebarBadge(cur);
+  showToast(`${cur} → ${screen} 지정 완료`);
+}
+
+function updateAssignUI(id) {
+  const badge = document.getElementById('assign-screen-badge');
+  const btn = document.getElementById('assign-btn');
+  if (!badge || !btn) return;
+  const screen = assignments[id];
+  badge.textContent = screen || '';
+  badge.style.display = screen ? 'inline-block' : 'none';
+  btn.style.display = id ? 'inline-block' : 'none';
+}
+
+function showToast(msg, type) {
+  let t = document.getElementById('proto-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'proto-toast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:600;padding:8px 20px;border-radius:8px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type === 'warn' ? '#7c2d12' : '#1e293b';
+  t.style.color = type === 'warn' ? '#fca5a5' : '#e2e8f0';
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+/* ── 사이드바 렌더 ── */
+function renderSidebar() {
+  const groups = {};
+  SCREENS.forEach(s => { if (!groups[s.g]) groups[s.g] = []; groups[s.g].push(s); });
+  const list = document.getElementById('sb-list');
+  list.innerHTML = '';
+  for (const [g, screens] of Object.entries(groups)) {
+    const grp = document.createElement('div'); grp.className = 'sb-group';
+    const lbl = document.createElement('div'); lbl.className = 'sb-group-label';
+    lbl.innerHTML = g === 'PC — 관리자' ? '🖥 PC 관리자' :
+                    g === 'PC — 공통'   ? '🖥 PC 공통' :
+                    g === 'PC — 직원'   ? '🖥 PC 직원' :
+                    `📱 ${g}`;
+    grp.appendChild(lbl);
+    screens.forEach(s => {
+      const item = document.createElement('div'); item.className = 'sb-item';
+      item.dataset.id = s.id;
+      item.onclick = () => selectScreen(s.id);
+      const assigned = assignments[s.id] || s.screen;
+      item.innerHTML = `<span class="sid">${s.id}</span><span class="sname">${s.title}</span><span class="sassign" data-assign-id="${s.id}">${assigned}</span>`;
+      grp.appendChild(item);
+    });
+    list.appendChild(grp);
+  }
+}
+
+/* ── 화면 선택 ── */
+function selectScreen(id) {
+  const s = SCREENS.find(x => x.id === id);
+  if (!s) return;
+  cur = id;
+
+  // 사이드바 active
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+
+  // 툴바 이름
+  document.getElementById('tb-screen-name').textContent = `${s.id} — ${s.title}`;
+
+  // 프로토타입 로드
+  loadProto(s);
+
+  // 스펙 패널 렌더
+  renderSpecPanel(s);
+}
+
+function toggleLock() {
+  _locked = !_locked;
+  const btn = document.getElementById('lock-btn');
+  const ov = document.getElementById('proto-lock-overlay');
+  if (_locked) {
+    btn.textContent = '🔒 고정'; btn.className = 'locked';
+    if (iframe.style.display !== 'none') ov.style.display = 'block';
+  } else {
+    btn.textContent = '🔓 인터랙션'; btn.className = 'unlocked';
+    ov.style.display = 'none';
+  }
+}
+
+// _liveScreen 갱신 + 배지 업데이트 (부모 컨텍스트에서 호출)
+function setLiveScreen(name) {
+  if (!name) return;
+  _liveScreen = name;
+  const el = document.getElementById('live-screen-badge');
+  if (el) { el.textContent = `▶ ${name}`; el.style.display = 'inline-block'; }
+}
+
+// iframe 로드 완료 후 showScreen/goPage 를 직접 래핑
+// → same-origin 환경에서 DOM 접근 없이 화면 전환 추적
+function injectScreenTracker(iw) {
+  try {
+    if (iw.showScreen && !iw.showScreen.__se) {
+      const _o = iw.showScreen;
+      iw.showScreen = function(n, h) { _o.call(this, n, h); setLiveScreen(n); };
+      iw.showScreen.__se = true;
+    }
+    if (iw.goPage && !iw.goPage.__se) {
+      const _g = iw.goPage;
+      iw.goPage = function(el) { _g.call(this, el); setLiveScreen(el && el.dataset && el.dataset.page); };
+      iw.goPage.__se = true;
+    }
+    // 초기 화면 읽기
+    const active = iw.document.querySelector('.screen.active, .nav-item.active');
+    setLiveScreen(active && (active.dataset.screen || active.dataset.page));
+  } catch(e) {
+    // cross-origin: NAV_SCRIPT postMessage 폴백이 처리
+  }
+}
+
+async function loadProto(s) {
+  const empty = document.getElementById('proto-empty');
+  const lbl = document.getElementById('proto-screen-name');
+  const ov = document.getElementById('proto-lock-overlay');
+
+  lbl.textContent = `${s.id} — ${s.title}`;
+
+  // HTML 로드 완료 대기
+  if (protosReady) {
+    try { await protosReady; } catch(e) {}
+  }
+
+  const html = s.type === 'mobile' ? mobileProtoHtml : pcProtoHtml;
+  const target = assignments[s.id] || s.screen;
+
+  // 화면 전환 시마다 추적값 초기화 → stale 방지
+  _liveScreen = null;
+  _lastTarget = null;
+
+  empty.style.display = 'none';
+  iframe.style.display = 'block';
+  ov.style.display = _locked ? 'block' : 'none';
+  updateAssignUI(s.id);
+
+  if (currentProtoType !== s.type) {
+    // 다른 타입 → 재로드
+    currentProtoType = s.type;
+    _liveScreen = null;
+    const _snap = {screen: target, type: s.type};
+    iframe.onload = () => {
+      injectScreenTracker(iframe.contentWindow);
+      navigateTo(_snap.screen, _snap.type);
+      applyProtoSize();
+    };
+    if (html) {
+      // srcdoc: 항상 same-origin → contentWindow 직접 접근 + 화면 지정 모두 정상 동작
+      const modified = html.includes('</body>')
+        ? html.replace('</body>', NAV_SCRIPT + '</body>')
+        : html + NAV_SCRIPT;
+      iframe.removeAttribute('src');
+      iframe.srcdoc = modified;
+    } else {
+      iframe.removeAttribute('srcdoc');
+      iframe.src = s.type === 'mobile'
+        ? './MY인사_모바일_v70_proto_only.html'
+        : './MY인사_PC_v31.html';
+    }
+  } else {
+    // 같은 타입 → 화면만 이동 (iframe 재로드 없음)
+    navigateTo(target, s.type);
+    applyProtoSize();
+  }
+}
+
+function applyProtoSize() {
+  const s = SCREENS.find(x => x.id === cur);
+  if (!s) return;
+  const wrap = document.getElementById('proto-frame-wrap');
+  const W = Math.max(wrap.clientWidth - 32, 100);
+  const H = Math.max(wrap.clientHeight - 32, 100);
+
+  if (s.type === 'mobile') {
+    // 375×812 폰 + presentation-wrapper padding(좌우 32px, 상하 40px) 포함 크기
+    const nw = 439, nh = 892;
+    const scale = Math.min(W / nw, H / nh, 1);
+    const sw = Math.ceil(nw * scale), sh = Math.ceil(nh * scale);
+
+    let outer = wrap.querySelector('.proto-scale-outer');
+    if (!outer) {
+      outer = document.createElement('div');
+      outer.className = 'proto-scale-outer';
+      wrap.insertBefore(outer, iframe);
+      outer.appendChild(iframe);
+    }
+    outer.style.cssText = `position:relative;flex-shrink:0;overflow:hidden;width:${sw}px;height:${sh}px;border-radius:${Math.round(16*scale)}px;box-shadow:0 8px 32px rgba(0,0,0,.25)`;
+    iframe.style.cssText = `border:none;display:block;position:absolute;top:0;left:0;width:${nw}px;height:${nh}px;transform:scale(${scale});transform-origin:top left`;
+  } else {
+    const outer = wrap.querySelector('.proto-scale-outer');
+    if (outer && outer.contains(iframe)) {
+      wrap.insertBefore(iframe, outer);
+      outer.remove();
+    }
+    iframe.style.cssText = `border:none;display:block;flex-shrink:0;width:${Math.max(W,300)}px;height:${Math.max(H,400)}px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15)`;
+  }
+}
+
+/* ── 스펙 패널 렌더 ── */
+function renderSpecPanel(s) {
+  document.getElementById('spec-screen-id').textContent = s.id;
+  document.getElementById('spec-screen-title').textContent = s.title;
+
+  const metaEl = document.getElementById('spec-meta');
+  metaEl.innerHTML = `
+    <div class="spec-meta-row"><span class="spec-meta-label">목적</span><span class="spec-meta-val">${esc(s.purpose)}</span></div>
+    <div class="spec-meta-row"><span class="spec-meta-label">진입</span><span class="spec-meta-val">${esc(s.enter)}</span></div>
+    <div class="spec-meta-row"><span class="spec-meta-label">다음</span><span class="spec-meta-val">${esc(s.next)}</span></div>`;
+
+  // 저장된 데이터 or 기본값
+  const sv = saved[s.id] || {};
+  const descs = sv.descs || [...s.descs];
+  const cp = sv.cp !== undefined ? sv.cp : s.cp;
+
+  const body = document.getElementById('spec-body');
+  body.innerHTML = '';
+
+  // Description section
+  const sec = document.createElement('div'); sec.className = 'spec-section';
+  const titleRow = document.createElement('div'); titleRow.className = 'spec-section-title';
+  titleRow.innerHTML = 'DESCRIPTION';
+  const addBtn = document.createElement('button'); addBtn.className = 'add-desc-btn'; addBtn.textContent = '＋ 추가';
+  addBtn.style.display = em ? '' : 'none';
+  addBtn.onclick = () => addDescItem();
+  titleRow.appendChild(addBtn);
+  sec.appendChild(titleRow);
+
+  const dl = document.createElement('div'); dl.id = 'desc-list';
+  descs.forEach((txt, i) => dl.appendChild(makeDescItem(txt, i)));
+  sec.appendChild(dl);
+  body.appendChild(sec);
+
+  // Checkpoint section
+  const cpSec = document.createElement('div'); cpSec.className = 'cp-section';
+  cpSec.innerHTML = '<div class="cp-section-title">CHECK POINT</div>';
+  const cpTa = document.createElement('textarea'); cpTa.id = 'cp-ta'; cpTa.value = cp;
+  cpTa.readOnly = !em;
+  cpTa.oninput = () => saveSpec(s.id);
+  cpSec.appendChild(cpTa);
+  body.appendChild(cpSec);
+}
+
+function makeDescItem(txt, idx) {
+  const item = document.createElement('div'); item.className = 'desc-item'; item.dataset.idx = idx;
+  const num = document.createElement('div'); num.className = 'desc-num'; num.textContent = idx + 1;
+  const ta = document.createElement('textarea'); ta.className = 'desc-ta'; ta.value = txt; ta.rows = 2;
+  ta.readOnly = !em;
+  ta.oninput = () => { autoHeight(ta); saveSpec(cur); };
+  setTimeout(() => autoHeight(ta), 0);
+  const del = document.createElement('button'); del.className = 'desc-del'; del.textContent = '×';
+  del.style.display = em ? '' : 'none';
+  del.onclick = () => { item.remove(); renumberDescs(); saveSpec(cur); };
+  item.append(num, ta, del);
+  return item;
+}
+
+function addDescItem() {
+  const list = document.getElementById('desc-list');
+  if (!list) return;
+  const cnt = list.querySelectorAll('.desc-item').length;
+  const item = makeDescItem('', cnt);
+  list.appendChild(item);
+  item.querySelector('textarea').focus();
+  saveSpec(cur);
+}
+
+function renumberDescs() {
+  document.querySelectorAll('#desc-list .desc-item').forEach((item, i) => {
+    item.dataset.idx = i;
+    const num = item.querySelector('.desc-num');
+    if (num) num.textContent = i + 1;
+  });
+}
+
+function autoHeight(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── 저장 ── */
+function collectSpec(id) {
+  const descs = [];
+  document.querySelectorAll('#desc-list .desc-ta').forEach(ta => descs.push(ta.value));
+  const cpTa = document.getElementById('cp-ta');
+  const cp = cpTa ? cpTa.value : '';
+  return { descs, cp };
+}
+
+function saveSpec(id) {
+  if (!id) return;
+  saved[id] = collectSpec(id);
+  clearTimeout(_saveT);
+  _saveT = setTimeout(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(saved)); } catch(e) {}
+  }, 600);
+}
+
+/* ── 다운로드 ── */
+function downloadHtml() {
+  if (cur) saved[cur] = collectSpec(cur);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(saved)); } catch(e) {}
+
+  // 현재 HTML에 데이터 주입
+  const html = document.documentElement.outerHTML;
+  const inject = `<script id="__spec-data__">window.__SAVED_SPEC__=${JSON.stringify(saved)};<\/script>`;
+  // 기존 삽입된 태그 제거 후 재삽입
+  const cleaned = html.replace(/<script id="__spec-data__">[\s\S]*?<\/script>/,'');
+  const final = cleaned.replace('</head>', inject + '</head>');
+  const blob = new Blob([final], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'MY인사_화면설계서_v1.4.html';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
+}
+
+/* ── 인증 ── */
+function toggleAuth() {
+  if (em) { em = false; applyEM(); }
+  else { openDlg('dlg-auth'); }
+}
+function openDlg(id) {
+  if (id === 'dlg-auth') {
+    document.getElementById('auth-inp').value = '';
+    document.getElementById('auth-err').textContent = '';
+  }
+  document.getElementById(id).classList.add('open');
+  const inp = document.querySelector('#' + id + ' input');
+  if (inp) setTimeout(() => inp.focus(), 80);
+}
+function closeDlg(id) { document.getElementById(id).classList.remove('open'); }
+function confirmAuth() {
+  if (document.getElementById('auth-inp').value === PW) {
+    em = true; closeDlg('dlg-auth'); applyEM();
+  } else {
+    const el = document.getElementById('auth-err');
+    el.textContent = '비밀번호가 틀렸습니다';
+    document.getElementById('auth-inp').value = '';
+    document.getElementById('auth-inp').focus();
+    setTimeout(() => { el.textContent = ''; }, 2000);
+  }
+}
+function applyEM() {
+  const btn = document.getElementById('auth-btn');
+  btn.className = em ? 'ed' : 'ro';
+  btn.textContent = em ? '✏️ 편집 중' : '🔒 보기 전용';
+  // 현재 화면 다시 렌더 (edit 상태 반영)
+  if (cur) renderSpecPanel(SCREENS.find(s => s.id === cur));
+}
+</script>
+</body>
+</html>
