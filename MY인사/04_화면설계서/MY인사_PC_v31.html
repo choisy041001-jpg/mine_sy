@@ -1,585 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MY인사 v11 — 관리자/직원 통합 PC</title>
-<style>
-:root{
-  --bg:#f7f7fa;
-  --surface:#ffffff;
-  --surface-hover:#f2f2f7;
-  --text:#111118;
-  --text-secondary:#4a4a5a;
-  --text-tertiary:#9898a8;
-  --border:#e8e8ef;
-  --border-strong:#d0d0dc;
-  --accent:#2363a8;
-  --accent-light:#eff5fa;
-  --accent-mid:#558ec3;
-  --accent-fg:#ffffff;
-  --success:#16a34a;
-  --success-bg:#f0fdf4;
-  --warning:#d97706;
-  --warning-bg:#fffbeb;
-  --danger:#dc2626;
-  --danger-bg:#fef2f2;
-  --info:#2563eb;
-  --info-bg:#eff6ff;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(35,99,168,.08),0 2px 4px rgba(0,0,0,.04);
-  --shadow-card:0 2px 8px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);
-  --sidebar-w:240px;
-  --radius-sm:6px;
-  --radius-md:8px;
-  --radius-lg:10px;
-  --radius-xl:14px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-  background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:14px}
-
-.layout{display:flex;height:100vh}
-
-/* ============ SIDEBAR ============ */
-.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;flex-shrink:0;min-width:180px;max-width:480px}
-.brand{padding:20px 20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.brand .logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent-mid));color:#fff;border-radius:10px;
-  display:grid;place-items:center;font-size:13px;font-weight:900;letter-spacing:-0.04em;
-  box-shadow:0 4px 10px rgba(35,99,168,.3)}
-.brand .name{font-size:15px;font-weight:800;letter-spacing:-0.02em}
-.brand .role{font-size:11px;color:var(--text-tertiary);font-weight:500;margin-top:1px}
-
-.nav{flex:1;padding:12px 8px;overflow-y:auto}
-.nav-group{margin-bottom:8px}
-.nav-label{font-size:10px;font-weight:700;color:var(--text-tertiary);
-  text-transform:uppercase;letter-spacing:0.08em;padding:10px 12px 4px}
-.nav-item{padding:8px 12px;display:flex;align-items:center;gap:10px;border-radius:var(--radius-md);cursor:pointer;
-  font-size:13px;font-weight:500;color:var(--text-secondary);transition:.15s;margin-bottom:2px}
-.nav-item:hover{background:var(--accent-light);color:var(--accent)}
-.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:700}
-.nav-item svg{width:16px;height:16px;flex-shrink:0;transition:.15s}
-.nav-item .count{margin-left:auto;font-size:11px;color:var(--accent);
-  background:var(--accent-light);padding:1px 7px;border-radius:20px;font-weight:700;border:none}
-
-.user-card{padding:14px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;
-  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-mid) 100%)}
-.user-card .avatar{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.25);
-  color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;
-  border:1.5px solid rgba(255,255,255,.3)}
-.user-card .info .name{font-size:13px;font-weight:700;color:#fff}
-.user-card .info .meta{font-size:11px;color:rgba(255,255,255,.7)}
-
-/* ── 사이드바 상단 프로필 스위처 ── */
-.sb-profile{
-  padding:12px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;cursor:pointer;
-  background:var(--surface);transition:background .15s;position:relative;
-}
-.sb-profile:hover{background:var(--surface-hover)}
-.sb-profile .sbp-avatar{
-  width:32px;height:32px;border-radius:9px;flex-shrink:0;
-  background:var(--accent-light);color:var(--accent);
-  display:grid;place-items:center;font-size:13px;font-weight:800;
-}
-.sb-profile .sbp-info{flex:1;min-width:0}
-.sb-profile .sbp-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-profile .sbp-role{font-size:11px;color:var(--text-tertiary);margin-top:1px}
-.sb-profile .sbp-arrow{color:var(--text-tertiary);flex-shrink:0;transition:transform .2s}
-.sb-profile.open .sbp-arrow{transform:rotate(180deg)}
-
-/* 프로필 스위처 드롭다운 */
-.sbp-dropdown{
-  position:absolute;top:calc(100% + 4px);left:8px;right:8px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;overflow:hidden;display:none;
-}
-.sbp-dropdown.show{display:block}
-.sbp-option{
-  padding:10px 14px;display:flex;align-items:center;gap:10px;
-  cursor:pointer;transition:background .15s;
-}
-.sbp-option:hover{background:var(--surface-hover)}
-.sbp-option.selected{background:var(--accent-light)}
-.sbp-option .sbo-avatar{
-  width:28px;height:28px;border-radius:8px;flex-shrink:0;
-  background:var(--accent-light);color:var(--accent);
-  display:grid;place-items:center;font-size:12px;font-weight:800;
-}
-.sbp-option .sbo-info .sbo-name{font-size:13px;font-weight:600;color:var(--text)}
-.sbp-option .sbo-info .sbo-sub{font-size:11px;color:var(--text-tertiary)}
-.sbp-option .sbo-check{margin-left:auto;color:var(--accent);display:none}
-.sbp-option.selected .sbo-check{display:block}
-
-/* ============ MAIN ============ */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.topbar h1{font-size:17px;font-weight:800;letter-spacing:-0.02em}
-.topbar .crumb{font-size:11px;color:var(--text-tertiary);margin-top:2px;font-weight:500}
-.topbar-actions{display:flex;gap:8px;align-items:center}
-.search-input{width:240px;height:34px;border:1.5px solid var(--border);border-radius:var(--radius-md);
-  padding:0 12px 0 34px;font-size:13px;font-family:inherit;outline:none;background:var(--bg);
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239898a8' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
-  background-repeat:no-repeat;background-position:11px center;transition:.15s}
-.search-input:focus{border-color:var(--accent);background-color:var(--surface);
-  box-shadow:0 0 0 3px var(--accent-light)}
-
-.btn{height:34px;padding:0 14px;font-size:13px;font-weight:600;border-radius:var(--radius-md);
-  cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--border);
-  background:var(--surface);color:var(--text);transition:.15s;font-family:inherit;white-space:nowrap}
-.btn:hover{background:var(--surface-hover)}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-mid));color:#fff;border:none;
-  box-shadow:0 3px 10px rgba(35,99,168,.3)}
-.btn-primary:hover{background:linear-gradient(135deg,#1b4d82,var(--accent));
-  box-shadow:0 4px 14px rgba(35,99,168,.4)}
-.btn-sm{height:28px;padding:0 10px;font-size:12px}
-
-.content{flex:1;overflow-y:auto;padding:24px;background:var(--bg)}
-.page{display:none}
-.page.active{display:block}
-
-/* ============ DASHBOARD ============ */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.kpi{background:var(--surface);border:none;border-radius:var(--radius-xl);padding:18px;
-  box-shadow:var(--shadow-card);position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--border);border-radius:var(--radius-xl) var(--radius-xl) 0 0}
-.kpi .label{font-size:11px;font-weight:700;color:var(--text-tertiary);margin-bottom:10px;
-  text-transform:uppercase;letter-spacing:0.06em}
-.kpi .value{font-size:28px;font-weight:800;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
-.kpi .trend{font-size:11px;color:var(--text-tertiary);margin-top:6px;display:flex;align-items:center;gap:4px}
-.kpi .trend.up{color:var(--success)}
-/* KPI 카드 컬러 테마 — MY인사 accent 톤 기준, 채도 +20% / 상단 3px 선만 색상 적용 */
-.kpi-leave::before{background:linear-gradient(90deg,#1a54a8,#4d8fd4)}
-.kpi-leave .label{color:#1a54a8}.kpi-leave .value{color:#1a54a8}
-
-.kpi-faq::before{background:linear-gradient(90deg,#6b35c9,#9b6de0)}
-.kpi-faq .label{color:#6b35c9}.kpi-faq .value{color:#6b35c9}
-
-.kpi-cert::before{background:linear-gradient(90deg,#0d8f6e,#2bbf9a)}
-.kpi-cert .label{color:#0d8f6e}.kpi-cert .value{color:#0d8f6e}
-
-.kpi-total::before{background:linear-gradient(90deg,#c95f0a,#f08030)}
-.kpi-total .label{color:#c95f0a}.kpi-total .value{color:#c95f0a}
-.kpi{cursor:pointer;transition:.15s}
-.kpi:hover{transform:translateY(-2px)}
-.kpi-leave:hover{box-shadow:0 8px 24px rgba(26,84,168,.18)}
-.kpi-faq:hover{box-shadow:0 8px 24px rgba(107,53,201,.18)}
-.kpi-cert:hover{box-shadow:0 8px 24px rgba(13,143,110,.18)}
-.kpi-total:hover{box-shadow:0 8px 24px rgba(201,95,10,.18)}
-
-.dash-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin-bottom:20px}
-.panel{background:var(--surface);border:none;border-radius:var(--radius-xl);overflow:hidden;
-  box-shadow:var(--shadow-card)}
-.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.panel-head h3{font-size:14px;font-weight:700;letter-spacing:-0.01em}
-.panel-head .more{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600}
-.panel-body{padding:18px}
-
-.chart{height:200px;position:relative}
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;height:160px;gap:8px;padding:0 4px}
-.chart-bar{flex:1;background:linear-gradient(180deg,var(--accent-mid),var(--accent));border-radius:4px 4px 0 0;min-height:4px;position:relative;transition:.2s;opacity:.8}
-.chart-bar:hover{opacity:1}
-.chart-labels{display:flex;justify-content:space-between;padding:8px 4px 0;font-size:10px;color:var(--text-tertiary)}
-
-.activity-list{padding:0}
-.activity-list .item{padding:10px 18px;display:flex;gap:10px;border-bottom:1px solid var(--border);align-items:flex-start}
-.activity-list .item:last-child{border-bottom:none}
-.activity-list .dot{width:6px;height:6px;border-radius:50%;background:var(--text-tertiary);margin-top:6px;flex-shrink:0}
-.activity-list .dot.s{background:var(--success)}
-.activity-list .dot.w{background:var(--warning)}
-.activity-list .dot.i{background:var(--info)}
-.activity-list .body{flex:1;min-width:0}
-.activity-list .title{font-size:13px;font-weight:500;color:var(--text);line-height:1.4}
-.activity-list .meta{font-size:11px;color:var(--text-tertiary);margin-top:2px}
-
-/* ============ DASHBOARD ALERT ROW (v4.4) ============ */
-.alert-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .15s}
-.alert-row:hover{background:var(--surface-hover)}
-.alert-row:last-child{border-bottom:none}
-.alert-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;border:none}
-.alert-icon.cert{background:var(--info-bg);color:var(--info)}
-.alert-icon.faq{background:var(--warning-bg);color:var(--warning)}
-.alert-icon.leave{background:var(--success-bg);color:var(--success)}
-.alert-body{flex:1;min-width:0}
-.alert-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.alert-meta{font-size:11px;color:var(--text-tertiary)}
-.alert-actions{flex-shrink:0}
-
-/* ============ EMPLOYEE INFO PANEL (v4.4) ============ */
-.dept-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
-.dept-row:last-child{margin-bottom:0}
-.dept-name{width:64px;color:var(--text-secondary);font-weight:500;flex-shrink:0}
-.dept-bar{flex:1;height:6px;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.dept-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-mid));border-radius:3px}
-.dept-num{width:44px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0;color:var(--text);font-size:12px}
-
-/* ============ TABLE (custom, AG Grid feel) ============ */
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px}
-.toolbar .filters{display:flex;gap:8px;align-items:center}
-.filter-input{height:34px;padding:0 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);
-  font-size:13px;font-family:inherit;outline:none;background:var(--surface);transition:.15s}
-.filter-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
-
-.table-wrap{background:var(--surface);border:none;border-radius:var(--radius-xl);overflow:hidden;
-  box-shadow:var(--shadow-card)}
-table.tbl{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
-table.tbl thead th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;
-  color:var(--text-tertiary);background:var(--bg);border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:2;letter-spacing:0.03em;text-transform:uppercase;
-  position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:none}
-table.tbl tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-table.tbl tbody td.wrap{white-space:normal}
-table.tbl tbody tr:last-child td{border-bottom:none}
-table.tbl tbody tr:hover{background:var(--accent-light)}
-table.tbl .num{font-variant-numeric:tabular-nums;text-align:right}
-table.tbl .center{text-align:center}
-
-/* Column resizer handle (자동 주입) */
-.col-resizer{position:absolute;top:0;right:-3px;width:8px;height:100%;cursor:col-resize;z-index:3;background:transparent;transition:background .15s}
-.col-resizer:hover{background:var(--accent);opacity:.6}
-.col-resizer.dragging{background:var(--accent);opacity:1}
-.col-resizer::before{content:'';position:absolute;top:30%;right:3px;width:1px;height:40%;background:var(--border-strong);transition:opacity .15s}
-.col-resizer:hover::before,.col-resizer.dragging::before{opacity:0}
-table.tbl thead th:last-child .col-resizer{display:none} /* 마지막 컬럼은 핸들 없음 */
-table.tbl thead th{position:relative} /* 핸들 absolute 기준 */
-
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;
-  font-size:11px;font-weight:700;border:none;background:var(--bg);white-space:nowrap;color:var(--text-secondary)}
-.badge.s{color:var(--success);background:var(--success-bg)}
-.badge.w{color:var(--warning);background:var(--warning-bg)}
-.badge.d{color:var(--danger);background:var(--danger-bg)}
-.badge.i{color:var(--info);background:var(--info-bg)}
-.badge.muted{color:var(--text-tertiary);background:var(--bg)}
-
-.row-actions{display:flex;gap:4px}
-.icon-btn{width:26px;height:26px;display:grid;place-items:center;background:transparent;border:none;
-  border-radius:4px;cursor:pointer;color:var(--text-secondary)}
-.icon-btn:hover{background:var(--accent-light);color:var(--accent)}
-
-/* leave grid (월별) */
-.leave-table .month-h{font-weight:500;color:var(--text-secondary);background:var(--bg)}
-.leave-table .used{color:var(--text-secondary)}
-.leave-table .remain{font-weight:600;color:var(--text)}
-.editable{cursor:pointer;position:relative}
-.editable:hover{background:var(--accent-light);outline:1px dashed var(--accent);outline-offset:-2px}
-.editable.editing{padding:0;background:transparent;outline:none}
-.editable input.edit-input{width:100%;height:100%;border:2px solid var(--accent);background:#fff;text-align:right;padding:10px 14px;font-size:13px;font-family:inherit;outline:none;font-variant-numeric:tabular-nums;border-radius:0;-moz-appearance:textfield;appearance:textfield}
-.editable input.edit-input::-webkit-outer-spin-button,
-.editable input.edit-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-
-/* 대시보드 직원 목록 테이블 (스크롤 가능) */
-.emp-tbl-wrap{overflow-y:auto;width:100%}
-.emp-tbl{table-layout:fixed;width:100%}
-.emp-tbl thead th{font-size:11px;padding:9px 12px;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;color:var(--text-tertiary);background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2}
-.emp-tbl tbody td{padding:9px 12px;font-size:13px}
-
-/* 무한스크롤 컨테이너 */
-.scroll-body{max-height:calc(100vh - 280px);overflow-y:auto}
-.scroll-body table.tbl thead th{position:sticky;top:0;z-index:2}
-.scroll-loader{padding:14px;text-align:center;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border);background:var(--surface)}
-.scroll-loader.done{color:var(--text-tertiary)}
-.scroll-loader .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* 사이드바 리사이즈 핸들 */
-.resizer{width:5px;cursor:col-resize;background:transparent;position:relative;flex-shrink:0;user-select:none;transition:background .15s}
-.resizer:hover,.resizer.dragging{background:var(--accent)}
-.resizer::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1px;height:32px;background:var(--border-strong)}
-.resizer:hover::before,.resizer.dragging::before{display:none}
-
-/* pagination */
-.pagi{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary);background:var(--surface)}
-.pagi .controls{display:flex;gap:4px;align-items:center}
-.pagi .controls button{width:28px;height:28px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  background:var(--surface);font-size:12px;cursor:pointer;color:var(--text-secondary);transition:.15s}
-.pagi .controls button.active{background:linear-gradient(135deg,var(--accent),var(--accent-mid));color:#fff;border:none;
-  box-shadow:0 2px 6px rgba(35,99,168,.3)}
-
-/* ============ BOARD MGMT ============ */
-.split{display:grid;grid-template-columns:300px 1fr;gap:16px}
-.split .panel{display:flex;flex-direction:column;min-height:480px}
-.split .panel-body{flex:1;overflow-y:auto;padding:0}
-.split-list-row{padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:8px}
-.split-list-row:hover{background:var(--accent-light)}
-.split-list-row.active{background:var(--accent-light);border-left:3px solid var(--accent)}
-.split-list-row .name{flex:1;font-size:13px;font-weight:500}
-.split-list-row .cnt{font-size:11px;color:var(--text-tertiary);font-weight:500}
-
-/* ============ MODAL ============ */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:none;
-  align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.show{display:flex}
-.modal{background:var(--surface);border-radius:var(--radius-xl);width:560px;max-width:100%;max-height:90vh;
-  display:flex;flex-direction:column;box-shadow:0 24px 60px -10px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.06)}
-.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-head h3{font-size:15px;font-weight:800;letter-spacing:-0.01em}
-.modal-head .close{width:30px;height:30px;display:grid;place-items:center;cursor:pointer;border-radius:var(--radius-sm);color:var(--text-secondary);background:var(--bg);border:1px solid var(--border)}
-.modal-head .close:hover{background:var(--surface-hover)}
-.modal-body{padding:20px;overflow-y:auto;flex:1}
-.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-
-.form-row{display:flex;gap:12px;margin-bottom:12px}
-.form-row > .field{flex:1}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--text-tertiary);
-  text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);
-  border-radius:var(--radius-md);font-size:13px;font-family:inherit;background:var(--surface);outline:none;transition:.15s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-light)}
-
-/* QR onboarding */
-.onb{display:flex;gap:0;background:var(--surface);
-  border:none;border-radius:var(--radius-xl);margin-bottom:20px;box-shadow:var(--shadow-card);overflow:hidden}
-.onb .qr-side{text-align:center;padding:32px 28px;border-right:1px solid var(--border);flex-shrink:0;width:260px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.onb .qr-box{width:180px;height:180px;background:#fff;border:1px solid var(--border);border-radius:12px;
-  margin:0 auto 14px;display:grid;place-items:center;position:relative}
-.onb .qr-box svg{width:154px;height:154px}
-.onb .qr-box .logo-overlay{position:absolute;width:38px;height:38px;background:var(--accent);
-  color:#fff;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:-0.04em;box-shadow:0 0 0 3px var(--surface),0 4px 12px rgba(35,99,168,.4)}
-.onb .info-side{flex:1;padding:32px 32px}
-.onb .info-side h2{font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
-.onb .info-side p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px}
-.onb .step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
-.onb .step .n{width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);
-  font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
-.onb .step .t{font-size:13px;line-height:1.4}
-
-/* welcome empty state on board mgmt right side */
-.empty{text-align:center;padding:60px 20px;color:var(--text-tertiary);font-size:13px}
-
-/* mobile preview pop */
-.mobile-preview{position:fixed;bottom:24px;right:24px;width:280px;height:480px;background:#fff;
-  border-radius:24px;border:8px solid #111;display:none;z-index:500;
-  box-shadow:0 20px 50px -10px rgba(0,0,0,.4)}
-
-
-/* ==================== MY인사 소개 (에르메스 명품관 스타일) ==================== */
-#screen-intro { margin: -24px -24px; overflow-y:auto; }
-.lux-hero { background:linear-gradient(180deg,#fafafa 0%,#ffffff 100%);padding:120px 80px 100px;text-align:center;border-bottom:1px solid #e5e5e5; }
-.lux-hero-eyebrow { font-size:12px;font-weight:700;letter-spacing:4px;color:#4F46E5;margin-bottom:24px;text-transform:uppercase; }
-.lux-hero-title { font-size:64px;font-weight:800;color:#0f172a;letter-spacing:-2px;line-height:1.1;margin-bottom:24px; }
-.lux-hero-sub { font-size:18px;color:#4b5563;font-weight:500;max-width:720px;margin:0 auto;line-height:1.6;letter-spacing:-0.3px; }
-.lux-feature { display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;padding:100px 80px;border-bottom:1px solid #e5e5e5; }
-.lux-feature.reverse .lux-feature-content { order:2; }
-.lux-feature.reverse .lux-feature-visual { order:1; }
-.lux-feature-content { max-width:520px;justify-self:end; }
-.lux-feature.reverse .lux-feature-content { justify-self:start; }
-.lux-feature-num { font-size:14px;font-weight:700;color:#9ca3af;letter-spacing:4px;margin-bottom:14px; }
-.lux-feature-eyebrow { font-size:11px;font-weight:800;letter-spacing:4px;color:#4F46E5;margin-bottom:16px;text-transform:uppercase; }
-.lux-feature-title { font-size:44px;font-weight:800;color:#0f172a;letter-spacing:-1.5px;line-height:1.15;margin-bottom:20px; }
-.lux-feature-desc { font-size:16px;color:#4b5563;font-weight:500;line-height:1.7;margin-bottom:28px;letter-spacing:-0.2px; }
-.lux-feature-list { list-style:none;padding:0;margin:0; }
-.lux-feature-list li { position:relative;padding:10px 0 10px 32px;font-size:14px;color:#1f2937;font-weight:600;border-bottom:1px solid #f0f0f0; }
-.lux-feature-list li:last-child { border-bottom:none; }
-.lux-feature-list li::before { content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#4F46E5;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");background-repeat:no-repeat;background-position:center;background-size:11px; }
-.lux-feature-visual { display:flex;justify-content:center;align-items:center; }
-.lux-phone { width:280px;height:580px;background:#1f2937;border-radius:36px;padding:10px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.18),0 8px 24px rgba(0,0,0,.08); }
-.lux-phone-notch { position:absolute;top:10px;left:50%;transform:translateX(-50%);width:100px;height:22px;background:#1f2937;border-radius:0 0 14px 14px;z-index:2; }
-.lux-phone-screen { width:100%;height:100%;background:#fff;border-radius:28px;overflow:hidden;display:flex;flex-direction:column; }
-.lux-ph-status { padding:14px 22px 8px;font-size:11px;font-weight:700;color:#111;display:flex;justify-content:space-between; }
-.lux-ph-header { padding:18px 22px 14px;font-size:17px;font-weight:800;color:#0f172a;border-bottom:1px solid #f0f0f0;letter-spacing:-0.4px; }
-.lux-ph-content { flex:1;padding:18px 16px;overflow:hidden; }
-.lux-ph-leave-card { background:linear-gradient(135deg,#4F46E5 0%,#6366F1 100%);border-radius:14px;padding:18px 18px 16px;color:white; }
-.lux-ph-item { display:flex;justify-content:space-between;align-items:center;background:#fafafa;padding:11px 13px;border-radius:8px;margin-top:8px;gap:8px; }
-.lux-pricing { padding:120px 80px;text-align:center;background:linear-gradient(180deg,#ffffff 0%,#f9fafb 100%); }
-.lux-pricing-eyebrow { font-size:12px;font-weight:800;letter-spacing:4px;color:#4F46E5;margin-bottom:18px;text-transform:uppercase; }
-.lux-pricing-title { font-size:48px;font-weight:800;color:#0f172a;letter-spacing:-1.5px;line-height:1.15;margin-bottom:16px; }
-.lux-pricing-sub { font-size:17px;color:#4b5563;font-weight:500;margin-bottom:56px;letter-spacing:-0.2px; }
-.lux-price-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:0 auto; }
-.lux-price-card { background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:36px 24px;transition:all .2s; }
-.lux-price-card:hover { border-color:#4F46E5;transform:translateY(-2px);box-shadow:0 12px 32px rgba(79,70,229,.08); }
-.lux-price-card-main { background:linear-gradient(135deg,#4F46E5 0%,#6366F1 100%);border-color:#4F46E5;color:#fff; }
-.lux-price-card-bonus { background:linear-gradient(135deg,#FEF3C7 0%,#FDE68A 100%);border-color:#F59E0B; }
-.lux-price-label { font-size:13px;font-weight:700;color:#6b7280;margin-bottom:16px;letter-spacing:-0.2px; }
-.lux-price-card-main .lux-price-label { color:rgba(255,255,255,.92); }
-.lux-price-card-bonus .lux-price-label { color:#92400e; }
-.lux-price-value { font-size:36px;font-weight:800;color:#0f172a;letter-spacing:-1px;line-height:1;margin-bottom:12px; }
-.lux-price-card-bonus .lux-price-value { color:#78350f; }
-.lux-price-value-main { font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1;margin-bottom:12px; }
-.lux-price-tag { font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase; }
-.lux-price-card-main .lux-price-tag { color:rgba(255,255,255,.7); }
-.lux-price-card-bonus .lux-price-tag { color:#b45309; }
-.lux-pricing-example { margin:56px auto 0;max-width:720px;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:32px 40px; }
-.lux-pricing-example-title { font-size:13px;font-weight:700;color:#6b7280;margin-bottom:20px; }
-.lux-pricing-example-calc { display:flex;justify-content:center;align-items:baseline;gap:14px;flex-wrap:wrap;font-size:16px;color:#1f2937;font-weight:600; }
-
-/* ===== 카카오톡 발송 모달 ===== */
-.kakao-preview {
-  background: #ffeb3b;
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
-  position: relative;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.kakao-preview::before {
-  content: '💬 카카오톡 미리보기';
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  color: #5d4037;
-  margin-bottom: 8px;
-  text-align: center;
-}
-.kakao-bubble {
-  background: white;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 13px;
-  color: #111;
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-/* ===== 토스트 ===== */
-.toast-v7 {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #18181b;
-  color: white;
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
-  z-index: 9999;
-  transition: transform 0.3s;
-  pointer-events: none;
-  max-width: 90%;
-  text-align: center;
-}
-.toast-v7.show { transform: translateX(-50%) translateY(0); }
-.toast-v7 .sub { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 3px; }
-
-/* 모바일 안내 직원 테이블 카카오 버튼 */
-.kakao-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  background: #FEE500;
-  color: #3C1E1E;
-  transition: .15s;
-}
-.kakao-btn:hover { background: #f5db00; }
-.kakao-btn svg { flex-shrink: 0; }
-
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
-/* ============ 직원 현황 탭 필터 ============ */
-.emp-tab-btn{padding:10px 16px 11px;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;font-family:inherit;display:inline-flex;align-items:center;gap:5px;letter-spacing:-0.01em}
-.emp-tab-btn:hover{color:var(--text)}
-.emp-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
-.emp-tab-count{font-size:11px;font-weight:700;color:inherit;opacity:.75}
-
-/* ============ FAQ 탭 ============ */
-.tab-pane{display:none}
-.tab-pane.active{display:block}
-
-/* FAQ 탭 버튼 */
-.faq-tab-btn{padding:10px 20px 12px;font-size:14px;font-weight:600;color:var(--text-tertiary);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;font-family:inherit;display:inline-flex;align-items:center;gap:8px;letter-spacing:-0.01em}
-.faq-tab-btn:hover{color:var(--text)}
-.faq-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
-
-/* FAQ 카테고리 칩 버튼 */
-.faq-cat-btn{height:30px;padding:0 14px;font-size:12px;font-weight:500;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);transition:.15s;font-family:inherit}
-.faq-cat-btn:hover{border-color:var(--accent);color:var(--accent)}
-.faq-cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
-
-/* ============ 증명서 종류 뱃지 (파스텔) ============ */
-.cert-badge-재직{background:#dbeafe;color:#1e40af;display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
-.cert-badge-경력{background:#fce7f3;color:#9d174d;display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
-.cert-badge-기타{background:#d1fae5;color:#065f46;display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
-
-/* ============ 테이블 가독성 개선 ============ */
-table.tbl thead th{padding:12px 20px}
-table.tbl tbody td{padding:13px 20px}
-.emp-tbl thead th{padding:10px 14px}
-.emp-tbl tbody td{padding:11px 14px}
-
-/* ============ 연차 월별 툴팁 ============ */
-.leave-tooltip{
-  position:fixed;
-  background:#ffffff;color:#111118;
-  padding:10px 14px;border-radius:10px;
-  font-size:12px;font-weight:500;
-  pointer-events:none;
-  z-index:9999;display:none;
-  box-shadow:0 6px 24px rgba(0,0,0,.15);
-  white-space:pre;line-height:1.8;
-  border:1px solid #e8e8ef;
-}
-.leave-tooltip::before{
-  content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);
-  width:10px;height:10px;background:#ffffff;
-  clip-path:polygon(50% 0,100% 100%,0 100%);
-  border-top:1px solid #e8e8ef;
-}
-/* 0이 아닌 월별 사용연차 셀 */
-.month-used-nonzero{
-  color:#0f3870 !important;
-  font-weight:600 !important;
-  cursor:pointer;
-  position:relative;
-}
-.month-used-nonzero:hover{
-  text-decoration:underline;
-  text-underline-offset:3px;
-  text-decoration-color:#0f3870;
-}
-.month-used-nonzero.tt-active{
-  text-decoration:underline;
-  text-underline-offset:3px;
-  text-decoration-color:#0f3870;
-  background:var(--accent-light);
-}
-
-/* ============ 업무신청관리 팝업 ============ */
-.cert-action-modal{background:var(--surface);border-radius:var(--radius-xl);width:700px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px -10px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.06)}
-
-/* ===== 연차 결재현황 사이드 패널 ===== */
-.leave-side-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:500;display:none}
-.leave-side-overlay.show{display:block}
-.leave-side-panel{position:fixed;top:0;right:0;width:400px;height:100vh;background:var(--surface);
-  box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:501;display:flex;flex-direction:column;
-  transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
-.leave-side-panel.show{transform:translateX(0)}
-.lsp-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.lsp-head h3{font-size:15px;font-weight:800;letter-spacing:-0.01em}
-.lsp-close{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border)}
-.lsp-close:hover{background:var(--surface-hover)}
-.lsp-body{flex:1;overflow-y:auto;padding:0}
-.lsp-profile{padding:20px;background:linear-gradient(135deg,var(--accent),var(--accent-mid));color:#fff}
-.lsp-profile .emp-name{font-size:18px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
-.lsp-profile .emp-meta{font-size:12px;color:rgba(255,255,255,.75)}
-.lsp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
-.lsp-stat{padding:14px 0;text-align:center;background:var(--surface)}
-.lsp-stat .sv{font-size:22px;font-weight:800;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;color:var(--text)}
-.lsp-stat .sl{font-size:11px;color:var(--text-tertiary);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
-.lsp-stat.accent .sv{color:var(--accent)}
-.lsp-section{padding:14px 20px;border-bottom:1px solid var(--border)}
-.lsp-section-title{font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px}
-.lsp-appr-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.lsp-appr-item:last-child{border-bottom:none}
-.lsp-appr-item .ai-info{flex:1;min-width:0}
-.lsp-appr-item .ai-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
-.lsp-appr-item .ai-meta{font-size:11px;color:var(--text-tertiary)}
-
-</style>
+<title>MY인사 — 관리자/직원 통합 PC</title>
+<link rel="stylesheet" href="my_cont.css">
 </head>
 <body>
 
@@ -722,13 +147,13 @@ table.tbl tbody td{padding:13px 20px}
             <div class="label">대기중 연차 결재</div>
             <div class="value">4</div>
           </div>
-          <div class="kpi kpi-faq" onclick="goPageByName('faq')" title="FAQ 답변 관리로 이동">
-            <div class="label">미답변 FAQ</div>
-            <div class="value">3</div>
-          </div>
           <div class="kpi kpi-cert" onclick="goPageByName('cert')" title="업무신청관리로 이동">
             <div class="label">미처리 증명서</div>
             <div class="value">3</div>
+          </div>
+          <div class="kpi kpi-faq" onclick="goPageByName('faq')" title="FAQ 관리로 이동">
+            <div class="label">노출중인 질문</div>
+            <div class="value">5</div>
           </div>
           <div class="kpi kpi-total" title="전체 직원 현황">
             <div class="label">총 직원수</div>
@@ -739,48 +164,9 @@ table.tbl tbody td{padding:13px 20px}
         <div class="dash-grid">
           <div class="panel">
             <div class="panel-head">
-              <h3>미처리 업무 (10)</h3>
+              <h3>미처리 업무 (8)</h3>
             </div>
             <div style="padding:0">
-              <!-- 알림: 미답변 FAQ 1 -->
-              <div class="alert-row" onclick="openFaqDetailModal('홍길동','write')" style="cursor:pointer">
-                <div class="alert-icon faq">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
-                </div>
-                <div class="alert-body">
-                  <div class="alert-title">육아휴직 후 복직 시 연차 산정은 어떻게 되나요?</div>
-                  <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 2시간 전</div>
-                </div>
-                <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="openFaqDetailModal('홍길동','write')">답변</button>
-                </div>
-              </div>
-              <!-- 알림: 미답변 FAQ 2 -->
-              <div class="alert-row" onclick="openFaqDetailModal('박직원','write')" style="cursor:pointer">
-                <div class="alert-icon faq">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
-                </div>
-                <div class="alert-body">
-                  <div class="alert-title">영문 재직증명서에 직인 외 추가 서명도 가능한가요?</div>
-                  <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 4시간 전</div>
-                </div>
-                <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="openFaqDetailModal('박직원','write')">답변</button>
-                </div>
-              </div>
-              <!-- 알림: 미답변 FAQ 3 -->
-              <div class="alert-row" onclick="openFaqDetailModal('최사원','write')" style="cursor:pointer">
-                <div class="alert-icon faq">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
-                </div>
-                <div class="alert-body">
-                  <div class="alert-title">급여명세서를 PDF로 받을 수 있나요?</div>
-                  <div class="alert-meta"><strong>최사원</strong> · CS팀 · 어제 09:42</div>
-                </div>
-                <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="openFaqDetailModal('최사원','write')">답변</button>
-                </div>
-              </div>
               <!-- 알림 1: 증명서 대기 -->
               <div class="alert-row" onclick="goPCPage('cert-issue')" style="cursor:pointer">
                 <div class="alert-icon cert">
@@ -791,7 +177,7 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 2시간 전</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
                 </div>
               </div>
 
@@ -805,7 +191,7 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 3시간 전</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary">승인</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="window.open(location.href,'_blank')">승인</a>
                 </div>
               </div>
 
@@ -819,7 +205,7 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 어제 17:30</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
                 </div>
               </div>
 
@@ -833,7 +219,7 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 어제 16:14</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary">승인</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="window.open(location.href,'_blank')">승인</a>
                 </div>
               </div>
 
@@ -847,7 +233,7 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>이대리</strong> · CS팀 · 어제 10:24</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary">승인</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="window.open(location.href,'_blank')">승인</a>
                 </div>
               </div>
               <!-- 알림 6: 증명서 대기 -->
@@ -860,22 +246,48 @@ table.tbl tbody td{padding:13px 20px}
                   <div class="alert-meta"><strong>김팀장</strong> · 마케팅팀 · 어제 14:05</div>
                 </div>
                 <div class="alert-actions" onclick="event.stopPropagation()">
-                  <button class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</button>
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
+                </div>
+              </div>
+              <!-- 알림 7: 연차 대기 -->
+              <div class="alert-row" onclick="goPCPage('leave')" style="cursor:pointer">
+                <div class="alert-icon leave">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">연차 신청 — 5/7 (1일)</div>
+                  <div class="alert-meta"><strong>강사원</strong> · 개발팀 · 어제 11:30</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="window.open(location.href,'_blank')">승인</a>
+                </div>
+              </div>
+              <!-- 알림 8: 증명서 대기 -->
+              <div class="alert-row" onclick="goPCPage('cert-issue')" style="cursor:pointer">
+                <div class="alert-icon cert">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">재직증명서 발급 요청</div>
+                  <div class="alert-meta"><strong>정과장</strong> · CS팀 · 어제 09:10</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 직원 현황 -->
-          <div class="panel" style="align-self:start">
+          <div class="panel">
             <div class="panel-head">
               <h3>직원 현황</h3>
             </div>
             <div style="border-bottom:1px solid var(--border);display:flex;gap:0">
-              <button class="emp-tab-btn active" onclick="filterEmpStatus(this,'all')" data-status="all">전체 <span class="emp-tab-count">9</span></button>
-              <button class="emp-tab-btn" onclick="filterEmpStatus(this,'재직')" data-status="재직">재직 <span class="emp-tab-count">8</span></button>
-              <button class="emp-tab-btn" onclick="filterEmpStatus(this,'휴직')" data-status="휴직">휴직 <span class="emp-tab-count">1</span></button>
-              <button class="emp-tab-btn" onclick="filterEmpStatus(this,'퇴사')" data-status="퇴사">퇴직 <span class="emp-tab-count">1</span></button>
+              <a href="#none" class="emp-tab-btn active" onclick="filterEmpStatus(this,'all')" data-status="all">전체 <span class="emp-tab-count">9</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'재직')" data-status="재직">재직 <span class="emp-tab-count">8</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'휴직')" data-status="휴직">휴직 <span class="emp-tab-count">1</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'퇴사')" data-status="퇴사">퇴직 <span class="emp-tab-count">1</span></a>
             </div>
             <div class="emp-tbl-wrap">
             <table class="tbl emp-tbl" id="empStatusTable">
@@ -951,18 +363,18 @@ table.tbl tbody td{padding:13px 20px}
             </span>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn" onclick="document.getElementById('importEmpModal').classList.add('show')">+ 일반근로자 불러오기</button>
-            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>엑셀 다운로드</button>
+            <a href="#none" class="btn" onclick="document.getElementById('importEmpModal').classList.add('show')">+ 일반근로자 불러오기</a>
+            <a href="#none" class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>엑셀 다운로드</a>
           </div>
         </div>
 
-        <div class="table-wrap leave-table" style="overflow:hidden">
+        <div class="table-wrap leave-table">
           <div style="overflow-x:auto">
           <div class="scroll-body" id="leaveScroll" style="max-height:calc(100vh - 260px);overflow-y:auto;overflow-x:visible">
           <table class="tbl" style="min-width:1100px">
             <thead>
               <tr>
-                <th style="width:120px;position:sticky;left:0;z-index:3;background:var(--bg)">직원</th>
+                <th class="col-sticky-l" style="width:120px">직원</th>
                 <th style="width:90px">부서</th>
                 <th class="num" style="width:80px">총 연차</th>
                 <th class="num" style="width:60px">사용</th>
@@ -978,108 +390,108 @@ table.tbl tbody td{padding:13px 20px}
                 <th class="num month-h" style="width:52px">10월</th>
                 <th class="num month-h" style="width:52px">11월</th>
                 <th class="num month-h" style="width:52px">12월</th>
-                <th class="num remain" style="width:60px;position:sticky;right:0;z-index:3;background:var(--bg);box-shadow:-2px 0 4px rgba(0,0,0,.06)">잔여</th>
+                <th class="num remain col-sticky-r" style="width:60px">잔여</th>
               </tr>
             </thead>
             <tbody id="leaveTbody">
               <!-- 홍길동: 1월1 + 3월0.5 + 4월0.5 = 2 사용, 잔여13 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('홍길동','마케팅팀',15,2,13,'wait')">홍길동</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('홍길동','마케팅팀',15,2,13,'wait')">홍길동</strong></td>
                 <td>마케팅팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="홍길동" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">15</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="홍길동">15</td>
                 <td class="num used">2</td>
                 <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">13</td>
+                <td class="num remain col-sticky-r">13</td>
               </tr>
               <!-- 박직원: 1월2 + 2월0.5 + 3월1 + 4월0.5 = 4 사용, 잔여11 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('박직원','개발팀',15,4,11,'wait')">박직원</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('박직원','개발팀',15,4,11,'wait')">박직원</strong></td>
                 <td>개발팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="박직원" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">15</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="박직원">15</td>
                 <td class="num used">4</td>
                 <td class="num">2</td><td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">11</td>
+                <td class="num remain col-sticky-r">11</td>
               </tr>
               <!-- 이대리: 1월2 + 2월1.5 + 3월1 + 4월1.5 = 6 사용, 잔여11 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('이대리','CS팀',17,6,11,'wait')">이대리</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('이대리','CS팀',17,6,11,'wait')">이대리</strong></td>
                 <td>CS팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="이대리" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">17</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="이대리">17</td>
                 <td class="num used">6</td>
                 <td class="num">2</td><td class="num">1.5</td><td class="num">1</td><td class="num">1.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">11</td>
+                <td class="num remain col-sticky-r">11</td>
               </tr>
               <!-- 최사원: 2월0.5 + 4월0.5 = 1 사용, 잔여10 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('최사원','CS팀',11,1,10,'wait')">최사원</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('최사원','CS팀',11,1,10,'wait')">최사원</strong></td>
                 <td>CS팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="최사원" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">11</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="최사원">11</td>
                 <td class="num used">1</td>
                 <td class="num">0</td><td class="num">0.5</td><td class="num">0</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">10</td>
+                <td class="num remain col-sticky-r">10</td>
               </tr>
               <!-- 김팀장: 1월2 + 2월0.5 + 3월2 + 4월0.5 = 5 사용, 잔여15 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('김팀장','마케팅팀',20,5,15,'normal')">김팀장</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('김팀장','마케팅팀',20,5,15,'normal')">김팀장</strong></td>
                 <td>마케팅팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="김팀장" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">20</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="김팀장">20</td>
                 <td class="num used">5</td>
                 <td class="num">2</td><td class="num">0.5</td><td class="num">2</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">15</td>
+                <td class="num remain col-sticky-r">15</td>
               </tr>
               <!-- 한과장: 1월1 + 2월0.5 + 3월1 + 4월0.5 = 3 사용, 잔여15 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('한과장','개발팀',18,3,15,'normal')">한과장</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('한과장','개발팀',18,3,15,'normal')">한과장</strong></td>
                 <td>개발팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="한과장" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">18</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="한과장">18</td>
                 <td class="num used">3</td>
                 <td class="num">1</td><td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">15</td>
+                <td class="num remain col-sticky-r">15</td>
               </tr>
               <!-- 강주임: 1월1 + 3월0.5 + 4월0.5 = 2 사용, 잔여13 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('강주임','인사팀',15,2,13,'normal')">강주임</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('강주임','인사팀',15,2,13,'normal')">강주임</strong></td>
                 <td>인사팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="강주임" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">15</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="강주임">15</td>
                 <td class="num used">2</td>
                 <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">13</td>
+                <td class="num remain col-sticky-r">13</td>
               </tr>
               <!-- 정사원: 1월1 + 3월0.5 = 1.5 사용, 잔여9.5 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('정사원','영업팀',11,1.5,9.5,'normal')">정사원</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('정사원','영업팀',11,1.5,9.5,'normal')">정사원</strong></td>
                 <td>영업팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="정사원" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">11</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="정사원">11</td>
                 <td class="num used">1.5</td>
                 <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">9.5</td>
+                <td class="num remain col-sticky-r">9.5</td>
               </tr>
               <!-- 오주임: 1월0.5 + 2월1 + 3월0.5 + 4월0.5 = 2.5 사용, 잔여12.5 -->
               <tr>
-                <td style="position:sticky;left:0;background:var(--surface);z-index:1"><strong style="cursor:pointer;color:var(--accent)" onclick="openLeavePanel('오주임','영업팀',15,2.5,12.5,'normal')">오주임</strong></td>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('오주임','영업팀',15,2.5,12.5,'normal')">오주임</strong></td>
                 <td>영업팀</td>
-                <td class="num editable" ondblclick="editTotal(this)" data-emp="오주임" style="background:#eff5fa;color:#1b4d82;font-weight:600;cursor:pointer;border-left:1px solid #bfd9ef;border-right:1px solid #bfd9ef">15</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="오주임">15</td>
                 <td class="num used">2.5</td>
                 <td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td><td class="num">0.5</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
                 <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
-                <td class="num remain" style="position:sticky;right:0;background:var(--surface);font-weight:600;box-shadow:-2px 0 4px rgba(0,0,0,.06)">12.5</td>
+                <td class="num remain col-sticky-r">12.5</td>
               </tr>
             </tbody>
           </table>
@@ -1099,7 +511,7 @@ table.tbl tbody td{padding:13px 20px}
             <input class="filter-input" type="date" value="2026-04-30" />
             <input class="filter-input" placeholder="신청자 이름 또는 사번" />
           </div>
-          <button class="btn">엑셀 다운로드</button>
+          <a href="#none" class="btn">엑셀 다운로드</a>
         </div>
 
         <div class="table-wrap">
@@ -1120,74 +532,74 @@ table.tbl tbody td{padding:13px 20px}
               <tr>
                 <td>2026.04.29 09:14</td>
                 <td><strong>홍길동</strong></td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td class="center">1</td>
                 <td>은행 대출 신청용</td>
                 <td class="center"><span class="badge w">대기</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm btn-primary" onclick="openCertIssueModal('홍길동','재직증명서','은행 대출 신청용','2026.04.29 09:14')">발급처리</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('홍길동','재직증명서','은행 대출 신청용','2026.04.29 09:14')">발급처리</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.28 17:30</td>
                 <td><strong>박직원</strong></td>
-                <td><span class="cert-badge-경력">경력증명서</span></td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
                 <td class="center">2</td>
                 <td>해외 프리랜서 계약</td>
                 <td class="center"><span class="badge w">대기</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm btn-primary" onclick="openCertIssueModal('박직원','경력증명서','해외 프리랜서 계약','2026.04.28 17:30')">발급처리</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('박직원','경력증명서','해외 프리랜서 계약','2026.04.28 17:30')">발급처리</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.28 14:05</td>
                 <td><strong>김팀장</strong></td>
-                <td><span class="cert-badge-기타">기타증명서</span></td>
+                <td><span class="cert-badge cert-badge-other">기타증명서</span></td>
                 <td class="center">1</td>
                 <td>육아휴직 신청용 근속확인서</td>
                 <td class="center"><span class="badge w">대기</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm btn-primary" onclick="openCertIssueModal('김팀장','기타증명서','육아휴직 신청용 근속확인서','2026.04.28 14:05')">발급처리</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('김팀장','기타증명서','육아휴직 신청용 근속확인서','2026.04.28 14:05')">발급처리</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.27 14:22</td>
                 <td><strong>이대리</strong></td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td class="center">1</td>
                 <td>병원 보험 청구</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm" onclick="openCertHistoryModal('이대리','재직증명서','2026.04.27 14:22')">이력보기</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('이대리','재직증명서','2026.04.27 14:22')">이력보기</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.27 11:05</td>
                 <td><strong>최사원</strong></td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td class="center">1</td>
                 <td>관공서 제출용</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm" onclick="openCertHistoryModal('최사원','재직증명서','2026.04.27 11:05')">이력보기</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('최사원','재직증명서','2026.04.27 11:05')">이력보기</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.26 16:48</td>
                 <td><strong>윤사원</strong></td>
-                <td><span class="cert-badge-경력">경력증명서</span></td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
                 <td class="center">1</td>
                 <td>이직 준비</td>
                 <td class="center"><span class="badge d">반려</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm" onclick="openCertReasonModal('윤사원','첨부 서류 누락으로 반려 처리되었습니다. 재신청 시 관련 서류를 첨부해주세요.')">사유보기</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertReasonModal('윤사원','첨부 서류 누락으로 반려 처리되었습니다. 재신청 시 관련 서류를 첨부해주세요.')">사유보기</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.25 10:12</td>
                 <td><strong>한과장</strong></td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td class="center">1</td>
                 <td>비자 신청</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm" onclick="openCertHistoryModal('한과장','재직증명서','2026.04.25 10:12')">이력보기</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('한과장','재직증명서','2026.04.25 10:12')">이력보기</a></div></td>
               </tr>
               <tr>
                 <td>2026.04.24 13:30</td>
                 <td><strong>강주임</strong></td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td class="center">2</td>
                 <td>금융기관 제출</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><div class="row-actions"><button class="btn btn-sm" onclick="openCertHistoryModal('강주임','재직증명서','2026.04.24 13:30')">이력보기</button></div></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('강주임','재직증명서','2026.04.24 13:30')">이력보기</a></div></td>
               </tr>
             </tbody>
           </table>
@@ -1203,67 +615,57 @@ table.tbl tbody td{padding:13px 20px}
       <!-- ===== FAQ 답변 관리 ===== -->
       <div class="page" data-page="faq">
 
-        <!-- 필터 + 등록 버튼 영역 -->
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <button class="faq-cat-btn active" onclick="filterFaqCommonTable(this,'all')">전체</button>
-            <button class="faq-cat-btn" onclick="filterFaqCommonTable(this,'연차')">연차</button>
-            <button class="faq-cat-btn" onclick="filterFaqCommonTable(this,'증명서')">증명서</button>
-            <button class="faq-cat-btn" onclick="filterFaqCommonTable(this,'급여')">급여</button>
-            <button class="faq-cat-btn" onclick="filterFaqCommonTable(this,'기타')">기타</button>
+        <!-- 등록 버튼 영역 -->
+        <div class="toolbar">
+          <div class="filters"></div>
+          <div style="display:flex;gap:8px">
+            <a href="#none" class="btn btn-primary btn-sm" onclick="document.getElementById('addFaqModal').classList.add('show')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              FAQ 등록
+            </a>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="document.getElementById('addFaqModal').classList.add('show')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            FAQ 등록
-          </button>
         </div>
         <!-- 테이블 카드 -->
         <div class="table-wrap">
           <table class="tbl" id="faqCommonTable" style="table-layout:auto">
             <thead>
               <tr>
-                <th style="width:100px">카테고리</th>
-                <th style="width:260px">질문</th>
+                <th style="width:300px">질문</th>
                 <th>답변 요약</th>
                 <th class="center" style="width:80px">노출 상태</th>
                 <th class="center" style="width:72px"></th>
               </tr>
             </thead>
             <tbody>
-              <tr data-faq-cat="연차">
-                <td><span class="badge i">연차</span></td>
+              <tr>
                 <td>연차는 언제부터 사용할 수 있나요?</td>
                 <td style="color:var(--text-secondary)">입사 후 1개월 이상 근무 시 월 1일씩 발생…</td>
                 <td class="center"><span class="badge s">노출 중</span></td>
-                <td class="center"><button class="btn btn-sm" onclick="openFaqEdit('연차','연차는 언제부터 사용할 수 있나요?','입사 후 1개월 이상 근무 시 월 1일씩 발생합니다.',this)">수정</button></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('연차는 언제부터 사용할 수 있나요?','입사 후 1개월 이상 근무 시 월 1일씩 발생합니다.',this)">수정</a></td>
               </tr>
-              <tr data-faq-cat="연차">
-                <td><span class="badge i">연차</span></td>
+              <tr>
                 <td>반반차도 신청이 가능한가요?</td>
                 <td style="color:var(--text-secondary)">네, MY인사 앱에서 반반차 신청이 가능합니다…</td>
                 <td class="center"><span class="badge s">노출 중</span></td>
-                <td class="center"><button class="btn btn-sm" onclick="openFaqEdit('연차','반반차도 신청이 가능한가요?','네, MY인사 앱에서 반반차 신청이 가능합니다.',this)">수정</button></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('반반차도 신청이 가능한가요?','네, MY인사 앱에서 반반차 신청이 가능합니다.',this)">수정</a></td>
               </tr>
-              <tr data-faq-cat="증명서">
-                <td><span class="badge" style="background:#deeef8;color:#2363a8">증명서</span></td>
+              <tr>
                 <td>재직증명서 발급은 얼마나 걸리나요?</td>
                 <td style="color:var(--text-secondary)">인사담당자 확인 후 당일 발급을 원칙으로 합니다…</td>
                 <td class="center"><span class="badge s">노출 중</span></td>
-                <td class="center"><button class="btn btn-sm" onclick="openFaqEdit('증명서','재직증명서 발급은 얼마나 걸리나요?','인사담당자 확인 후 당일 발급을 원칙으로 합니다.',this)">수정</button></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('재직증명서 발급은 얼마나 걸리나요?','인사담당자 확인 후 당일 발급을 원칙으로 합니다.',this)">수정</a></td>
               </tr>
-              <tr data-faq-cat="급여">
-                <td><span class="badge" style="background:#fef9c3;color:#854d0e">급여</span></td>
+              <tr>
                 <td>급여일이 주말인 경우 언제 입금되나요?</td>
                 <td style="color:var(--text-secondary)">직전 영업일에 지급됩니다…</td>
                 <td class="center"><span class="badge muted">비노출</span></td>
-                <td class="center"><button class="btn btn-sm" onclick="openFaqEdit('급여','급여일이 주말인 경우 언제 입금되나요?','급여일이 토·일·공휴일인 경우 직전 영업일에 지급됩니다.',this)">수정</button></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('급여일이 주말인 경우 언제 입금되나요?','급여일이 토·일·공휴일인 경우 직전 영업일에 지급됩니다.',this)">수정</a></td>
               </tr>
-              <tr data-faq-cat="기타">
-                <td><span class="badge" style="background:#f3f4f6;color:#4b5563">기타</span></td>
+              <tr>
                 <td>사원증 재발급 방법이 궁금합니다.</td>
                 <td style="color:var(--text-secondary)">총무팀에 문의하거나 MY인사 FAQ를 참고하세요…</td>
                 <td class="center"><span class="badge s">노출 중</span></td>
-                <td class="center"><button class="btn btn-sm" onclick="openFaqEdit('기타','사원증 재발급 방법이 궁금합니다.','총무팀(내선 1234)에 문의해 주세요.',this)">수정</button></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('사원증 재발급 방법이 궁금합니다.','총무팀(내선 1234)에 문의해 주세요.',this)">수정</a></td>
               </tr>
             </tbody>
           </table>
@@ -1271,7 +673,7 @@ table.tbl tbody td{padding:13px 20px}
       </div>
 
       <!-- ===== MY인사 소개 (에르메스 명품관 스타일) ===== -->
-      <div class="page" id="screen-intro" data-page="intro" style="padding:0;overflow-y:auto">
+      <div class="page" id="screen-intro" data-page="intro">
         <div class="lux-hero">
           <div class="lux-hero-eyebrow">FOR EXECUTIVES</div>
           <h1 class="lux-hero-title">하나의 앱으로,<br>인사의 모든 순간</h1>
@@ -1377,12 +779,12 @@ table.tbl tbody td{padding:13px 20px}
           <div class="lux-feature-content">
             <div class="lux-feature-num">04</div>
             <div class="lux-feature-eyebrow">FAQ</div>
-            <h2 class="lux-feature-title">궁금한 건 바로,<br>답변은 빠르게</h2>
-            <p class="lux-feature-desc">인사 관련 궁금증을 앱에서 직접 질문하면 인사담당자가 답변을 등록합니다. 자주 묻는 질문은 카테고리별로 정리되어 있어 언제든지 확인할 수 있습니다.</p>
+            <h2 class="lux-feature-title">자주 묻는 질문,<br>앱에서 바로 확인</h2>
+            <p class="lux-feature-desc">인사담당자가 직접 등록·관리하는 공식 FAQ를 앱에서 언제든지 확인할 수 있습니다. 연차, 증명서, 급여 등 자주 묻는 인사 관련 질문과 답변이 항상 최신 상태로 제공됩니다.</p>
             <ul class="lux-feature-list">
-              <li>연차·증명서·급여 카테고리별 FAQ</li>
-              <li>직접 질문 등록 및 답변 알림</li>
-              <li>인사담당자 실시간 답변 관리</li>
+              <li>연차·증명서·급여 주제별 FAQ</li>
+              <li>인사담당자가 직접 등록·수정·관리</li>
+              <li>노출 여부 설정으로 유연한 공개 관리</li>
             </ul>
           </div>
           <div class="lux-feature-visual">
@@ -1395,47 +797,24 @@ table.tbl tbody td{padding:13px 20px}
                   <div style="width:26px;height:26px;background:#f2f2f7;border-radius:7px;display:grid;place-items:center;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
                   </div>
-                  <span style="font-size:14px;font-weight:700;color:#111118;letter-spacing:-0.01em;">FAQ</span>
+                  <span style="font-size:14px;font-weight:700;color:#111118;letter-spacing:-0.01em;">자주 묻는 질문</span>
                 </div>
-                <!-- 탭 -->
-                <div style="background:#fff;display:flex;gap:5px;padding:8px 10px 8px;border-bottom:1px solid #e8e8ef;">
-                  <span style="padding:5px 10px;font-size:10px;font-weight:700;background:#2363a8;color:#fff;border-radius:20px;">내 질문</span>
-                  <span style="padding:5px 10px;font-size:10px;font-weight:600;color:#9898a8;background:#f2f2f7;border-radius:20px;">자주 묻는 질문</span>
-                </div>
-                <!-- 내 질문 목록 -->
+                <!-- FAQ 목록 -->
                 <div style="flex:1;overflow:hidden;padding:8px 10px;display:flex;flex-direction:column;gap:6px;">
-                  <!-- 질문 카드 1 -->
-                  <div style="background:#fff;border-radius:12px;padding:10px 11px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-                      <span style="font-size:9px;font-weight:700;background:#f2f2f7;color:#4a4a5a;padding:2px 7px;border-radius:8px;border:1px solid #e8e8ef;">연차</span>
-                      <span style="font-size:9px;font-weight:700;background:#f0fdf4;color:#16a34a;padding:2px 7px;border-radius:20px;">답변 완료</span>
-                    </div>
-                    <div style="font-size:11px;font-weight:600;color:#111118;line-height:1.4;margin-bottom:4px;">연차 신청 후 결재 전에 취소할 수 있나요?</div>
-                    <div style="font-size:9px;color:#9898a8;">4월 25일 · 답변 4월 26일</div>
+                  <!-- FAQ 항목 1 -->
+                  <div style="background:#fff;border-radius:8px;padding:10px 11px;border:1px solid #e8e8ef;">
+                    <div style="font-size:11px;font-weight:700;color:#111118;line-height:1.4;">연차는 언제부터 사용할 수 있나요?</div>
+                    <div style="font-size:10px;color:#6b7280;margin-top:5px;line-height:1.5;">입사 후 1개월 이상 근무 시 월 1일씩 발생합니다.</div>
                   </div>
-                  <!-- 질문 카드 2 -->
-                  <div style="background:#fff;border-radius:12px;padding:10px 11px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-                      <span style="font-size:9px;font-weight:700;background:#f2f2f7;color:#4a4a5a;padding:2px 7px;border-radius:8px;border:1px solid #e8e8ef;">연차</span>
-                      <span style="font-size:9px;font-weight:700;background:#fffbeb;color:#d97706;padding:2px 7px;border-radius:20px;">답변 대기</span>
-                    </div>
-                    <div style="font-size:11px;font-weight:600;color:#111118;line-height:1.4;margin-bottom:4px;">육아휴직 후 복직 시 연차 산정은 어떻게 되나요?</div>
-                    <div style="font-size:9px;color:#9898a8;">오늘 11:24 · 내가 등록</div>
+                  <!-- FAQ 항목 2 -->
+                  <div style="background:#fff;border-radius:8px;padding:10px 11px;border:1px solid #e8e8ef;">
+                    <div style="font-size:11px;font-weight:700;color:#111118;line-height:1.4;">재직증명서 발급은 얼마나 걸리나요?</div>
+                    <div style="font-size:10px;color:#6b7280;margin-top:5px;line-height:1.5;">인사담당자 확인 후 당일 발급을 원칙으로 합니다.</div>
                   </div>
-                  <!-- 질문 카드 3 -->
-                  <div style="background:#fff;border-radius:12px;padding:10px 11px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-                      <span style="font-size:9px;font-weight:700;background:#f2f2f7;color:#4a4a5a;padding:2px 7px;border-radius:8px;border:1px solid #e8e8ef;">증명서</span>
-                      <span style="font-size:9px;font-weight:700;background:#f0fdf4;color:#16a34a;padding:2px 7px;border-radius:20px;">답변 완료</span>
-                    </div>
-                    <div style="font-size:11px;font-weight:600;color:#111118;line-height:1.4;margin-bottom:4px;">경력증명서에 프로젝트 이력도 기재 가능한가요?</div>
-                    <div style="font-size:9px;color:#9898a8;">4월 24일 · 답변 4월 25일</div>
-                  </div>
-                </div>
-                <!-- 하단 + 버튼 -->
-                <div style="padding:0 10px 12px;display:flex;justify-content:flex-end;">
-                  <div style="width:36px;height:36px;background:linear-gradient(135deg,#2363a8,#558ec3);border-radius:50%;display:grid;place-items:center;box-shadow:0 4px 12px rgba(35,99,168,.4);">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <!-- FAQ 항목 3 -->
+                  <div style="background:#fff;border-radius:8px;padding:10px 11px;border:1px solid #e8e8ef;">
+                    <div style="font-size:11px;font-weight:700;color:#111118;line-height:1.4;">급여일이 주말이면 언제 입금되나요?</div>
+                    <div style="font-size:10px;color:#6b7280;margin-top:5px;line-height:1.5;">직전 영업일에 지급됩니다.</div>
                   </div>
                 </div>
               </div>
@@ -1447,10 +826,10 @@ table.tbl tbody td{padding:13px 20px}
           <div class="lux-pricing-eyebrow">PRICING</div>
           <h2 class="lux-pricing-title">투명하고, 단순한 가격</h2>
           <p class="lux-pricing-sub">숨겨진 비용 없습니다. 사용자 수만큼 정확하게.</p>
-          <div class="lux-price-grid" style="grid-template-columns:repeat(3,1fr);max-width:800px">
+          <div class="lux-price-grid">
             <div class="lux-price-card"><div class="lux-price-label">도입비</div><div class="lux-price-value">면 제</div><div class="lux-price-tag">No setup fee</div></div>
             <div class="lux-price-card"><div class="lux-price-label">월 사용료</div><div class="lux-price-value">면 제</div><div class="lux-price-tag">Zero monthly fee</div></div>
-            <div class="lux-price-card lux-price-card-main"><div class="lux-price-label">사용자당 월</div><div class="lux-price-value-main">10,000<span style="font-size:18px;font-weight:600;margin-left:4px;">원</span></div><div class="lux-price-tag">Per active user</div></div>
+            <div class="lux-price-card lux-price-card-main"><div class="lux-price-label">사용자당 월</div><div class="lux-price-value">10,000<span style="font-size:18px;font-weight:600;margin-left:4px;">원</span></div><div class="lux-price-tag">Per active user</div></div>
           </div>
         </div>
       </div>
@@ -1498,8 +877,8 @@ table.tbl tbody td{padding:13px 20px}
             <div class="step"><span class="n">2</span><div class="t">앱 설치 (또는 웹 모바일 진입)</div></div>
             <div class="step"><span class="n">3</span><div class="t">사번으로 로그인 → 바로 시작</div></div>
             <div style="display:flex;gap:8px;margin-top:20px">
-              <button class="btn">QR 다운로드</button>
-              <button class="btn">링크 복사</button>
+              <a href="#none" class="btn">QR 다운로드</a>
+              <a href="#none" class="btn">링크 복사</a>
             </div>
           </div>
         </div>
@@ -1515,9 +894,9 @@ table.tbl tbody td{padding:13px 20px}
 
           <!-- 필터 칩 -->
           <div style="padding:10px 18px;display:flex;gap:6px;border-bottom:1px solid var(--border)">
-            <button class="btn btn-sm" id="ifilter-all" onclick="setInstFilter('all')" style="background:var(--accent);color:#fff;border-color:var(--accent)">전체</button>
-            <button class="btn btn-sm" id="ifilter-not" onclick="setInstFilter('not')">미설치만</button>
-            <button class="btn btn-sm" id="ifilter-done" onclick="setInstFilter('done')">설치 완료만</button>
+            <a href="#none" class="btn btn-sm" id="ifilter-all" onclick="setInstFilter('all')" style="background:var(--accent);color:#fff;border-color:var(--accent)">전체</a>
+            <a href="#none" class="btn btn-sm" id="ifilter-not" onclick="setInstFilter('not')">미설치만</a>
+            <a href="#none" class="btn btn-sm" id="ifilter-done" onclick="setInstFilter('done')">설치 완료만</a>
           </div>
 
           <table class="tbl" id="installTable">
@@ -1545,46 +924,46 @@ table.tbl tbody td{padding:13px 20px}
         <!-- ① 상단: 연차 현황 카드 (좌: 잔여연차 / 우: QR + 칩) -->
         <div class="panel" style="margin-bottom:20px;border:1.5px solid var(--border);box-shadow:none">
           <div class="panel-body" style="padding:20px 24px">
-            <div style="display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center">
+            <div class="leave-remain-grid">
 
               <!-- 좌: 연차 수치 + 프로그레스 바 -->
               <div>
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
                   <div>
-                    <div style="font-size:11px;font-weight:700;color:var(--accent-mid);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">잔여 연차</div>
-                    <div style="display:flex;align-items:baseline;gap:4px">
-                      <span style="font-size:52px;font-weight:700;color:var(--accent);line-height:1;letter-spacing:-0.04em;font-variant-numeric:tabular-nums">11</span>
-                      <span style="font-size:18px;font-weight:600;color:var(--accent-mid);margin-left:2px">일</span>
+                    <div class="leave-card-label">잔여 연차</div>
+                    <div class="leave-num-row">
+                      <span class="leave-num-big">11</span>
+                      <span class="leave-num-unit">일</span>
                     </div>
                   </div>
-                  <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-                    <div style="background:#fff;border:1px solid var(--accent-mid);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text-secondary);white-space:nowrap">
-                      <span style="font-size:15px;font-weight:700;margin-right:3px;color:var(--accent)">15</span>총
+                  <div class="leave-stat-chips">
+                    <div class="leave-stat-chip">
+                      <span class="leave-stat-num">15</span>총
                     </div>
-                    <div style="background:#fff;border:1px solid var(--accent-mid);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text-secondary);white-space:nowrap">
-                      <span style="font-size:15px;font-weight:700;margin-right:3px;color:var(--accent)">4</span>사용
+                    <div class="leave-stat-chip">
+                      <span class="leave-stat-num">4</span>사용
                     </div>
                   </div>
                 </div>
-                <div style="height:7px;background:rgba(35,99,168,.12);border-radius:4px;overflow:hidden;border:1px solid rgba(35,99,168,.12)">
-                  <div style="width:26.7%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-mid));border-radius:4px"></div>
+                <div class="leave-progress">
+                  <div class="leave-progress-fill" style="width:26.7%"></div>
                 </div>
-                <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text-tertiary);font-weight:500">
+                <div class="leave-progress-meta">
                   <span>사용 4일</span>
                   <span>잔여 11일 / 총 15일</span>
                 </div>
               </div>
 
               <!-- 우: QR -->
-              <div style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-mid) 100%);border-radius:var(--radius-xl);padding:16px 18px;min-width:260px">
-                <div style="width:72px;height:72px;background:#fff;border-radius:9px;flex-shrink:0;display:grid;place-items:center;position:relative">
+              <div class="qr-card">
+                <div class="qr-box">
                   <svg viewBox="0 0 41 41" width="58" height="58" xmlns="http://www.w3.org/2000/svg"><rect width="41" height="41" fill="#fff"/><g fill="#0a0a0a"><rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3"/><rect x="34" y="0" width="7" height="7"/><rect x="35" y="1" width="5" height="5" fill="#fff"/><rect x="36" y="2" width="3" height="3"/><rect x="0" y="34" width="7" height="7"/><rect x="1" y="35" width="5" height="5" fill="#fff"/><rect x="2" y="36" width="3" height="3"/><rect x="9" y="2" width="2" height="2"/><rect x="13" y="2" width="2" height="2"/><rect x="17" y="2" width="2" height="2"/><rect x="22" y="2" width="2" height="2"/><rect x="9" y="9" width="3" height="3"/><rect x="14" y="9" width="2" height="2"/><rect x="23" y="9" width="3" height="2"/><rect x="29" y="9" width="3" height="3"/><rect x="9" y="14" width="2" height="2"/><rect x="18" y="14" width="2" height="2"/><rect x="29" y="14" width="2" height="2"/><rect x="9" y="18" width="3" height="2"/><rect x="18" y="18" width="3" height="2"/><rect x="28" y="18" width="3" height="3"/><rect x="9" y="22" width="2" height="3"/><rect x="22" y="22" width="3" height="2"/><rect x="29" y="22" width="2" height="2"/><rect x="9" y="27" width="3" height="2"/><rect x="23" y="27" width="2" height="3"/><rect x="28" y="27" width="3" height="2"/><rect x="9" y="31" width="2" height="2"/><rect x="13" y="31" width="3" height="3"/><rect x="23" y="31" width="3" height="2"/><rect x="29" y="31" width="2" height="3"/></g></svg>
-                  <div style="position:absolute;width:16px;height:16px;background:var(--accent);color:#fff;border-radius:3px;display:grid;place-items:center;font-size:6px;font-weight:900;box-shadow:0 0 0 2px #fff">MY</div>
+                  <div class="qr-badge">MY</div>
                 </div>
                 <div>
-                  <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:3px">모바일 앱 설치</div>
-                  <div style="font-size:10px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:6px">QR 스캔으로 언제 어디서나<br>연차·증명서 신청</div>
-                  <div style="font-size:10px;font-weight:700;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:20px;display:inline-block">my-insa.app/install</div>
+                  <div class="qr-title">모바일 앱 설치</div>
+                  <div class="qr-desc">QR 스캔으로 언제 어디서나<br>연차·증명서 신청</div>
+                  <div class="qr-link">my-insa.app/install</div>
                 </div>
               </div>
 
@@ -1621,35 +1000,35 @@ table.tbl tbody td{padding:13px 20px}
                   <tr>
                     <td>2026.05.04 (월)</td>
                     <td>연차</td>
-                    <td class="center" style="font-weight:700;color:var(--accent)">1일</td>
+                    <td class="center val-accent">1일</td>
                     <td>가족 행사</td>
                     <td class="center"><span class="badge w">대기</span></td>
                   </tr>
                   <tr>
                     <td>2026.04.15 (수)</td>
                     <td>오전 반차</td>
-                    <td class="center" style="font-weight:700;color:var(--accent)">0.5일</td>
+                    <td class="center val-accent">0.5일</td>
                     <td>병원 방문</td>
                     <td class="center"><span class="badge s">승인</span></td>
                   </tr>
                   <tr>
                     <td>2026.03.12 (목)</td>
                     <td>오전 반차</td>
-                    <td class="center" style="font-weight:700;color:var(--accent)">0.5일</td>
+                    <td class="center val-accent">0.5일</td>
                     <td>개인 사유</td>
                     <td class="center"><span class="badge s">승인</span></td>
                   </tr>
                   <tr>
                     <td>2026.01.08 (목)</td>
                     <td>연차</td>
-                    <td class="center" style="font-weight:700;color:var(--accent)">1일</td>
+                    <td class="center val-accent">1일</td>
                     <td>개인 사유</td>
                     <td class="center"><span class="badge s">승인</span></td>
                   </tr>
                   <tr>
                     <td>2025.12.24 (수)</td>
                     <td>연차</td>
-                    <td class="center" style="font-weight:700;color:var(--accent)">1일</td>
+                    <td class="center val-accent">1일</td>
                     <td>연말 휴가</td>
                     <td class="center"><span class="badge s">승인</span></td>
                   </tr>
@@ -1662,33 +1041,33 @@ table.tbl tbody td{padding:13px 20px}
           <div class="panel">
             <div class="panel-head">
               <h3>증명서 관리</h3>
-              <button class="btn btn-sm btn-primary" onclick="openEmpCertModal()">
+              <a href="#none" class="btn btn-sm btn-primary" onclick="openEmpCertModal()">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 증명서 신청
-              </button>
+              </a>
             </div>
             <div class="panel-body" style="padding:0">
               <!-- 최근 신청 내역 -->
               <div style="padding:12px 18px">
-                <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">최근 신청 내역</div>
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+                <div class="section-label">최근 신청 내역</div>
+                <div class="cert-row">
                   <div>
                     <div style="font-size:12px;font-weight:600">재직증명서</div>
-                    <div style="font-size:11px;color:var(--text-tertiary)">2026.04.29 · 은행 대출</div>
+                    <div class="item-meta">2026.04.29 · 은행 대출</div>
                   </div>
                   <span class="badge w">대기</span>
                 </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+                <div class="cert-row">
                   <div>
                     <div style="font-size:12px;font-weight:600">재직증명서</div>
-                    <div style="font-size:11px;color:var(--text-tertiary)">2026.04.01 · 관공서 제출</div>
+                    <div class="item-meta">2026.04.01 · 관공서 제출</div>
                   </div>
                   <span class="badge s">발급완료</span>
                 </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0">
+                <div class="cert-row">
                   <div>
                     <div style="font-size:12px;font-weight:600">경력증명서</div>
-                    <div style="font-size:11px;color:var(--text-tertiary)">2026.02.15 · 이직 준비</div>
+                    <div class="item-meta">2026.02.15 · 이직 준비</div>
                   </div>
                   <span class="badge s">발급완료</span>
                 </div>
@@ -1717,10 +1096,10 @@ table.tbl tbody td{padding:13px 20px}
               <option>반려</option>
             </select>
           </div>
-          <button class="btn btn-primary" onclick="openEmpCertModal()">
+          <a href="#none" class="btn btn-primary" onclick="openEmpCertModal()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             증명서 신청
-          </button>
+          </a>
         </div>
 
         <div class="table-wrap">
@@ -1738,43 +1117,43 @@ table.tbl tbody td{padding:13px 20px}
             <tbody>
               <tr>
                 <td>2026.04.29 09:14</td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td>은행 대출 신청용</td>
                 <td class="center">1</td>
                 <td class="center"><span class="badge w">대기</span></td>
-                <td><button class="btn btn-sm" onclick="showToastV7('신청이 취소되었습니다.')">신청 취소</button></td>
+                <td><a href="#none" class="btn btn-sm" onclick="showToastV7('신청이 취소되었습니다.')">신청 취소</a></td>
               </tr>
               <tr>
                 <td>2026.04.01 14:30</td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td>관공서 제출</td>
                 <td class="center">1</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="showToastV7('📄 재직증명서를 다운로드합니다.')">다운로드</button></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 재직증명서를 다운로드합니다.')">다운로드</a></td>
               </tr>
               <tr>
                 <td>2026.02.15 10:22</td>
-                <td><span class="cert-badge-경력">경력증명서</span></td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
                 <td>이직 준비</td>
                 <td class="center">2</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="showToastV7('📄 경력증명서를 다운로드합니다.')">다운로드</button></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 경력증명서를 다운로드합니다.')">다운로드</a></td>
               </tr>
               <tr>
                 <td>2025.12.10 11:05</td>
-                <td><span class="cert-badge-기타">기타증명서</span></td>
+                <td><span class="cert-badge cert-badge-other">기타증명서</span></td>
                 <td>육아휴직 신청용 근속확인서</td>
                 <td class="center">1</td>
                 <td class="center"><span class="badge s">발급완료</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="showToastV7('📄 기타증명서를 다운로드합니다.')">다운로드</button></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 기타증명서를 다운로드합니다.')">다운로드</a></td>
               </tr>
               <tr>
                 <td>2025.09.03 16:48</td>
-                <td><span class="cert-badge-재직">재직증명서</span></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
                 <td>비자 신청</td>
                 <td class="center">1</td>
                 <td class="center"><span class="badge d">반려</span></td>
-                <td><button class="btn btn-sm" onclick="openCertReasonModal('홍길동','신청하신 재직증명서는 제출처 확인이 필요합니다. 용도란에 기재하신 내용만으로는 발급이 어려우니, 제출처 기관명을 구체적으로 기재하여 재신청해 주세요.')">사유보기</button></td>
+                <td><a href="#none" class="btn btn-sm" onclick="openCertReasonModal('홍길동','신청하신 재직증명서는 제출처 확인이 필요합니다. 용도란에 기재하신 내용만으로는 발급이 어려우니, 제출처 기관명을 구체적으로 기재하여 재신청해 주세요.')">사유보기</a></td>
               </tr>
             </tbody>
           </table>
@@ -1787,56 +1166,54 @@ table.tbl tbody td{padding:13px 20px}
         <!-- topbar 대체 액션 버튼 (수정/저장/취소) -->
         <div style="display:flex;justify-content:flex-end;margin-bottom:16px;gap:8px" id="profileActions">
           <!-- 조회 모드 버튼 -->
-          <button id="profileEditBtn" class="btn" onclick="setProfileMode('edit')">
+          <a href="#none" id="profileEditBtn" class="btn" onclick="setProfileMode('edit')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             수정
-          </button>
+          </a>
           <!-- 수정 모드 버튼 (기본 숨김) -->
-          <button id="profileCancelBtn" class="btn" style="display:none" onclick="setProfileMode('view')">취소</button>
-          <button id="profileSaveBtn" class="btn btn-primary" style="display:none" onclick="saveProfile()">
+          <a href="#none" id="profileCancelBtn" class="btn" style="display:none" onclick="setProfileMode('view')">취소</a>
+          <a href="#none" id="profileSaveBtn" class="btn btn-primary" style="display:none" onclick="saveProfile()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             저장
-          </button>
+          </a>
         </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr;gap:16px">
+        <div class="profile-layout">
           <!-- 좌측: 프로필 사진 + 인사 기본 정보 -->
-          <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="flex-col">
             <div class="panel">
               <div class="panel-head"><h3>프로필 사진</h3></div>
               <div class="panel-body" style="text-align:center;padding:24px 20px">
-                <div style="position:relative;width:88px;margin:0 auto 12px;display:inline-block">
-                  <div style="width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent-mid));color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800">홍</div>
+                <div class="profile-avatar-wrap">
+                  <div class="profile-avatar">홍</div>
                   <!-- 수정 모드에서만 표시되는 카메라 아이콘 -->
-                  <button id="profilePhotoEditBtn"
+                  <a href="#none" id="profilePhotoEditBtn"
                     onclick="document.getElementById('profilePhotoInput').click()"
-                    style="display:none;position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;background:var(--surface);border:1.5px solid var(--border);place-items:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:.15s;color:var(--text-secondary)"
-                    onmouseenter="this.style.background='var(--accent)';this.style.color='#fff';this.style.borderColor='var(--accent)'"
-                    onmouseleave="this.style.background='var(--surface)';this.style.color='var(--text-secondary)';this.style.borderColor='var(--border)'">
+                    class="profile-photo-btn" style="display:none">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                  </button>
+                  </a>
                   <!-- 숨김 파일 입력 -->
                   <input type="file" id="profilePhotoInput" accept="image/*" style="display:none"
                     onchange="if(this.files&&this.files.length){showToastV7('✅ 프로필이 설정되었습니다.');this.value='';}">
                 </div>
-                <div style="font-size:15px;font-weight:800;margin-bottom:3px">홍길동</div>
+                <div class="profile-name">홍길동</div>
                 <div style="font-size:12px;color:var(--text-secondary)">마케팅팀 · 대리</div>
               </div>
             </div>
             <div class="panel">
               <div class="panel-head"><h3>인사 기본 정보</h3></div>
               <div class="panel-body" style="padding:0">
-                <div style="padding:10px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-secondary)">사번</span><strong>EMP-2103</strong></div>
-                <div style="padding:10px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-secondary)">입사일</span><strong>2021.03.02</strong></div>
-                <div style="padding:10px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-secondary)">부서</span><strong>마케팅팀</strong></div>
-                <div style="padding:10px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-secondary)">직급</span><strong>대리</strong></div>
-                <div style="padding:10px 16px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-secondary)">고용형태</span><strong>정규직</strong></div>
+                <div class="hr-info-row"><span style="color:var(--text-secondary)">사번</span><strong>EMP-2103</strong></div>
+                <div class="hr-info-row"><span style="color:var(--text-secondary)">입사일</span><strong>2021.03.02</strong></div>
+                <div class="hr-info-row"><span style="color:var(--text-secondary)">부서</span><strong>마케팅팀</strong></div>
+                <div class="hr-info-row"><span style="color:var(--text-secondary)">직급</span><strong>대리</strong></div>
+                <div class="hr-info-row"><span style="color:var(--text-secondary)">고용형태</span><strong>정규직</strong></div>
               </div>
             </div>
           </div>
 
           <!-- 우측: 개인 정보 + 내 인사 정보 -->
-          <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="flex-col">
 
             <!-- 개인 정보 패널 -->
             <div class="panel">
@@ -1845,22 +1222,22 @@ table.tbl tbody td{padding:13px 20px}
 
                 <!-- 조회 모드 -->
                 <div id="profileViewMode">
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
-                    <div style="padding:12px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
-                      <div style="font-size:11px;color:var(--text-tertiary);font-weight:600;margin-bottom:4px">이름</div>
-                      <div style="font-size:13px;font-weight:600">홍길동</div>
+                  <div class="profile-view-grid">
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">이름</div>
+                      <div class="item-title">홍길동</div>
                     </div>
-                    <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
-                      <div style="font-size:11px;color:var(--text-tertiary);font-weight:600;margin-bottom:4px">영문 이름</div>
-                      <div style="font-size:13px;font-weight:600">Hong Gil Dong</div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">영문 이름</div>
+                      <div class="item-title">Hong Gil Dong</div>
                     </div>
-                    <div style="padding:12px 16px;border-right:1px solid var(--border)">
-                      <div style="font-size:11px;color:var(--text-tertiary);font-weight:600;margin-bottom:4px">이메일</div>
-                      <div style="font-size:13px;font-weight:600">hong@company.com</div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">이메일</div>
+                      <div class="item-title">hong@company.com</div>
                     </div>
-                    <div style="padding:12px 16px">
-                      <div style="font-size:11px;color:var(--text-tertiary);font-weight:600;margin-bottom:4px">연락처</div>
-                      <div style="font-size:13px;font-weight:600">010-1234-5678</div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">연락처</div>
+                      <div class="item-title">010-1234-5678</div>
                     </div>
                   </div>
                 </div>
@@ -1896,55 +1273,55 @@ table.tbl tbody td{padding:13px 20px}
             <div class="panel">
               <div class="panel-head">
                 <h3>내 인사 정보</h3>
-                <button id="hrInfoAddBtn" class="btn btn-sm" style="display:none" onclick="openHrInfoModal()">
+                <a href="#none" id="hrInfoAddBtn" class="btn btn-sm" style="display:none" onclick="openHrInfoModal()">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   항목 추가
-                </button>
+                </a>
               </div>
               <div class="panel-body" style="padding:0">
 
                 <!-- 자격증 -->
-                <div style="padding:12px 18px;border-bottom:1px solid var(--border)">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">자격증</div>
-                  <div style="display:flex;flex-direction:column;gap:6px">
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:var(--radius-md);border:1px solid var(--border)">
-                      <div style="display:flex;align-items:center;gap:10px">
-                        <div style="width:28px;height:28px;border-radius:8px;background:#dbeafe;display:grid;place-items:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-                        <div><div style="font-size:13px;font-weight:600">정보처리기사</div><div style="font-size:11px;color:var(--text-tertiary)">한국산업인력공단 · 2020.06.05</div></div>
+                <div class="hr-section">
+                  <div class="section-label">자격증</div>
+                  <div class="hr-item-list">
+                    <div class="hr-item">
+                      <div class="hr-item-inner">
+                        <div class="hr-item-icon" style="background:#dbeafe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                        <div><div class="item-title">정보처리기사</div><div class="item-meta">한국산업인력공단 · 2020.06.05</div></div>
                       </div>
-                      <button class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','정보처리기사','한국산업인력공단','2020.06.05','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                      <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','정보처리기사','한국산업인력공단','2020.06.05','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
                     </div>
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:var(--radius-md);border:1px solid var(--border)">
-                      <div style="display:flex;align-items:center;gap:10px">
-                        <div style="width:28px;height:28px;border-radius:8px;background:#dbeafe;display:grid;place-items:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-                        <div><div style="font-size:13px;font-weight:600">SQLD (SQL 개발자)</div><div style="font-size:11px;color:var(--text-tertiary)">한국데이터산업진흥원 · 2022.09.02</div></div>
+                    <div class="hr-item">
+                      <div class="hr-item-inner">
+                        <div class="hr-item-icon" style="background:#dbeafe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                        <div><div class="item-title">SQLD (SQL 개발자)</div><div class="item-meta">한국데이터산업진흥원 · 2022.09.02</div></div>
                       </div>
-                      <button class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','SQLD (SQL 개발자)','한국데이터산업진흥원','2022.09.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                      <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','SQLD (SQL 개발자)','한국데이터산업진흥원','2022.09.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
                     </div>
                   </div>
                 </div>
 
                 <!-- 학력 -->
-                <div style="padding:12px 18px;border-bottom:1px solid var(--border)">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">학력</div>
-                  <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:var(--radius-md);border:1px solid var(--border)">
-                    <div style="display:flex;align-items:center;gap:10px">
-                      <div style="width:28px;height:28px;border-radius:8px;background:#f3e8ff;display:grid;place-items:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-                      <div><div style="font-size:13px;font-weight:600">○○대학교 컴퓨터공학과</div><div style="font-size:11px;color:var(--text-tertiary)">학사 졸업 · 2015.03 ~ 2021.02</div></div>
+                <div class="hr-section">
+                  <div class="section-label">학력</div>
+                  <div class="hr-item">
+                    <div class="hr-item-inner">
+                      <div class="hr-item-icon" style="background:#f3e8ff"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                      <div><div class="item-title">○○대학교 컴퓨터공학과</div><div class="item-meta">학사 졸업 · 2015.03 ~ 2021.02</div></div>
                     </div>
-                    <button class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('edu','○○대학교 컴퓨터공학과','학사 졸업','2015.03 ~ 2021.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                    <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('edu','○○대학교 컴퓨터공학과','학사 졸업','2015.03 ~ 2021.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
                   </div>
                 </div>
 
                 <!-- 어학 -->
-                <div style="padding:12px 18px">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">어학</div>
-                  <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:var(--radius-md);border:1px solid var(--border)">
-                    <div style="display:flex;align-items:center;gap:10px">
-                      <div style="width:28px;height:28px;border-radius:8px;background:#fef9c3;display:grid;place-items:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M21 21l-9-9M11 11l3.5 9 1.5-4 4-1.5L11 11z"/></svg></div>
-                      <div><div style="font-size:13px;font-weight:600">TOEIC 875점</div><div style="font-size:11px;color:var(--text-tertiary)">ETS · 2023.04.16 취득</div></div>
+                <div class="hr-section">
+                  <div class="section-label">어학</div>
+                  <div class="hr-item">
+                    <div class="hr-item-inner">
+                      <div class="hr-item-icon" style="background:#fef9c3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M21 21l-9-9M11 11l3.5 9 1.5-4 4-1.5L11 11z"/></svg></div>
+                      <div><div class="item-title">TOEIC 875점</div><div class="item-meta">ETS · 2023.04.16 취득</div></div>
                     </div>
-                    <button class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('lang','TOEIC 875점','ETS','2023.04.16','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                    <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('lang','TOEIC 875점','ETS','2023.04.16','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
                   </div>
                 </div>
 
@@ -1961,8 +1338,8 @@ table.tbl tbody td{padding:13px 20px}
 
 
 <!-- ===== 카카오톡 발송 모달 ===== -->
-<div class="modal-backdrop" id="kakaoModalBg" style="display:none;align-items:center;justify-content:center">
-  <div class="modal" style="width:560px;max-width:95vw">
+<div class="modal-backdrop" id="kakaoModalBg">
+  <div class="modal">
     <div class="modal-head">
       <h3 id="kakaoModalTitle">💬 카카오톡 발송</h3>
       <div class="close" onclick="closeKakaoModal()">
@@ -1986,11 +1363,11 @@ table.tbl tbody td{padding:13px 20px}
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="closeKakaoModal()">취소</button>
-      <button class="btn" style="background:#FEE500;color:#3C1E1E;border-color:#FEE500;font-weight:700" onclick="sendKakao()">
+      <a href="#none" class="btn" onclick="closeKakaoModal()">취소</a>
+      <a href="#none" class="btn" style="background:#FEE500;color:#3C1E1E;border-color:#FEE500;font-weight:700" onclick="sendKakao()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.83 1.91 5.31 4.79 6.7-.21.78-.76 2.83-.87 3.27-.14.55.2.54.42.39.18-.12 2.78-1.89 3.91-2.66.57.08 1.15.13 1.75.13 5.52 0 10-3.48 10-7.83C22 6.48 17.52 3 12 3z"/></svg>
         💬 카카오톡 발송
-      </button>
+      </a>
     </div>
   </div>
 </div>
@@ -2111,11 +1488,11 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
 
 <!-- ===== FAQ 답변 작성/보기 팝업 ===== -->
 <div class="modal-backdrop" id="faqDetailModalBg">
-  <div class="modal" style="width:680px;max-width:96vw;max-height:90vh">
+  <div class="modal modal--lg">
     <div class="modal-head">
       <div>
         <h3 id="faqDetailModalTitle">답변 작성</h3>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px" id="faqDetailModalMeta"></div>
+        <div class="item-sub" id="faqDetailModalMeta"></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span id="faqDetailBadge" class="badge w">답변 대기</span>
@@ -2133,33 +1510,33 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
       <!-- 답변 완료 시: 기존 답변 표시 -->
       <div id="faqDetailAnswerView" style="display:none;padding:18px 20px;border-bottom:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">등록된 답변</div>
+        <div class="section-label">등록된 답변</div>
         <div style="font-size:13px;color:var(--text);line-height:1.7;padding:14px;background:var(--accent-light);border-radius:8px;border:1px solid #bfd9ef" id="faqDetailAnswerText"></div>
         <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px" id="faqDetailAnswerMeta"></div>
       </div>
       <!-- 답변 대기 시: 작성 영역 -->
       <div id="faqDetailWriteArea" style="padding:18px 20px">
-        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">답변 작성 <span style="color:var(--danger)">*</span></div>
+        <div class="section-label">답변 작성 <span style="color:var(--danger)">*</span></div>
         <textarea id="faqDetailTextarea" rows="8" style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:13px;font-family:inherit;background:var(--surface);outline:none;resize:vertical;line-height:1.7;transition:.15s" placeholder="답변을 작성해주세요. 등록 시 신청자에게 즉시 알림이 발송됩니다." onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--accent-light)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'"></textarea>
         <div style="margin-top:10px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <label style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;font-size:12px;font-weight:600;border:1.5px dashed var(--border);border-radius:var(--radius-md);cursor:pointer;color:var(--text-secondary);background:var(--bg);transition:.15s;white-space:nowrap" onmouseenter="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            <label class="file-attach-label">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
               파일 첨부
               <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx" style="display:none" onchange="handleFaqAnswerFile(this,'faqDetailFileList')" />
             </label>
-            <span style="font-size:11px;color:var(--text-tertiary)">PDF · 이미지 · 문서 · 최대 10MB</span>
+            <span class="item-meta">PDF · 이미지 · 문서 · 최대 10MB</span>
           </div>
           <div id="faqDetailFileList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
         </div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="closeFaqDetailModal()">닫기</button>
-      <button class="btn btn-primary" id="faqDetailSubmitBtn" onclick="submitFaqAnswer()">
+      <a href="#none" class="btn" onclick="closeFaqDetailModal()">닫기</a>
+      <a href="#none" class="btn btn-primary" id="faqDetailSubmitBtn" onclick="submitFaqAnswer()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         답변 등록
-      </button>
+      </a>
     </div>
   </div>
 </div>
@@ -2205,11 +1582,11 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
 
 <!-- ===== 경리나라 일반근로자 불러오기 모달 (경량 UI) ===== -->
 <div class="modal-backdrop" id="importEmpModal">
-  <div class="modal" style="width:520px;max-width:92vw">
+  <div class="modal modal--md">
     <div class="modal-head">
       <div>
         <h3>경리나라 직원 불러오기</h3>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">연차 관리에 등록할 직원을 확인하세요</div>
+        <div class="item-sub">연차 관리에 등록할 직원을 확인하세요</div>
       </div>
       <div class="close" onclick="document.getElementById('importEmpModal').classList.remove('show')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -2225,61 +1602,61 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
       <!-- 직원 카드 리스트 -->
       <div style="padding:12px 20px;display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto">
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface)" id="impRow1">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">김</div>
+        <div class="list-row" id="impRow1">
+          <div class="icon-avatar icon-avatar--accent">김</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700">김지원</div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">개발팀 · 2024.01.02 입사</div>
+            <div class="item-meta-t">개발팀 · 2024.01.02 입사</div>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow1')">등록</button>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow1')">등록</a>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface)" id="impRow2">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">이</div>
+        <div class="list-row" id="impRow2">
+          <div class="icon-avatar icon-avatar--accent">이</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700">이도현</div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">영업팀 · 2024.04.10 입사</div>
+            <div class="item-meta-t">영업팀 · 2024.04.10 입사</div>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow2')">등록</button>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow2')">등록</a>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface)" id="impRow3">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">장</div>
+        <div class="list-row" id="impRow3">
+          <div class="icon-avatar icon-avatar--accent">장</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700">장하나</div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">CS팀 · 2025.08.01 입사</div>
+            <div class="item-meta-t">CS팀 · 2025.08.01 입사</div>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow3')">등록</button>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow3')">등록</a>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface)" id="impRow4">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">홍</div>
+        <div class="list-row" id="impRow4">
+          <div class="icon-avatar icon-avatar--accent">홍</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700">홍서영</div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">인사팀 · 2024.09.15 입사</div>
+            <div class="item-meta-t">인사팀 · 2024.09.15 입사</div>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow4')">등록</button>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow4')">등록</a>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface)" id="impRow5">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">최</div>
+        <div class="list-row" id="impRow5">
+          <div class="icon-avatar icon-avatar--accent">최</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700">최민준</div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">마케팅팀 · 2025.11.01 입사</div>
+            <div class="item-meta-t">마케팅팀 · 2025.11.01 입사</div>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow5')">등록</button>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow5')">등록</a>
         </div>
       </div>
     </div>
     <div class="modal-foot" style="justify-content:space-between">
-      <button class="btn" onclick="document.getElementById('importEmpModal').classList.remove('show')">닫기</button>
-      <button class="btn btn-primary" onclick="document.getElementById('importEmpModal').classList.remove('show');alert('5명 전체가 연차 관리에 등록되었습니다.')">
+      <a href="#none" class="btn" onclick="document.getElementById('importEmpModal').classList.remove('show')">닫기</a>
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('importEmpModal').classList.remove('show');alert('5명 전체가 연차 관리에 등록되었습니다.')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         전체 일괄 등록
-      </button>
+      </a>
     </div>
   </div>
 </div>
 
 <!-- ===== FAQ 수정 모달 ===== -->
 <div class="modal-backdrop" id="editFaqModal">
-  <div class="modal" style="width:520px">
+  <div class="modal modal--md">
     <div class="modal-head">
       <h3>FAQ 수정</h3>
       <div class="close" onclick="document.getElementById('editFaqModal').classList.remove('show')">
@@ -2287,15 +1664,9 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="field">
-          <label>카테고리</label>
-          <select id="editFaqCat"><option>연차</option><option>증명서</option><option>급여</option><option>기타</option></select>
-        </div>
-        <div class="field">
-          <label>노출 상태</label>
-          <select id="editFaqVisible"><option>노출 중</option><option>비노출</option></select>
-        </div>
+      <div class="field" style="margin-bottom:12px">
+        <label>노출 상태</label>
+        <select id="editFaqVisible"><option>노출 중</option><option>비노출</option></select>
       </div>
       <div class="field" style="margin-bottom:12px">
         <label>질문 <span style="color:var(--danger)">*</span></label>
@@ -2307,13 +1678,13 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-foot" style="justify-content:space-between">
-      <button class="btn" style="color:var(--danger);border-color:var(--border)" onclick="confirmFaqDelete()">
+      <a href="#none" class="btn" style="color:var(--danger);border-color:var(--border)" onclick="confirmFaqDelete()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         삭제
-      </button>
+      </a>
       <div style="display:flex;gap:8px">
-        <button class="btn" onclick="document.getElementById('editFaqModal').classList.remove('show')">취소</button>
-        <button class="btn btn-primary" onclick="saveFaqEdit()">저장</button>
+        <a href="#none" class="btn" onclick="document.getElementById('editFaqModal').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" onclick="saveFaqEdit()">저장</a>
       </div>
     </div>
   </div>
@@ -2321,7 +1692,7 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
 
 <!-- ===== FAQ 삭제 확인 모달 ===== -->
 <div class="modal-backdrop" id="deleteFaqModal">
-  <div class="modal" style="width:400px">
+  <div class="modal modal--xs">
     <div class="modal-head">
       <h3>FAQ 삭제</h3>
       <div class="close" onclick="document.getElementById('deleteFaqModal').classList.remove('show')">
@@ -2341,18 +1712,18 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="document.getElementById('deleteFaqModal').classList.remove('show');document.getElementById('editFaqModal').classList.add('show')">취소</button>
-      <button class="btn" style="background:var(--danger);color:#fff;border-color:var(--danger)" onclick="executeFaqDelete()">
+      <a href="#none" class="btn" onclick="document.getElementById('deleteFaqModal').classList.remove('show');document.getElementById('editFaqModal').classList.add('show')">취소</a>
+      <a href="#none" class="btn btn--danger" onclick="executeFaqDelete()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
         삭제 확정
-      </button>
+      </a>
     </div>
   </div>
 </div>
 
 <!-- ===== FAQ 등록 모달 ===== -->
 <div class="modal-backdrop" id="addFaqModal">
-  <div class="modal" style="width:520px">
+  <div class="modal modal--md">
     <div class="modal-head">
       <h3>FAQ 등록</h3>
       <div class="close" onclick="document.getElementById('addFaqModal').classList.remove('show')">
@@ -2360,15 +1731,9 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="field">
-          <label>카테고리</label>
-          <select><option>연차</option><option>증명서</option><option>급여</option><option>기타</option></select>
-        </div>
-        <div class="field">
-          <label>노출 상태</label>
-          <select><option>노출 중</option><option>비노출</option></select>
-        </div>
+      <div class="field" style="margin-bottom:12px">
+        <label>노출 상태</label>
+        <select><option>노출 중</option><option>비노출</option></select>
       </div>
       <div class="field" style="margin-bottom:12px">
         <label>질문 <span style="color:var(--danger)">*</span></label>
@@ -2380,39 +1745,37 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="document.getElementById('addFaqModal').classList.remove('show')">취소</button>
-      <button class="btn btn-primary" onclick="document.getElementById('addFaqModal').classList.remove('show');alert('FAQ가 등록되었습니다.')">등록</button>
+      <a href="#none" class="btn" onclick="document.getElementById('addFaqModal').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('addFaqModal').classList.remove('show');alert('FAQ가 등록되었습니다.')">등록</a>
     </div>
   </div>
 </div>
 
 <!-- ===== 업무신청관리: 발급처리 팝업 ===== -->
 <div class="modal-backdrop" id="certIssueModalBg">
-  <div class="modal" style="width:520px">
+  <div class="modal modal--md">
     <div class="modal-head">
       <div>
         <h3 id="certIssueTitle">증명서 발급 처리</h3>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px" id="certIssueMeta"></div>
+        <div class="item-sub" id="certIssueMeta"></div>
       </div>
       <div class="close" onclick="document.getElementById('certIssueModalBg').classList.remove('show')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
     </div>
     <div class="modal-body">
-      <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="flex-col">
         <div style="background:var(--info-bg);border:1px solid #bfdbfe;border-radius:var(--radius-md);padding:10px 14px;display:flex;gap:8px;font-size:12px;color:var(--info)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <span>직접 작성한 PDF 파일을 첨부하여 발급합니다. 발급 완료 시 신청자의 MY인사 앱으로 즉시 전달됩니다.</span>
         </div>
         <div>
           <label style="display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">증명서 파일 첨부 <span style="color:var(--danger)">*</span></label>
-          <div style="border:2px dashed var(--border);border-radius:var(--radius-lg);padding:24px 20px;text-align:center;cursor:pointer;background:var(--bg);transition:.2s"
-            onmouseenter="this.style.borderColor='var(--accent)';this.style.background='var(--accent-light)'"
-            onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--bg)'"
+          <div class="file-drop-zone"
             onclick="document.getElementById('certIssueFileInput').click()">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--text-tertiary);margin-bottom:8px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
             <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">PDF 파일을 클릭하여 업로드</div>
-            <div style="font-size:11px;color:var(--text-tertiary)">PDF · 최대 10MB</div>
+            <div class="item-meta">PDF · 최대 10MB</div>
             <input type="file" id="certIssueFileInput" accept=".pdf" style="display:none" onchange="handleModalIssueFile(this)" />
           </div>
           <div id="certIssueFileList" style="margin-top:8px"></div>
@@ -2424,13 +1787,13 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       </div>
     </div>
     <div class="modal-foot" style="justify-content:space-between">
-      <button class="btn" style="color:var(--danger)" onclick="document.getElementById('certIssueModalBg').classList.remove('show');document.getElementById('certRejectModalBg').classList.add('show')">반려</button>
+      <a href="#none" class="btn" style="color:var(--danger)" onclick="document.getElementById('certIssueModalBg').classList.remove('show');document.getElementById('certRejectModalBg').classList.add('show')">반려</a>
       <div style="display:flex;gap:8px">
-        <button class="btn" onclick="document.getElementById('certIssueModalBg').classList.remove('show')">취소</button>
-        <button class="btn btn-primary" style="min-width:120px" onclick="if(!document.getElementById('certIssueFileList').children.length){alert('파일을 첨부해주세요.');}else{document.getElementById('certIssueModalBg').classList.remove('show');showToastV7('✅ 발급이 완료되었습니다. 신청자에게 발송되었습니다.')}">
+        <a href="#none" class="btn" onclick="document.getElementById('certIssueModalBg').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" style="min-width:120px" onclick="if(!document.getElementById('certIssueFileList').children.length){alert('파일을 첨부해주세요.');}else{document.getElementById('certIssueModalBg').classList.remove('show');showToastV7('✅ 발급이 완료되었습니다. 신청자에게 발송되었습니다.')}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
           발급 완료
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -2438,32 +1801,32 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
 
 <!-- ===== 업무신청관리: 이력보기 팝업 ===== -->
 <div class="modal-backdrop" id="certHistoryModalBg">
-  <div class="modal" style="width:480px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <div>
         <h3 id="certHistoryTitle">발급 이력</h3>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px" id="certHistoryMeta"></div>
+        <div class="item-sub" id="certHistoryMeta"></div>
       </div>
       <div class="close" onclick="document.getElementById('certHistoryModalBg').classList.remove('show')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
     </div>
     <div class="modal-body">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:12px">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">발급 상세</div>
-        <div style="padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-secondary)">증명서 종류</span><strong id="certHistoryKind">재직증명서</strong></div>
-        <div style="padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-secondary)">신청자</span><strong id="certHistoryName2">-</strong></div>
-        <div style="padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-secondary)">발급일시</span><span id="certHistoryDate">-</span></div>
-        <div style="padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-secondary)">발급 담당자</span><span>한관리자</span></div>
-        <div style="padding:12px 16px;display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-secondary)">수령 방법</span><span>앱 내 다운로드</span></div>
+      <div class="section-card">
+        <div class="panel-section-hd">발급 상세</div>
+        <div class="info-row"><span style="color:var(--text-secondary)">증명서 종류</span><strong id="certHistoryKind">재직증명서</strong></div>
+        <div class="info-row"><span style="color:var(--text-secondary)">신청자</span><strong id="certHistoryName2">-</strong></div>
+        <div class="info-row"><span style="color:var(--text-secondary)">발급일시</span><span id="certHistoryDate">-</span></div>
+        <div class="info-row"><span style="color:var(--text-secondary)">발급 담당자</span><span>한관리자</span></div>
+        <div class="info-row"><span style="color:var(--text-secondary)">수령 방법</span><span>앱 내 다운로드</span></div>
       </div>
       <!-- 첨부파일 섹션 -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:12px" id="certHistoryFileSection">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">첨부파일</div>
+      <div class="section-card" id="certHistoryFileSection">
+        <div class="panel-section-hd">첨부파일</div>
         <div style="padding:10px 14px" id="certHistoryFileList"></div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">인사담당자 메모</div>
+        <div class="panel-section-hd">인사담당자 메모</div>
         <div style="padding:14px 16px;font-size:13px;color:var(--text);line-height:1.6" id="certHistoryMemo">요청하신 대로 발급 완료했습니다. 문의 사항 있으시면 연락주세요.</div>
       </div>
     </div>
@@ -2472,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
 
 <!-- ===== 업무신청관리: 반려 팝업 ===== -->
 <div class="modal-backdrop" id="certRejectModalBg">
-  <div class="modal" style="width:480px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <h3>신청 반려</h3>
       <div class="close" onclick="document.getElementById('certRejectModalBg').classList.remove('show')">
@@ -2491,15 +1854,15 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       <div style="font-size:12px;color:var(--text-tertiary);margin-top:8px">* 작성한 사유는 신청자에게 전달됩니다.</div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="document.getElementById('certRejectModalBg').classList.remove('show')">취소</button>
-      <button class="btn" style="background:var(--danger);color:#fff;border-color:var(--danger)" onclick="document.getElementById('certRejectModalBg').classList.remove('show');showToastV7('반려 처리가 완료되었습니다.')">반려 확정</button>
+      <a href="#none" class="btn" onclick="document.getElementById('certRejectModalBg').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn--danger" onclick="document.getElementById('certRejectModalBg').classList.remove('show');showToastV7('반려 처리가 완료되었습니다.')">반려 확정</a>
     </div>
   </div>
 </div>
 
 <!-- ===== 업무신청관리: 반려 사유 보기 팝업 ===== -->
 <div class="modal-backdrop" id="certReasonModalBg">
-  <div class="modal" style="width:440px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <h3>반려 사유</h3>
       <div class="close" onclick="document.getElementById('certReasonModalBg').classList.remove('show')">
@@ -2510,7 +1873,7 @@ document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
       <div style="background:var(--danger-bg);border:1px solid #fecaca;border-radius:var(--radius-md);padding:14px 16px;font-size:13px;color:var(--text);line-height:1.6" id="certReasonText"></div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-primary" onclick="document.getElementById('certReasonModalBg').classList.remove('show')">확인</button>
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('certReasonModalBg').classList.remove('show')">확인</a>
     </div>
   </div>
 </div>
@@ -2565,16 +1928,14 @@ function openCertHistoryModal(name, kind, date) {
     fileList.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:4px 2px">첨부파일이 없습니다.</div>';
   } else {
     fileList.innerHTML = files.map(f => `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:6px;background:var(--bg);cursor:pointer;transition:.15s"
-           onmouseenter="this.style.borderColor='var(--accent)';this.style.background='var(--accent-light)'"
-           onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--bg)'"
+      <div class="cert-file-item"
            onclick="downloadCertFile('${f.name}')">
-        <div style="width:34px;height:34px;border-radius:8px;background:var(--danger-bg);display:grid;place-items:center;flex-shrink:0">
+        <div class="cert-file-icon">
           <span style="font-size:9px;font-weight:800;color:var(--danger)">PDF</span>
         </div>
-        <div style="flex:1;min-width:0">
+        <div class="flex-1-min">
           <div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${f.size}</div>
+          <div class="item-meta-t">${f.size}</div>
         </div>
         <div style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -2611,9 +1972,9 @@ function handleModalIssueFile(input) {
       <div style="width:36px;height:36px;border-radius:8px;background:var(--danger-bg);display:grid;place-items:center;flex-shrink:0">
         <span style="font-size:10px;font-weight:800;color:var(--danger)">PDF</span>
       </div>
-      <div style="flex:1;min-width:0">
+      <div class="flex-1-min">
         <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</div>
-        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${(file.size/1024).toFixed(1)} KB</div>
+        <div class="item-meta-t">${(file.size/1024).toFixed(1)} KB</div>
       </div>
       <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--success-bg);border-radius:20px;font-size:11px;font-weight:700;color:var(--success);flex-shrink:0">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2887,11 +2248,11 @@ function handleOtherFile(input) {
       <div style="width:36px;height:36px;border-radius:8px;background:${color}20;display:grid;place-items:center;flex-shrink:0">
         <span style="font-size:10px;font-weight:800;color:${color}">${ext}</span>
       </div>
-      <div style="flex:1;min-width:0">
+      <div class="flex-1-min">
         <div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</div>
-        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${(file.size/1024).toFixed(1)} KB</div>
+        <div class="item-meta-t">${(file.size/1024).toFixed(1)} KB</div>
       </div>
-      <button onclick="this.closest('div[style]').remove();updateOtherPreviewState()" style="width:24px;height:24px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;color:var(--text-tertiary);font-size:14px;display:grid;place-items:center">×</button>
+      <a href="#none" onclick="this.closest('div[style]').remove();updateOtherPreviewState()" style="width:24px;height:24px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;color:var(--text-tertiary);font-size:14px;display:grid;place-items:center">×</a>
     `;
     list.appendChild(item);
     // 이미지면 미리보기 업데이트
@@ -3062,8 +2423,8 @@ function editTotal(td){
     const badgeClass = isPending ? 'badge w' : 'badge s';
     const statusText = isPending ? '답변 대기' : '답변 완료';
     const actionBtn = isPending
-      ? `<button class="btn btn-sm btn-primary" onclick="openFaqDetailModal('${d.n}','write')">답변 작성</button>`
-      : `<button class="btn btn-sm" onclick="openFaqDetailModal('${d.n}','view')">답변 보기</button>`;
+      ? `<a href="#none" class="btn btn-sm btn-primary" onclick="openFaqDetailModal('${d.n}','write')">답변 작성</a>`
+      : `<a href="#none" class="btn btn-sm" onclick="openFaqDetailModal('${d.n}','view')">답변 보기</a>`;
     return `<tr>
       <td>${d.dt}</td>
       <td><strong>${d.n}</strong></td>
@@ -3077,7 +2438,7 @@ function editTotal(td){
     return `<tr>
       <td><strong>${d.n}</strong></td>
       <td>${d.d}</td>
-      <td class="num editable" ondblclick="editTotal(this)" data-emp="${d.n}">${d.t}</td>
+      <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="${d.n}">${d.t}</td>
       <td class="num used">${d.u}</td>
       <td class="num remain">${d.r}</td>
       <td class="num">${d.m[0]}</td>
@@ -3093,9 +2454,9 @@ function editTotal(td){
     if(d.s === '대기') badge = 'badge w';
     else if(d.s === '반려') badge = 'badge d';
     let action = '';
-    if(d.a === 'history') action = `<button class="btn btn-sm" onclick="goPCPage('cert-history')">이력보기</button>`;
-    else if(d.a === 'reject') action = `<button class="btn btn-sm">사유보기</button>`;
-    else action = `<button class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급처리</button>`;
+    if(d.a === 'history') action = `<a href="#none" class="btn btn-sm" onclick="goPCPage('cert-history')">이력보기</a>`;
+    else if(d.a === 'reject') action = `<a href="#none" class="btn btn-sm">사유보기</a>`;
+    else action = `<a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급처리</a>`;
     return `<tr>
       <td>${d.dt}</td>
       <td><strong>${d.n}</strong> <span class="badge muted" style="margin-left:4px">${d.d}</span></td>
@@ -3193,7 +2554,7 @@ function renderInstallTable() {
       : '<span style="color:var(--text-tertiary);font-size:12px">-</span>';
     const kakaoBtn = e.installed
       ? '<span style="color:var(--text-tertiary);font-size:12px">불필요</span>'
-      : `<button class="kakao-btn" onclick="openKakaoSingle(${e.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.83 1.91 5.31 4.79 6.7-.21.78-.76 2.83-.87 3.27-.14.55.2.54.42.39.18-.12 2.78-1.89 3.91-2.66.57.08 1.15.13 1.75.13 5.52 0 10-3.48 10-7.83C22 6.48 17.52 3 12 3z"/></svg>카카오톡 발송</button>`;
+      : `<a href="#none" class="kakao-btn" onclick="openKakaoSingle(${e.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.83 1.91 5.31 4.79 6.7-.21.78-.76 2.83-.87 3.27-.14.55.2.54.42.39.18-.12 2.78-1.89 3.91-2.66.57.08 1.15.13 1.75.13 5.52 0 10-3.48 10-7.83C22 6.48 17.52 3 12 3z"/></svg>카카오톡 발송</a>`;
     return `<tr><td><strong>${e.name}</strong></td><td>${e.dept}</td><td>${e.rank}</td><td style="font-size:12px;color:var(--text-secondary)">${e.phone}</td><td class="center">${statusBadge}</td><td class="center">${lastCell}</td><td class="center">${kakaoBtn}</td></tr>`;
   }).join('');
   const notInst = installEmps.filter(e => !e.installed).length;
@@ -3224,7 +2585,7 @@ function openKakaoSingle(id) {
   document.getElementById('kakaoTargetInfo').textContent = `${emp.name} (${emp.dept} · ${emp.rank}) · ${emp.phone}`;
   document.getElementById('kakaoMsgInput').value = getDefaultKakaoMsg(emp);
   updateKakaoPreview();
-  document.getElementById('kakaoModalBg').style.display = 'flex';
+  document.getElementById('kakaoModalBg').classList.add('show');
 }
 
 function openKakaoBulk() {
@@ -3235,11 +2596,11 @@ function openKakaoBulk() {
   document.getElementById('kakaoTargetInfo').textContent = notInst.map(e => e.name).join(', ') + ` · 총 ${notInst.length}명 (미설치)`;
   document.getElementById('kakaoMsgInput').value = getDefaultKakaoMsg({name:'{이름}'});
   updateKakaoPreview();
-  document.getElementById('kakaoModalBg').style.display = 'flex';
+  document.getElementById('kakaoModalBg').classList.add('show');
 }
 
 function closeKakaoModal() {
-  document.getElementById('kakaoModalBg').style.display = 'none';
+  document.getElementById('kakaoModalBg').classList.remove('show');
 }
 
 function updateKakaoPreview() {
@@ -3296,7 +2657,7 @@ function filterFaqTable(btn, cat) {
   });
 }
 
-/* 자주 묻는 질문 카테고리 필터 */
+/* 자주 묻는 질문 필터 (미사용) */
 function filterFaqCommonTable(btn, cat) {
   btn.closest('div').querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -3308,14 +2669,10 @@ function filterFaqCommonTable(btn, cat) {
 /* FAQ 수정 팝업 열기 */
 let _faqEditTargetRow = null;
 
-function openFaqEdit(cat, q, a, btnEl) {
+function openFaqEdit(q, a, btnEl) {
   _faqEditTargetRow = btnEl ? btnEl.closest('tr') : null;
-  const catEl = document.getElementById('editFaqCat');
   const qEl = document.getElementById('editFaqQ');
   const aEl = document.getElementById('editFaqA');
-  if (catEl) {
-    Array.from(catEl.options).forEach(o => { o.selected = (o.value === cat || o.text === cat); });
-  }
   if (qEl) qEl.value = q;
   if (aEl) aEl.value = a;
   document.getElementById('editFaqModal').classList.add('show');
@@ -3359,7 +2716,7 @@ function handleIssueFile(input) {
   Array.from(input.files).forEach(file => {
     const item = document.createElement('div');
     item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:var(--radius-md);box-shadow:var(--shadow-card)';
-    item.innerHTML = `<div style="width:34px;height:34px;border-radius:8px;background:var(--danger-bg);display:grid;place-items:center;flex-shrink:0"><span style="font-size:10px;font-weight:800;color:var(--danger)">PDF</span></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${file.name}</div><div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${(file.size/1024).toFixed(1)} KB</div></div><div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--success-bg);border-radius:20px;font-size:11px;font-weight:700;color:var(--success)">✓ 첨부됨</div>`;
+    item.innerHTML = `<div class="cert-file-icon"><span style="font-size:10px;font-weight:800;color:var(--danger)">PDF</span></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${file.name}</div><div class="item-meta-t">${(file.size/1024).toFixed(1)} KB</div></div><div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--success-bg);border-radius:20px;font-size:11px;font-weight:700;color:var(--success)">✓ 첨부됨</div>`;
     list.appendChild(item);
     preview.innerHTML = `<div style="text-align:center;color:var(--text-secondary)"><div style="width:60px;height:60px;border-radius:14px;background:var(--danger-bg);display:grid;place-items:center;margin:0 auto 12px"><span style="font-size:18px;font-weight:900;color:var(--danger)">PDF</span></div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">${file.name}</div><div style="font-size:12px;color:var(--text-tertiary)">${(file.size/1024).toFixed(1)} KB · 첨부 완료</div><div style="margin-top:14px;display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:var(--success-bg);border-radius:20px;font-size:12px;font-weight:700;color:var(--success)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>파일 첨부됨</div></div>`;
   });
@@ -3465,7 +2822,7 @@ function handleFaqAnswerFile(input, listId) {
     const color = extColors[ext] || 'var(--text-tertiary)';
     const tag = document.createElement('div');
     tag.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;color:var(--text-secondary)';
-    tag.innerHTML = `<span style="font-size:9px;font-weight:800;color:${color};background:${color}22;padding:1px 5px;border-radius:3px">${ext}</span><span style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</span><button onclick="this.closest('div').remove()" style="width:14px;height:14px;border:none;background:none;cursor:pointer;color:var(--text-tertiary);font-size:14px;line-height:1;padding:0">×</button>`;
+    tag.innerHTML = `<span style="font-size:9px;font-weight:800;color:${color};background:${color}22;padding:1px 5px;border-radius:3px">${ext}</span><span style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</span><a href="#none" onclick="this.closest('div').remove()" style="width:14px;height:14px;border:none;background:none;cursor:pointer;color:var(--text-tertiary);font-size:14px;line-height:1;padding:0">×</a>`;
     list.appendChild(tag);
   });
   input.value = '';
@@ -3616,7 +2973,7 @@ function importSingle(btn, rowId) {
 
 <!-- ===== 직원용: 증명서 신청 팝업 ===== -->
 <div class="modal-backdrop" id="empCertStep1Bg">
-  <div class="modal" style="width:460px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <h3>증명서 신청 — 종류 선택</h3>
       <div class="close" onclick="closeEmpCertModal()">
@@ -3624,47 +2981,47 @@ function importSingle(btn, rowId) {
       </div>
     </div>
     <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px">
-      <button class="btn" style="justify-content:flex-start;gap:14px;height:56px;padding:0 16px" onclick="openEmpCertStep2('재직증명서')">
-        <div style="width:36px;height:36px;border-radius:10px;background:#dbeafe;display:grid;place-items:center;flex-shrink:0">
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('재직증명서')">
+        <div class="icon-avatar" style="background:#dbeafe">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         </div>
         <div style="text-align:left">
           <div style="font-size:14px;font-weight:700">재직증명서</div>
-          <div style="font-size:11px;color:var(--text-tertiary)">현재 재직 사실을 증명하는 문서 · 국문/영문</div>
+          <div class="item-meta">현재 재직 사실을 증명하는 문서 · 국문/영문</div>
         </div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="margin-left:auto;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="btn" style="justify-content:flex-start;gap:14px;height:56px;padding:0 16px" onclick="openEmpCertStep2('경력증명서')">
-        <div style="width:36px;height:36px;border-radius:10px;background:#fce7f3;display:grid;place-items:center;flex-shrink:0">
+      </a>
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('경력증명서')">
+        <div class="icon-avatar" style="background:#fce7f3">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9d174d" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
         </div>
         <div style="text-align:left">
           <div style="font-size:14px;font-weight:700">경력증명서</div>
-          <div style="font-size:11px;color:var(--text-tertiary)">입사일·직위·담당업무 등 경력 증명 · 국문/영문</div>
+          <div class="item-meta">입사일·직위·담당업무 등 경력 증명 · 국문/영문</div>
         </div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="margin-left:auto;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="btn" style="justify-content:flex-start;gap:14px;height:56px;padding:0 16px" onclick="openEmpCertStep2('기타증명서')">
-        <div style="width:36px;height:36px;border-radius:10px;background:#d1fae5;display:grid;place-items:center;flex-shrink:0">
+      </a>
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('기타증명서')">
+        <div class="icon-avatar" style="background:#d1fae5">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
         </div>
         <div style="text-align:left">
           <div style="font-size:14px;font-weight:700">기타증명서</div>
-          <div style="font-size:11px;color:var(--text-tertiary)">근속확인서, 급여확인서 등 기타 문서</div>
+          <div class="item-meta">근속확인서, 급여확인서 등 기타 문서</div>
         </div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="margin-left:auto;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      </a>
     </div>
   </div>
 </div>
 
 <!-- 증명서 신청 Step 2: 용도/메모 입력 -->
 <div class="modal-backdrop" id="empCertStep2Bg">
-  <div class="modal" style="width:480px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <div>
         <h3 id="empCertStep2Title">재직증명서 신청</h3>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">신청 정보를 입력해주세요</div>
+        <div class="item-sub">신청 정보를 입력해주세요</div>
       </div>
       <div class="close" onclick="closeEmpCertModal()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -3681,18 +3038,18 @@ function importSingle(btn, rowId) {
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="closeEmpCertModal()">취소</button>
-      <button class="btn btn-primary" onclick="submitEmpCert()">
+      <a href="#none" class="btn" onclick="closeEmpCertModal()">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="submitEmpCert()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         신청하기
-      </button>
+      </a>
     </div>
   </div>
 </div>
 
 <!-- ===== 직원용: 인사정보 항목 추가 팝업 ===== -->
 <div class="modal-backdrop" id="hrInfoModalBg">
-  <div class="modal" style="width:480px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <h3>인사 정보 추가</h3>
       <div class="close" onclick="document.getElementById('hrInfoModalBg').classList.remove('show')">
@@ -3739,8 +3096,8 @@ function importSingle(btn, rowId) {
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="document.getElementById('hrInfoModalBg').classList.remove('show')">취소</button>
-      <button class="btn btn-primary" onclick="submitHrInfo()">저장</button>
+      <a href="#none" class="btn" onclick="document.getElementById('hrInfoModalBg').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="submitHrInfo()">저장</a>
     </div>
   </div>
 </div>
@@ -3836,7 +3193,7 @@ function submitHrInfo() {
 
 <!-- ===== 내 인사 정보 수정 모달 ===== -->
 <div class="modal-backdrop" id="hrEditModalBg">
-  <div class="modal" style="width:480px">
+  <div class="modal modal--sm">
     <div class="modal-head">
       <h3 id="hrEditModalTitle">항목 수정</h3>
       <div class="close" onclick="document.getElementById('hrEditModalBg').classList.remove('show')">
@@ -3866,13 +3223,13 @@ function submitHrInfo() {
       </div>
     </div>
     <div class="modal-foot" style="justify-content:space-between">
-      <button class="btn" style="color:var(--danger)" onclick="document.getElementById('hrEditModalBg').classList.remove('show');showToastV7('항목이 삭제되었습니다.')">
+      <a href="#none" class="btn" style="color:var(--danger)" onclick="document.getElementById('hrEditModalBg').classList.remove('show');showToastV7('항목이 삭제되었습니다.')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
         삭제
-      </button>
+      </a>
       <div style="display:flex;gap:8px">
-        <button class="btn" onclick="document.getElementById('hrEditModalBg').classList.remove('show')">취소</button>
-        <button class="btn btn-primary" onclick="saveHrEdit()">저장</button>
+        <a href="#none" class="btn" onclick="document.getElementById('hrEditModalBg').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" onclick="saveHrEdit()">저장</a>
       </div>
     </div>
   </div>
@@ -3912,3 +3269,10 @@ function saveHrEdit() {
 
 </body>
 </html>
+
+
+
+
+
+
+
