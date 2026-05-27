@@ -1985,12 +1985,6 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
         <div class="title">연차 사용내역</div>
       </div>
 
-      <div class="tabs-filter">
-        <span class="tab-pill active">전체</span>
-        <span class="tab-pill">연차</span>
-        <span class="tab-pill">반차</span>
-      </div>
-
       <div style="background:var(--surface);border-top:1px solid var(--border);">
 
         <div class="date-section" style="background:var(--bg);padding:6px 20px;font-size:11px;font-weight:600;color:var(--text-tertiary)">2026.05.04 (월)</div>
@@ -4531,6 +4525,10 @@ function goPostList(boardName, isFaqBoard, newCount){
   }
   // 게시글 상세 내용은 openPost() 호출 시 세팅
   showScreen('post-list');
+  // 인사 FAQ는 더보기에서 진입 → 더보기 탭 강조 유지
+  if(isFaqBoard){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==='more'));
+  }
 }
 
 /* ── 게시글 상세 데이터 (게시글 ID별) ── */
@@ -4779,6 +4777,10 @@ function openPost(postId) {
   _currentPostId = postId;
   _renderPostDetail(postId, _currentBoardName);
   showScreen('post-detail');
+  // 인사 FAQ에서 진입한 경우 더보기 탭 강조 유지
+  if(_currentIsFaqBoard){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==='more'));
+  }
 }
 
 

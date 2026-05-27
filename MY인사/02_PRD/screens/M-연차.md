@@ -45,8 +45,8 @@
 | 항목 | 내용 |
 |------|------|
 | **진입 조건** | `leave-approval` → 연차 사용내역 섹션 [전체 보기] 탭 |
-| **UI 요소** | 상단 뒤로가기 + '연차 사용내역' / 필터 탭(전체·연차·반차) / 이력 목록(날짜 섹션 헤더 + 구분선형 행: 문서 구분·종류·일수·상신일·결재자·상태 뱃지·화살표) |
-| **사용자 액션** | 필터 탭 전환 → 해당 종류만 표시 / 이력 행 탭 → 진행중: `leave-detail-wait` / 승인: `leave-detail-done` / 반려: `leave-detail-reject` |
+| **UI 요소** | 상단 뒤로가기 + '연차 사용내역' / 이력 목록(날짜 섹션 헤더 + 구분선형 행: 문서 구분·종류·일수·상신일·결재자·상태 뱃지·화살표) |
+| **사용자 액션** | 이력 행 탭 → 진행중: `leave-detail-wait` / 승인: `leave-detail-done` / 반려: `leave-detail-reject` |
 | **다음 화면** | `leave-detail-wait` (M-015), `leave-detail-done` (M-016), `leave-detail-reject` (M-017) |
 
 ### M-011 연차 신청 (`leave-apply`)
