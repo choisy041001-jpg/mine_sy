@@ -1961,9 +1961,12 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
               <div style="font-size:10px;color:var(--text-tertiary);margin-top:1px">1차 결재</div>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;gap:5px">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            결재선은 경리나라를 기준으로 자동 지정됩니다
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;justify-content:space-between;gap:5px">
+            <span style="display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              결재선은 경리나라를 기준으로 자동 지정됩니다
+            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;flex-shrink:0" onclick="openApprovalLinePopup()">결재선 변경</span>
           </div>
         </div>
       </div>
@@ -2142,9 +2145,12 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
               <div style="font-size:10px;color:var(--text-tertiary);margin-top:1px">1차 결재</div>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;gap:5px">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            결재선은 경리나라를 기준으로 자동 지정됩니다
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;justify-content:space-between;gap:5px">
+            <span style="display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              결재선은 경리나라를 기준으로 자동 지정됩니다
+            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;flex-shrink:0" onclick="openApprovalLinePopup()">결재선 변경</span>
           </div>
         </div>
       </div>
@@ -2251,9 +2257,12 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
               <div style="font-size:10px;color:var(--text-tertiary);margin-top:1px">1차 결재</div>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;gap:5px">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            결재선은 경리나라를 기준으로 자동 지정됩니다
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:7px;display:flex;align-items:center;justify-content:space-between;gap:5px">
+            <span style="display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              결재선은 경리나라를 기준으로 자동 지정됩니다
+            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;flex-shrink:0" onclick="openApprovalLinePopup()">결재선 변경</span>
           </div>
         </div>
       </div>
@@ -3196,8 +3205,12 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
         </div>
 
         <div class="form-section">
-          <label class="form-label">사용일자 <span class="req">*</span></label>
-          <input class="form-input" type="date" value="2026-04-24" />
+          <label class="form-label">사용일시 <span class="req">*</span></label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="form-input" type="date" value="2026-04-24" style="flex:1.4" />
+            <input class="form-input" type="time" value="19:30" style="flex:1" />
+          </div>
+          <div class="form-hint">날짜와 시간을 선택하세요</div>
         </div>
 
         <div class="form-section">
@@ -3223,8 +3236,9 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
         </div>
 
         <div class="form-section">
-          <label class="form-label">용도 <span class="req">*</span></label>
+          <label class="form-label">용도</label>
           <select class="form-select">
+            <option value="">선택 안함 (선택)</option>
             <option>거래처 식대</option>
             <option>회의 다과</option>
             <option>야근 교통</option>
@@ -3240,7 +3254,7 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
         </div>
 
         <div class="form-section">
-          <label class="form-label">지급처 <span class="req">*</span></label>
+          <label class="form-label">지급처 <span style="font-size:11px;font-weight:400;color:var(--text-tertiary)">(선택)</span></label>
           <div class="form-chip-row" id="payeeChipRow">
             <button class="form-chip active" id="payeeChipEmp" onclick="selectPayeeChip('emp')">직원</button>
             <button class="form-chip" id="payeeChipBiz" onclick="selectPayeeChip('biz')">거래처</button>
@@ -3508,7 +3522,10 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
         </div>
 
         <div class="form-section" style="border-bottom:none">
-          <label class="form-label">결재선 <span style="font-size:11px;font-weight:400;color:var(--text-tertiary)">(경리나라 자동 지정)</span></label>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <label class="form-label" style="margin-bottom:0">결재선 <span style="font-size:11px;font-weight:400;color:var(--text-tertiary)">(경리나라 자동 지정)</span></label>
+            <span style="font-size:12px;font-weight:600;color:var(--accent);cursor:pointer" onclick="openApprovalLinePopup()">결재선 변경</span>
+          </div>
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">
             <span style="font-size:11px;color:var(--text-tertiary);font-weight:500">신청자</span>
             <span style="font-weight:500">홍길동</span>
@@ -4325,6 +4342,37 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto
       <div id="workplaceList" style="padding:12px;max-height:280px;overflow-y:auto;"></div>
       <div style="padding:4px 12px 12px;">
         <button onclick="closeWorkplacePopup()" style="width:100%;height:44px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;color:var(--text-secondary);cursor:pointer;font-family:inherit;">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 결재선 변경 팝업 ============ -->
+  <div id="approvalLinePopup" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;border-radius:44px;overflow:hidden;">
+    <div style="background:#fff;border-radius:20px;width:calc(100% - 40px);max-width:300px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.22);animation:fadeScaleIn .2s ease-out;">
+      <div style="padding:20px 20px 14px;border-bottom:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">결재선 선택</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.02em;">결재선을 선택하세요</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">경리나라에 등록된 결재선 중 하나를 선택하세요</div>
+      </div>
+      <div style="padding:12px;">
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer;background:var(--accent-light);margin-bottom:6px" onclick="selectApprovalLine(this)">
+          <input type="radio" name="approvalLine" checked style="accent-color:var(--accent);width:16px;height:16px;flex-shrink:0" />
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">기본 결재선</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:1px">홍길동 → 김팀장</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer" onclick="selectApprovalLine(this)">
+          <input type="radio" name="approvalLine" style="accent-color:var(--accent);width:16px;height:16px;flex-shrink:0" />
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">임원 결재선</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:1px">홍길동 → 김팀장 → 이대표</div>
+          </div>
+        </label>
+      </div>
+      <div style="padding:4px 12px 14px;display:flex;gap:8px;">
+        <button onclick="closeApprovalLinePopup()" style="flex:1;height:44px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;color:var(--text-secondary);cursor:pointer;font-family:inherit;">취소</button>
+        <button onclick="closeApprovalLinePopup();showToast('✅ 결재선이 변경되었습니다')" style="flex:1;height:44px;background:var(--accent);border:none;border-radius:12px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit;">확인</button>
       </div>
     </div>
   </div>
@@ -6231,6 +6279,22 @@ function openLogoutConfirm() {
 function closeLogoutConfirm() {
   const el = document.getElementById('logoutConfirmOverlay');
   if(el) el.style.display = 'none';
+}
+
+/* ===== 결재선 변경 팝업 ===== */
+function openApprovalLinePopup() {
+  const el = document.getElementById('approvalLinePopup');
+  if(el) { el.style.display = 'flex'; }
+}
+function closeApprovalLinePopup() {
+  const el = document.getElementById('approvalLinePopup');
+  if(el) { el.style.display = 'none'; }
+}
+function selectApprovalLine(label) {
+  document.querySelectorAll('#approvalLinePopup label').forEach(l => {
+    l.style.background = '';
+  });
+  label.style.background = 'var(--accent-light)';
 }
 
 /* ===== 삭제 확인 ===== */
