@@ -36,9 +36,9 @@
 | 항목 | 내용 |
 |------|------|
 | **진입 조건** | 하단 탭바 '연차' 탭 |
-| **UI 요소** | 상단 타이틀 '연차 관리' + 부제('연차 신청 및 사용 내역') / 잔여 연차 현황 카드(잔여 일수 대형 숫자·총 연차·사용 일수·프로그레스 바) / 연차 사용내역 섹션(최근 3건 목록 + [전체 보기] 탭 → `leave-history`) / 결재 현황 카드 목록(휴가신청서/연차사용계획서 구분·날짜·종류·일수·상신일·결재자·상태 뱃지: 진행중/승인/반려) / 연차 FAB(+): 연차 신청·취소 신청·연차사용계획서 |
-| **사용자 액션** | [전체 보기] 탭 → `leave-history` / 진행중 카드 탭 → `leave-detail-wait` / 승인 카드 탭 → `leave-detail-done` / 반려 카드 탭 → `leave-detail-reject` / FAB → 연차 신청 → `leave-apply` / FAB → 취소 신청 → `leave-cancel` / FAB → 연차사용계획서 → `leave-plan` |
-| **다음 화면** | `leave-history` (M-012), `leave-detail-wait` (M-015), `leave-detail-done` (M-016), `leave-detail-reject` (M-017), `leave-apply` (M-011), `leave-cancel` (M-014), `leave-plan` (M-013) |
+| **UI 요소** | 상단 타이틀 '연차 관리' + 부제('연차 신청 및 사용 내역') / 잔여 연차 현황 카드(잔여 일수 대형 숫자·총 연차·사용 일수·프로그레스 바) / 연차 이력 인라인 목록(구분선형 행: 문서명·종류·일수·상신일·결재자·상태 뱃지·화살표 — 헤더 없음) / 연차 FAB(+): 연차 신청·취소 신청·연차사용계획서 |
+| **사용자 액션** | 이력 행 탭 → 진행중: `leave-detail-wait` / 승인: `leave-detail-done` / 반려: `leave-detail-reject` / FAB → 연차 신청 → `leave-apply` / FAB → 취소 신청 → `leave-cancel` / FAB → 연차사용계획서 → `leave-plan` |
+| **다음 화면** | `leave-detail-wait` (M-015), `leave-detail-done` (M-016), `leave-detail-reject` (M-017), `leave-apply` (M-011), `leave-cancel` (M-014), `leave-plan` (M-013) |
 
 ### M-012 연차 사용내역 (`leave-history`)
 
