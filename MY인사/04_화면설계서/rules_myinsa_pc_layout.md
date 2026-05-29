@@ -214,9 +214,13 @@
     <div class="nav-item" data-page="leave" onclick="goPage(this)">
       <svg .../>
       연차 관리
-      <span class="count">4</span>   <!-- 뱃지 카운트 (선택적) -->
     </div>
-    <!-- cert, faq ... -->
+    <div class="nav-item" data-page="cert" onclick="goPage(this)">
+      <svg .../>
+      업무신청관리
+      <span class="count">3</span>   <!-- 뱃지 카운트: 업무신청관리에만 표시 (처리 상태 '대기' 건수) -->
+    </div>
+    <!-- faq ... -->
   </div>
 
   <!-- 구분선 (관리자 모드에서만 표시) -->
@@ -240,6 +244,8 @@
 | `.nav-item.active` | `background:var(--accent-light)`, `color:var(--accent)`, `font-weight:700` |
 | `.nav-item svg` | `16×16px`, `flex-shrink:0` |
 | `.count` | `font-size:11px`, `background:var(--accent-light)`, `color:var(--accent)`, `padding:1px 7px`, `border-radius:20px` |
+
+> **숫자 뱃지(`.count`) 표시 규칙**: 좌측 메뉴 숫자 뱃지는 **업무신청관리(`cert`)** 메뉴에만 표시한다. 값은 업무신청관리 처리 상태 **'대기'** 건수와 동일. **'대기' 건수가 0건이면 뱃지를 숨기지 않고 `0`으로 표시한다.** **연차 관리(`leave`)·FAQ 관리(`faq`)** 메뉴에는 숫자 뱃지를 표시하지 않는다.
 
 ### 3-4. 하단 고정 메뉴 (#navBottom)
 

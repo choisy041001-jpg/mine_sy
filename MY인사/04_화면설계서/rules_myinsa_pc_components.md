@@ -507,18 +507,18 @@ table.tbl tbody tr:hover .col-sticky-r { background:var(--accent-light) }
 <div class="kpi-grid">   <!-- grid-template-columns:repeat(4,1fr); gap:12px -->
 
   <div class="kpi kpi-leave" onclick="goPageByName('leave')">
-    <div class="label">대기중 연차 결재</div>
+    <div class="label">승인할 연차</div>
     <div class="value">4</div>
-  </div>
-
-  <div class="kpi kpi-faq" onclick="goPageByName('faq')">
-    <div class="label">미답변 FAQ</div>
-    <div class="value">3</div>
   </div>
 
   <div class="kpi kpi-cert" onclick="goPageByName('cert')">
     <div class="label">미처리 증명서</div>
     <div class="value">3</div>
+  </div>
+
+  <div class="kpi kpi-faq" onclick="goPageByName('faq')">
+    <div class="label">노출중인 질문</div>
+    <div class="value">4</div>
   </div>
 
   <div class="kpi kpi-total">
