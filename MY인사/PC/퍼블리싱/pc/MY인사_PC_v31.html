@@ -1,0 +1,3241 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY인사</title>
+<link rel="stylesheet" href="../_common/my_tokens.css">
+<link rel="stylesheet" href="my_cont.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+
+    <!-- 브랜드 -->
+    <div class="brand">
+      <div class="logo">MY</div>
+      <div><div class="name">MY인사</div></div>
+    </div>
+
+    <!-- 프로필 스위처 -->
+    <div class="sb-profile" id="sbProfile" onclick="toggleSbDropdown()">
+      <div class="sbp-avatar" id="sbpAvatar">한</div>
+      <div class="sbp-info">
+        <div class="sbp-name" id="sbpName">한관리자</div>
+        <div class="sbp-role" id="sbpRole">인사팀 · 팀장 · 관리자</div>
+      </div>
+      <svg class="sbp-arrow" id="sbpArrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- 드롭다운 -->
+      <div class="sbp-dropdown" id="sbpDropdown" onclick="event.stopPropagation()">
+        <div class="sbp-option selected" id="sbpOptAdmin" onclick="switchRole('admin')">
+          <div class="sbo-avatar">한</div>
+          <div class="sbo-info">
+            <div class="sbo-name">한관리자</div>
+            <div class="sbo-sub">인사팀 · 팀장 · 관리자 계정</div>
+          </div>
+          <svg class="sbo-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="sbp-option" id="sbpOptEmp" onclick="switchRole('emp')">
+          <div class="sbo-avatar">홍</div>
+          <div class="sbo-info">
+            <div class="sbo-name">홍길동</div>
+            <div class="sbo-sub">마케팅팀 · 대리 · 직원 계정</div>
+          </div>
+          <svg class="sbo-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <!-- 관리자용 그룹 -->
+      <div class="nav-group" id="navAdmin">
+        <div class="nav-label">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          관리자용
+        </div>
+        <div class="nav-item active" data-page="dashboard" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          대시보드
+        </div>
+        <div class="nav-item" data-page="leave" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          연차 관리
+          <span class="count">4</span>
+        </div>
+        <div class="nav-item" data-page="cert" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          업무신청관리
+          <span class="count">3</span>
+        </div>
+        <div class="nav-item" data-page="faq" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
+          FAQ 관리
+          <span class="count">3</span>
+        </div>
+      </div>
+
+      <!-- 구분선 (관리자 모드에서만 표시) -->
+      <div id="navDivider" class="nav-divider"></div>
+
+      <!-- 직원용 그룹 -->
+      <div class="nav-group" id="navEmp">
+        <div class="nav-label">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          직원용
+        </div>
+        <div class="nav-item" data-page="emp-dashboard" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          대시보드
+        </div>
+        <div class="nav-item" data-page="emp-cert" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          업무신청
+        </div>
+        <div class="nav-item" data-page="emp-profile" onclick="goPage(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          프로필 관리
+        </div>
+      </div>
+    </nav>
+
+    <!-- 하단 고정 기타 메뉴 (관리자 모드에서만) -->
+    <div id="navBottom" class="nav-bottom">
+      <div class="nav-item" data-page="intro" onclick="goPage(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        MY인사 소개
+      </div>
+      <div class="nav-item" data-page="onboard" onclick="goPage(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        모바일 안내
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== RESIZE HANDLE ===== -->
+  <div class="resizer" id="resizer"></div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">대시보드</h1>
+        <div class="crumb" id="pageCrumb">관리자 / 대시보드</div>
+      </div>
+      <div class="topbar-actions">
+        <input class="search-input" placeholder="직원·게시글·증명서 검색" />
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="page active" data-page="dashboard">
+        <div class="kpi-grid">
+          <div class="kpi kpi-leave" onclick="goPageByName('leave')" title="연차 관리로 이동">
+            <div class="label">대기중 연차 결재</div>
+            <div class="value">4</div>
+          </div>
+          <div class="kpi kpi-faq" onclick="goPageByName('faq')" title="FAQ 답변 관리로 이동">
+            <div class="label">미답변 FAQ</div>
+            <div class="value">3</div>
+          </div>
+          <div class="kpi kpi-cert" onclick="goPageByName('cert')" title="업무신청관리로 이동">
+            <div class="label">미처리 증명서</div>
+            <div class="value">3</div>
+          </div>
+          <div class="kpi kpi-total" title="전체 직원 현황">
+            <div class="label">총 직원수</div>
+            <div class="value">9</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>미처리 업무 (10)</h3>
+            </div>
+            <div class="p-0">
+              <!-- 알림: 미답변 FAQ 1 -->
+              <div class="alert-row" onclick="openFaqDetailModal('홍길동','write')">
+                <div class="alert-icon faq">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">육아휴직 후 복직 시 연차 산정은 어떻게 되나요?</div>
+                  <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 2시간 전</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="openFaqDetailModal('홍길동','write')">답변</a>
+                </div>
+              </div>
+              <!-- 알림: 미답변 FAQ 2 -->
+              <div class="alert-row" onclick="openFaqDetailModal('박직원','write')">
+                <div class="alert-icon faq">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">영문 재직증명서에 직인 외 추가 서명도 가능한가요?</div>
+                  <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 4시간 전</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="openFaqDetailModal('박직원','write')">답변</a>
+                </div>
+              </div>
+              <!-- 알림: 미답변 FAQ 3 -->
+              <div class="alert-row" onclick="openFaqDetailModal('최사원','write')">
+                <div class="alert-icon faq">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h0"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">급여명세서를 PDF로 받을 수 있나요?</div>
+                  <div class="alert-meta"><strong>최사원</strong> · CS팀 · 어제 09:42</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="openFaqDetailModal('최사원','write')">답변</a>
+                </div>
+              </div>
+              <!-- 알림 1: 증명서 대기 -->
+              <div class="alert-row" onclick="goPCPage('cert-issue')">
+                <div class="alert-icon cert">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">재직증명서 발급 요청</div>
+                  <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 2시간 전</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
+                </div>
+              </div>
+
+              <!-- 알림 2: 연차 대기 -->
+              <div class="alert-row" onclick="goPCPage('leave')">
+                <div class="alert-icon leave">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">연차 신청 — 5/4 (1일)</div>
+                  <div class="alert-meta"><strong>홍길동</strong> · 마케팅팀 · 3시간 전</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary">승인</a>
+                </div>
+              </div>
+
+              <!-- 알림 3: 증명서 대기 -->
+              <div class="alert-row" onclick="goPCPage('cert-issue')">
+                <div class="alert-icon cert">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">경력증명서 발급 요청 (영문)</div>
+                  <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 어제 17:30</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
+                </div>
+              </div>
+
+              <!-- 알림 4: 연차 대기 -->
+              <div class="alert-row" onclick="goPCPage('leave')">
+                <div class="alert-icon leave">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">반차 신청 — 5/2 오후</div>
+                  <div class="alert-meta"><strong>박직원</strong> · 개발팀 · 어제 16:14</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary">승인</a>
+                </div>
+              </div>
+
+              <!-- 알림 5: 연차 대기 -->
+              <div class="alert-row" onclick="goPCPage('leave')">
+                <div class="alert-icon leave">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">연차 신청 — 5/6~5/8 (3일)</div>
+                  <div class="alert-meta"><strong>이대리</strong> · CS팀 · 어제 10:24</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary">승인</a>
+                </div>
+              </div>
+              <!-- 알림 6: 증명서 대기 -->
+              <div class="alert-row" onclick="goPCPage('cert-issue')">
+                <div class="alert-icon cert">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">기타증명서 발급 요청 (근속확인서)</div>
+                  <div class="alert-meta"><strong>김팀장</strong> · 마케팅팀 · 어제 14:05</div>
+                </div>
+                <div class="alert-actions" onclick="event.stopPropagation()">
+                  <a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 직원 현황 -->
+          <div class="panel panel--start">
+            <div class="panel-head">
+              <h3>직원 현황</h3>
+            </div>
+            <div class="emp-tab-bar">
+              <a href="#none" class="emp-tab-btn active" onclick="filterEmpStatus(this,'all')" data-status="all">전체 <span class="emp-tab-count">9</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'재직')" data-status="재직">재직 <span class="emp-tab-count">8</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'휴직')" data-status="휴직">휴직 <span class="emp-tab-count">1</span></a>
+              <a href="#none" class="emp-tab-btn" onclick="filterEmpStatus(this,'퇴사')" data-status="퇴사">퇴직 <span class="emp-tab-count">1</span></a>
+            </div>
+            <div class="emp-tbl-wrap">
+            <table class="tbl emp-tbl" id="empStatusTable">
+              <thead>
+                <tr>
+                  <th style="width:100px">이름</th>
+                  <th style="width:110px">부서</th>
+                  <th style="width:100px">직급</th>
+                  <th style="width:110px">입사일</th>
+                  <th style="width:130px">연락처</th>
+                  <th class="center" style="width:70px">상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-emp-status="재직">
+                  <td><strong>홍길동</strong></td><td>마케팅팀</td><td>대리</td><td>2024.03.04</td><td>010-1234-5678</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>박직원</strong></td><td>개발팀</td><td>주임</td><td>2023.07.15</td><td>010-2345-6789</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>이대리</strong></td><td>CS팀</td><td>대리</td><td>2022.01.10</td><td>010-3456-7890</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>최사원</strong></td><td>CS팀</td><td>사원</td><td>2025.09.01</td><td>010-4567-8901</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>김팀장</strong></td><td>마케팅팀</td><td>팀장</td><td>2019.04.22</td><td>010-5678-9012</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>한과장</strong></td><td>개발팀</td><td>과장</td><td>2020.11.03</td><td>010-6789-0123</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>정사원</strong></td><td>영업팀</td><td>사원</td><td>2023.03.20</td><td>010-9012-3456</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="재직">
+                  <td><strong>오주임</strong></td><td>영업팀</td><td>주임</td><td>2021.08.09</td><td>010-0123-4567</td>
+                  <td class="center"><span class="badge s">재직</span></td>
+                </tr>
+                <tr data-emp-status="휴직">
+                  <td><strong>강주임</strong></td><td>인사팀</td><td>주임</td><td>2023.05.18</td><td>010-7890-1234</td>
+                  <td class="center"><span class="badge w">휴직</span></td>
+                </tr>
+                <tr data-emp-status="퇴사">
+                  <td><strong>윤사원</strong></td><td>마케팅팀</td><td>사원</td><td>2024.06.01</td><td>010-8901-2345</td>
+                  <td class="center"><span class="badge d">퇴사</span></td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== LEAVE MGMT (v4.0 형태 + 총연차 더블클릭 편집) ===== -->
+      <div class="page" data-page="leave">
+        <div class="toolbar">
+          <div class="filters">
+            <select class="filter-input"><option>2026년</option><option>2025년</option></select>
+            <select class="filter-input"><option>전체 부서</option><option>마케팅팀</option><option>개발팀</option><option>CS팀</option></select>
+            <input class="filter-input" placeholder="직원명 검색" />
+            <span class="hint-info">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              총연차를 클릭하시면 연차를 등록할 수 있습니다.
+            </span>
+          </div>
+          <div class="btn-group">
+            <a href="#none" class="btn" onclick="document.getElementById('importEmpModal').classList.add('show')">+ 일반근로자 불러오기</a>
+            <a href="#none" class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>엑셀 다운로드</a>
+          </div>
+        </div>
+
+        <div class="table-wrap leave-table">
+          <div class="ov-x-auto">
+          <div class="scroll-body" id="leaveScroll" style="max-height:calc(100vh - 260px);overflow-y:auto;overflow-x:visible">
+          <table class="tbl" style="min-width:1100px">
+            <thead>
+              <tr>
+                <th class="col-sticky-l" style="width:120px">직원</th>
+                <th style="width:90px">부서</th>
+                <th class="num" style="width:80px">총 연차</th>
+                <th class="num" style="width:60px">사용</th>
+                <th class="num month-h" style="width:52px">1월</th>
+                <th class="num month-h" style="width:52px">2월</th>
+                <th class="num month-h" style="width:52px">3월</th>
+                <th class="num month-h" style="width:52px">4월</th>
+                <th class="num month-h" style="width:52px">5월</th>
+                <th class="num month-h" style="width:52px">6월</th>
+                <th class="num month-h" style="width:52px">7월</th>
+                <th class="num month-h" style="width:52px">8월</th>
+                <th class="num month-h" style="width:52px">9월</th>
+                <th class="num month-h" style="width:52px">10월</th>
+                <th class="num month-h" style="width:52px">11월</th>
+                <th class="num month-h" style="width:52px">12월</th>
+                <th class="num remain col-sticky-r" style="width:60px">잔여</th>
+              </tr>
+            </thead>
+            <tbody id="leaveTbody">
+              <!-- 홍길동: 1월1 + 3월0.5 + 4월0.5 = 2 사용, 잔여13 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('홍길동','마케팅팀',15,2,13,'wait')">홍길동</strong></td>
+                <td>마케팅팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="홍길동">15</td>
+                <td class="num used">2</td>
+                <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">13</td>
+              </tr>
+              <!-- 박직원: 1월2 + 2월0.5 + 3월1 + 4월0.5 = 4 사용, 잔여11 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('박직원','개발팀',15,4,11,'wait')">박직원</strong></td>
+                <td>개발팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="박직원">15</td>
+                <td class="num used">4</td>
+                <td class="num">2</td><td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">11</td>
+              </tr>
+              <!-- 이대리: 1월2 + 2월1.5 + 3월1 + 4월1.5 = 6 사용, 잔여11 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('이대리','CS팀',17,6,11,'wait')">이대리</strong></td>
+                <td>CS팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="이대리">17</td>
+                <td class="num used">6</td>
+                <td class="num">2</td><td class="num">1.5</td><td class="num">1</td><td class="num">1.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">11</td>
+              </tr>
+              <!-- 최사원: 2월0.5 + 4월0.5 = 1 사용, 잔여10 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('최사원','CS팀',11,1,10,'wait')">최사원</strong></td>
+                <td>CS팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="최사원">11</td>
+                <td class="num used">1</td>
+                <td class="num">0</td><td class="num">0.5</td><td class="num">0</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">10</td>
+              </tr>
+              <!-- 김팀장: 1월2 + 2월0.5 + 3월2 + 4월0.5 = 5 사용, 잔여15 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('김팀장','마케팅팀',20,5,15,'normal')">김팀장</strong></td>
+                <td>마케팅팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="김팀장">20</td>
+                <td class="num used">5</td>
+                <td class="num">2</td><td class="num">0.5</td><td class="num">2</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">15</td>
+              </tr>
+              <!-- 한과장: 1월1 + 2월0.5 + 3월1 + 4월0.5 = 3 사용, 잔여15 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('한과장','개발팀',18,3,15,'normal')">한과장</strong></td>
+                <td>개발팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="한과장">18</td>
+                <td class="num used">3</td>
+                <td class="num">1</td><td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">15</td>
+              </tr>
+              <!-- 강주임: 1월1 + 3월0.5 + 4월0.5 = 2 사용, 잔여13 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('강주임','인사팀',15,2,13,'normal')">강주임</strong></td>
+                <td>인사팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="강주임">15</td>
+                <td class="num used">2</td>
+                <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">13</td>
+              </tr>
+              <!-- 정사원: 1월1 + 3월0.5 = 1.5 사용, 잔여9.5 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('정사원','영업팀',11,1.5,9.5,'normal')">정사원</strong></td>
+                <td>영업팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="정사원">11</td>
+                <td class="num used">1.5</td>
+                <td class="num">1</td><td class="num">0</td><td class="num">0.5</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">9.5</td>
+              </tr>
+              <!-- 오주임: 1월0.5 + 2월1 + 3월0.5 + 4월0.5 = 2.5 사용, 잔여12.5 -->
+              <tr>
+                <td class="col-sticky-l"><strong class="accent-link" onclick="openLeavePanel('오주임','영업팀',15,2.5,12.5,'normal')">오주임</strong></td>
+                <td>영업팀</td>
+                <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="오주임">15</td>
+                <td class="num used">2.5</td>
+                <td class="num">0.5</td><td class="num">1</td><td class="num">0.5</td><td class="num">0.5</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+                <td class="num remain col-sticky-r">12.5</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CERT MGMT (P-006 업무신청관리) ===== -->
+      <div class="page" data-page="cert">
+        <div class="toolbar">
+          <div class="filters">
+            <select class="filter-input"><option>전체 종류</option><option>재직증명서</option><option>경력증명서</option><option>기타증명서</option></select>
+            <select class="filter-input"><option>전체 상태</option><option>대기</option><option>발급완료</option><option>반려</option></select>
+            <input class="filter-input" type="date" value="2026-04-01" />
+            <span class="text-muted">~</span>
+            <input class="filter-input" type="date" value="2026-04-30" />
+            <input class="filter-input" placeholder="신청자 이름 또는 사번" />
+          </div>
+          <a href="#none" class="btn">엑셀 다운로드</a>
+        </div>
+
+        <div class="table-wrap">
+          <div class="scroll-body" id="certScroll">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:140px">신청일</th>
+                <th style="width:120px">신청자</th>
+                <th style="width:130px">증명서 종류</th>
+                <th class="center" style="width:60px">부수</th>
+                <th>제출처 / 용도</th>
+                <th class="center" style="width:100px">상태</th>
+                <th style="width:160px"></th>
+              </tr>
+            </thead>
+            <tbody id="certTbody">
+              <tr>
+                <td>2026.04.29 09:14</td>
+                <td><strong>홍길동</strong></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td class="center">1</td>
+                <td>은행 대출 신청용</td>
+                <td class="center"><span class="badge w">대기</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('홍길동','재직증명서','은행 대출 신청용','2026.04.29 09:14')">발급처리</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.28 17:30</td>
+                <td><strong>박직원</strong></td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
+                <td class="center">2</td>
+                <td>해외 프리랜서 계약</td>
+                <td class="center"><span class="badge w">대기</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('박직원','경력증명서','해외 프리랜서 계약','2026.04.28 17:30')">발급처리</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.28 14:05</td>
+                <td><strong>김팀장</strong></td>
+                <td><span class="cert-badge cert-badge-other">기타증명서</span></td>
+                <td class="center">1</td>
+                <td>육아휴직 신청용 근속확인서</td>
+                <td class="center"><span class="badge w">대기</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm btn-primary" onclick="openCertIssueModal('김팀장','기타증명서','육아휴직 신청용 근속확인서','2026.04.28 14:05')">발급처리</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.27 14:22</td>
+                <td><strong>이대리</strong></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td class="center">1</td>
+                <td>병원 보험 청구</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('이대리','재직증명서','2026.04.27 14:22')">이력보기</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.27 11:05</td>
+                <td><strong>최사원</strong></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td class="center">1</td>
+                <td>관공서 제출용</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('최사원','재직증명서','2026.04.27 11:05')">이력보기</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.26 16:48</td>
+                <td><strong>윤사원</strong></td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
+                <td class="center">1</td>
+                <td>이직 준비</td>
+                <td class="center"><span class="badge d">반려</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertReasonModal('윤사원','첨부 서류 누락으로 반려 처리되었습니다. 재신청 시 관련 서류를 첨부해주세요.')">사유보기</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.25 10:12</td>
+                <td><strong>한과장</strong></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td class="center">1</td>
+                <td>비자 신청</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('한과장','재직증명서','2026.04.25 10:12')">이력보기</a></div></td>
+              </tr>
+              <tr>
+                <td>2026.04.24 13:30</td>
+                <td><strong>강주임</strong></td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td class="center">2</td>
+                <td>금융기관 제출</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><div class="row-actions"><a href="#none" class="btn btn-sm" onclick="openCertHistoryModal('강주임','재직증명서','2026.04.24 13:30')">이력보기</a></div></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== P-007 증명서 발급/이력/반려 화면 → 팝업으로 대체됨, hidden ===== -->
+      <div class="page" data-page="cert-issue" style="display:none!important"></div>
+      <div class="page" data-page="cert-history" style="display:none!important"></div>
+      <div class="page" data-page="cert-other" style="display:none!important"></div>
+
+      <!-- ===== FAQ 답변 관리 ===== -->
+      <div class="page" data-page="faq">
+
+        <!-- 필터 + 등록 버튼 영역 -->
+        <div class="toolbar">
+          <div class="filters">
+            <a href="#none" class="faq-cat-btn active" onclick="filterFaqCommonTable(this,'all')">전체</a>
+            <a href="#none" class="faq-cat-btn" onclick="filterFaqCommonTable(this,'연차')">연차</a>
+            <a href="#none" class="faq-cat-btn" onclick="filterFaqCommonTable(this,'증명서')">증명서</a>
+            <a href="#none" class="faq-cat-btn" onclick="filterFaqCommonTable(this,'급여')">급여</a>
+            <a href="#none" class="faq-cat-btn" onclick="filterFaqCommonTable(this,'기타')">기타</a>
+          </div>
+          <a href="#none" class="btn btn-primary btn-sm" onclick="document.getElementById('addFaqModal').classList.add('show')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            FAQ 등록
+          </a>
+        </div>
+        <!-- 테이블 카드 -->
+        <div class="table-wrap">
+          <table class="tbl tbl--auto" id="faqCommonTable">
+            <thead>
+              <tr>
+                <th style="width:100px">카테고리</th>
+                <th style="width:260px">질문</th>
+                <th>답변 요약</th>
+                <th class="center" style="width:80px">노출 상태</th>
+                <th class="center" style="width:72px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-faq-cat="연차">
+                <td><span class="badge i">연차</span></td>
+                <td>연차는 언제부터 사용할 수 있나요?</td>
+                <td class="text-secondary">입사 후 1개월 이상 근무 시 월 1일씩 발생…</td>
+                <td class="center"><span class="badge s">노출 중</span></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('연차','연차는 언제부터 사용할 수 있나요?','입사 후 1개월 이상 근무 시 월 1일씩 발생합니다.',this)">수정</a></td>
+              </tr>
+              <tr data-faq-cat="연차">
+                <td><span class="badge i">연차</span></td>
+                <td>반반차도 신청이 가능한가요?</td>
+                <td class="text-secondary">네, MY인사 앱에서 반반차 신청이 가능합니다…</td>
+                <td class="center"><span class="badge s">노출 중</span></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('연차','반반차도 신청이 가능한가요?','네, MY인사 앱에서 반반차 신청이 가능합니다.',this)">수정</a></td>
+              </tr>
+              <tr data-faq-cat="증명서">
+                <td><span class="badge cert">증명서</span></td>
+                <td>재직증명서 발급은 얼마나 걸리나요?</td>
+                <td class="text-secondary">인사담당자 확인 후 당일 발급을 원칙으로 합니다…</td>
+                <td class="center"><span class="badge s">노출 중</span></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('증명서','재직증명서 발급은 얼마나 걸리나요?','인사담당자 확인 후 당일 발급을 원칙으로 합니다.',this)">수정</a></td>
+              </tr>
+              <tr data-faq-cat="급여">
+                <td><span class="badge pay">급여</span></td>
+                <td>급여일이 주말인 경우 언제 입금되나요?</td>
+                <td class="text-secondary">직전 영업일에 지급됩니다…</td>
+                <td class="center"><span class="badge muted">비노출</span></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('급여','급여일이 주말인 경우 언제 입금되나요?','급여일이 토·일·공휴일인 경우 직전 영업일에 지급됩니다.',this)">수정</a></td>
+              </tr>
+              <tr data-faq-cat="기타">
+                <td><span class="badge etc">기타</span></td>
+                <td>사원증 재발급 방법이 궁금합니다.</td>
+                <td class="text-secondary">총무팀에 문의하거나 MY인사 FAQ를 참고하세요…</td>
+                <td class="center"><span class="badge s">노출 중</span></td>
+                <td class="center"><a href="#none" class="btn btn-sm" onclick="openFaqEdit('기타','사원증 재발급 방법이 궁금합니다.','총무팀(내선 1234)에 문의해 주세요.',this)">수정</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== MY인사 소개 (에르메스 명품관 스타일) ===== -->
+      <div class="page" id="screen-intro" data-page="intro">
+        <div class="lux-hero">
+          <div class="lux-hero-eyebrow">FOR EXECUTIVES</div>
+          <h1 class="lux-hero-title">하나의 앱으로,<br>인사의 모든 순간</h1>
+          <p class="lux-hero-sub">연차, 증명서, 경비, FAQ — 직원의 손끝에서 시작되어 0.3초 만에 결재됩니다</p>
+        </div>
+        <!-- 기능 1: 연차 -->
+        <div class="lux-feature">
+          <div class="lux-feature-content">
+            <div class="lux-feature-num">01</div>
+            <div class="lux-feature-eyebrow">CALENDAR</div>
+            <h2 class="lux-feature-title">연차, 더 이상 결재서가 아닙니다</h2>
+            <p class="lux-feature-desc">캘린더 위에서 단 두 번의 탭으로 연차를 신청합니다. 잔여 일수는 항상 손끝에 있고, 결재 진행상황은 실시간으로 푸시 알림됩니다. 종이 한 장 없이.</p>
+            <ul class="lux-feature-list">
+              <li>직관적 캘린더 인터페이스</li>
+              <li>실시간 결재 진행 알림</li>
+              <li>팀 일정과 자동 연동</li>
+            </ul>
+          </div>
+          <div class="lux-feature-visual">
+            <div class="lux-phone">
+              <div class="lux-phone-notch"></div>
+              <div class="lux-phone-screen">
+                <div class="lux-ph-status"><span>9:41</span><span>📶 🔋</span></div>
+                <div class="lux-ph-header">📅 연차</div>
+                <div class="lux-ph-content">
+                  <div class="lux-ph-leave-card">
+                    <div class="lux-ph-card-label">잔여 연차</div>
+                    <div class="lux-ph-card-num">12<span class="lux-ph-card-unit">일</span></div>
+                    <div class="lux-ph-card-bar"><div class="lux-ph-card-bar-fill" style="width:80%"></div></div>
+                    <div class="lux-ph-card-meta">총 15일 중 3일 사용</div>
+                  </div>
+                  <div class="lux-ph-section-label">최근 신청</div>
+                  <div class="lux-ph-item">
+                    <div><div class="lux-ph-item-title">4월 8-9일 (2일)</div><div class="lux-ph-item-meta">연차 · 가족 행사</div></div>
+                    <span class="lux-ph-item-badge">승인</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 기능 2: 증명서 -->
+        <div class="lux-feature reverse">
+          <div class="lux-feature-content">
+            <div class="lux-feature-num">02</div>
+            <div class="lux-feature-eyebrow">DOCUMENTS</div>
+            <h2 class="lux-feature-title">증명서를 위해<br>인사팀에 가지 않습니다</h2>
+            <p class="lux-feature-desc">재직증명서, 경력증명서를 모바일로 신청하면 인사담당자가 직접 발급하여 이메일로 즉시 전달합니다. 평일 오전 10시에 보냈다면, 11시에 받습니다.</p>
+            <ul class="lux-feature-list">
+              <li>모바일에서 한 번의 탭으로 신청</li>
+              <li>인사담당자 즉시 발급</li>
+              <li>이메일로 안전하게 수령</li>
+            </ul>
+          </div>
+          <div class="lux-feature-visual">
+            <div class="lux-phone">
+              <div class="lux-phone-notch"></div>
+              <div class="lux-phone-screen">
+                <div class="lux-ph-status"><span>9:41</span><span>📶 🔋</span></div>
+                <div class="lux-ph-header">📄 증명서</div>
+                <div class="lux-ph-content">
+                  <div class="lux-ph-notice">💡 인사담당자가 발급하면 이메일로 즉시 받으실 수 있습니다</div>
+                  <div class="lux-ph-item"><div><div class="lux-ph-item-title">📕 재직증명서</div><div class="lux-ph-item-meta">2026-04-20 신청</div></div><span class="lux-ph-item-badge">발급완료</span></div>
+                  <div class="lux-ph-item"><div><div class="lux-ph-item-title">📕 경력증명서</div><div class="lux-ph-item-meta">2026-04-25 신청</div></div><span class="lux-ph-item-badge lux-ph-item-badge--wait">대기중</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 기능 3: 경비 -->
+        <div class="lux-feature">
+          <div class="lux-feature-content">
+            <div class="lux-feature-num">03</div>
+            <div class="lux-feature-eyebrow">EXPENSE · AI</div>
+            <h2 class="lux-feature-title">영수증을 풀로 붙이는 시대,<br>이미 지났습니다</h2>
+            <p class="lux-feature-desc">영수증을 한 장 촬영하면 AI가 금액·날짜·사용처를 자동으로 인식해 입력합니다. 평균 입력 시간은 3초. 분실 위험은 0%입니다.</p>
+            <ul class="lux-feature-list">
+              <li>AI 자동 OCR 인식</li>
+              <li>영수증 사진 클라우드 보관</li>
+              <li>경리나라와 자동 동기화</li>
+            </ul>
+          </div>
+          <div class="lux-feature-visual">
+            <div class="lux-phone">
+              <div class="lux-phone-notch"></div>
+              <div class="lux-phone-screen">
+                <div class="lux-ph-status"><span>9:41</span><span>📶 🔋</span></div>
+                <div class="lux-ph-header">💳 경비</div>
+                <div class="lux-ph-content">
+                  <div class="lux-ph-scan-zone">
+                    <div class="lux-ph-scan-icon">📷</div>
+                    <div class="lux-ph-scan-title">영수증 촬영</div>
+                    <div class="lux-ph-scan-sub">AI가 자동으로 정보 인식</div>
+                  </div>
+                  <div class="lux-ph-item"><div><div class="lux-ph-item-title">회식비 (4/22)</div><div class="lux-ph-item-meta">198,000원 · 3건</div></div><span class="lux-ph-item-badge lux-ph-item-badge--proc">처리중</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 기능 4: FAQ -->
+        <div class="lux-feature reverse">
+          <div class="lux-feature-content">
+            <div class="lux-feature-num">04</div>
+            <div class="lux-feature-eyebrow">FAQ</div>
+            <h2 class="lux-feature-title">궁금한 건 바로,<br>답변은 빠르게</h2>
+            <p class="lux-feature-desc">인사 관련 궁금증을 앱에서 직접 질문하면 인사담당자가 답변을 등록합니다. 자주 묻는 질문은 카테고리별로 정리되어 있어 언제든지 확인할 수 있습니다.</p>
+            <ul class="lux-feature-list">
+              <li>연차·증명서·급여 카테고리별 FAQ</li>
+              <li>직접 질문 등록 및 답변 알림</li>
+              <li>인사담당자 실시간 답변 관리</li>
+            </ul>
+          </div>
+          <div class="lux-feature-visual">
+            <div class="lux-phone">
+              <div class="lux-phone-notch"></div>
+              <div class="lux-phone-screen lux-phone-screen--bg">
+                <div class="lux-ph-status lux-ph-status--white"><span>9:41</span><span>📶 🔋</span></div>
+                <!-- 상단 타이틀바 -->
+                <div class="lux-ph-titlebar">
+                  <div class="lux-ph-back-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                  </div>
+                  <span class="lux-ph-titlebar-text">FAQ</span>
+                </div>
+                <!-- 탭 -->
+                <div class="lux-ph-tabbar">
+                  <span class="lux-ph-tab active">내 질문</span>
+                  <span class="lux-ph-tab">자주 묻는 질문</span>
+                </div>
+                <!-- 내 질문 목록 -->
+                <div class="lux-ph-list">
+                  <!-- 질문 카드 1 -->
+                  <div class="faq-card">
+                    <div class="faq-card-hd">
+                      <span class="faq-card-tag">연차</span>
+                      <span class="faq-card-status done">답변 완료</span>
+                    </div>
+                    <div class="faq-card-title">연차 신청 후 결재 전에 취소할 수 있나요?</div>
+                    <div class="faq-card-date">4월 25일 · 답변 4월 26일</div>
+                  </div>
+                  <!-- 질문 카드 2 -->
+                  <div class="faq-card">
+                    <div class="faq-card-hd">
+                      <span class="faq-card-tag">연차</span>
+                      <span class="faq-card-status wait">답변 대기</span>
+                    </div>
+                    <div class="faq-card-title">육아휴직 후 복직 시 연차 산정은 어떻게 되나요?</div>
+                    <div class="faq-card-date">오늘 11:24 · 내가 등록</div>
+                  </div>
+                  <!-- 질문 카드 3 -->
+                  <div class="faq-card">
+                    <div class="faq-card-hd">
+                      <span class="faq-card-tag">증명서</span>
+                      <span class="faq-card-status done">답변 완료</span>
+                    </div>
+                    <div class="faq-card-title">경력증명서에 프로젝트 이력도 기재 가능한가요?</div>
+                    <div class="faq-card-date">4월 24일 · 답변 4월 25일</div>
+                  </div>
+                </div>
+                <!-- 하단 + 버튼 -->
+                <div class="lux-ph-fab-wrap">
+                  <div class="lux-ph-fab">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 가격 정책 -->
+        <div class="lux-pricing">
+          <div class="lux-pricing-eyebrow">PRICING</div>
+          <h2 class="lux-pricing-title">투명하고, 단순한 가격</h2>
+          <p class="lux-pricing-sub">숨겨진 비용 없습니다. 사용자 수만큼 정확하게.</p>
+          <div class="lux-price-grid">
+            <div class="lux-price-card"><div class="lux-price-label">도입비</div><div class="lux-price-value">면 제</div><div class="lux-price-tag">No setup fee</div></div>
+            <div class="lux-price-card"><div class="lux-price-label">월 사용료</div><div class="lux-price-value">면 제</div><div class="lux-price-tag">Zero monthly fee</div></div>
+            <div class="lux-price-card lux-price-card-main"><div class="lux-price-label">사용자당 월</div><div class="lux-price-value">10,000<span class="price-unit">원</span></div><div class="lux-price-tag">Per active user</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ONBOARDING (카카오톡 발송 포함) ===== -->
+      <div class="page" data-page="onboard">
+        <div class="onb">
+          <div class="qr-side">
+            <div class="qr-box" id="qrBox">
+              <svg viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg">
+                <rect width="41" height="41" fill="#fff"/>
+                <g fill="#0a0a0a">
+                  <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3"/>
+                  <rect x="34" y="0" width="7" height="7"/><rect x="35" y="1" width="5" height="5" fill="#fff"/><rect x="36" y="2" width="3" height="3"/>
+                  <rect x="0" y="34" width="7" height="7"/><rect x="1" y="35" width="5" height="5" fill="#fff"/><rect x="2" y="36" width="3" height="3"/>
+                  <rect x="9" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="14" y="2" width="1" height="1"/><rect x="16" y="2" width="1" height="1"/><rect x="19" y="2" width="1" height="1"/><rect x="22" y="2" width="1" height="1"/><rect x="25" y="2" width="1" height="1"/><rect x="28" y="2" width="1" height="1"/><rect x="31" y="2" width="1" height="1"/>
+                  <rect x="9" y="4" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="15" y="4" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="24" y="4" width="1" height="1"/><rect x="27" y="4" width="1" height="1"/><rect x="30" y="4" width="1" height="1"/><rect x="32" y="4" width="1" height="1"/>
+                  <rect x="2" y="9" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="9" y="9" width="3" height="3"/><rect x="14" y="9" width="2" height="2"/><rect x="18" y="9" width="1" height="3"/><rect x="22" y="9" width="2" height="1"/><rect x="26" y="9" width="3" height="2"/><rect x="32" y="9" width="2" height="2"/><rect x="36" y="9" width="1" height="1"/><rect x="38" y="9" width="1" height="1"/>
+                  <rect x="2" y="11" width="1" height="1"/><rect x="6" y="11" width="2" height="1"/><rect x="13" y="11" width="2" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="20" y="11" width="2" height="2"/><rect x="25" y="11" width="1" height="2"/><rect x="29" y="11" width="2" height="1"/><rect x="34" y="11" width="3" height="1"/>
+                  <rect x="2" y="13" width="2" height="2"/><rect x="9" y="13" width="1" height="2"/><rect x="12" y="13" width="2" height="1"/><rect x="16" y="13" width="1" height="2"/><rect x="19" y="13" width="1" height="1"/><rect x="22" y="13" width="3" height="1"/><rect x="27" y="13" width="2" height="2"/><rect x="31" y="13" width="1" height="1"/><rect x="35" y="13" width="2" height="3"/>
+                  <rect x="6" y="15" width="3" height="1"/><rect x="11" y="15" width="2" height="1"/><rect x="15" y="15" width="2" height="2"/><rect x="20" y="15" width="1" height="3"/><rect x="24" y="15" width="2" height="1"/><rect x="29" y="15" width="3" height="2"/><rect x="38" y="15" width="2" height="1"/>
+                  <rect x="2" y="17" width="3" height="1"/><rect x="9" y="17" width="2" height="2"/><rect x="13" y="17" width="1" height="2"/><rect x="22" y="17" width="3" height="1"/><rect x="27" y="17" width="1" height="3"/><rect x="32" y="17" width="2" height="1"/><rect x="36" y="17" width="3" height="2"/>
+                  <rect x="6" y="19" width="2" height="1"/><rect x="12" y="19" width="2" height="2"/><rect x="17" y="19" width="1" height="2"/><rect x="22" y="19" width="2" height="2"/><rect x="29" y="19" width="2" height="1"/><rect x="34" y="19" width="1" height="3"/>
+                  <rect x="2" y="21" width="2" height="2"/><rect x="9" y="21" width="1" height="2"/><rect x="15" y="21" width="3" height="1"/><rect x="20" y="21" width="1" height="3"/><rect x="25" y="21" width="2" height="2"/><rect x="29" y="21" width="3" height="2"/><rect x="36" y="21" width="2" height="2"/>
+                  <rect x="6" y="23" width="2" height="1"/><rect x="11" y="23" width="2" height="2"/><rect x="16" y="23" width="1" height="2"/><rect x="22" y="23" width="2" height="3"/><rect x="27" y="23" width="1" height="2"/><rect x="33" y="23" width="2" height="1"/>
+                  <rect x="2" y="25" width="3" height="1"/><rect x="9" y="25" width="1" height="3"/><rect x="13" y="25" width="2" height="1"/><rect x="18" y="25" width="2" height="2"/><rect x="29" y="25" width="2" height="3"/><rect x="34" y="25" width="2" height="1"/><rect x="38" y="25" width="1" height="3"/>
+                  <rect x="6" y="27" width="2" height="2"/><rect x="11" y="27" width="3" height="1"/><rect x="15" y="27" width="2" height="2"/><rect x="22" y="27" width="2" height="1"/><rect x="26" y="27" width="1" height="2"/><rect x="32" y="27" width="2" height="2"/>
+                  <rect x="2" y="29" width="2" height="1"/><rect x="9" y="29" width="2" height="2"/><rect x="13" y="29" width="1" height="2"/><rect x="18" y="29" width="3" height="1"/><rect x="22" y="29" width="1" height="3"/><rect x="29" y="29" width="2" height="2"/><rect x="34" y="29" width="3" height="1"/>
+                  <rect x="6" y="31" width="3" height="2"/><rect x="11" y="31" width="2" height="2"/><rect x="16" y="31" width="2" height="1"/><rect x="20" y="31" width="1" height="2"/><rect x="25" y="31" width="2" height="2"/><rect x="29" y="31" width="1" height="2"/><rect x="33" y="31" width="2" height="2"/><rect x="38" y="31" width="2" height="2"/>
+                  <rect x="9" y="33" width="2" height="1"/><rect x="14" y="33" width="2" height="2"/><rect x="19" y="33" width="2" height="1"/><rect x="23" y="33" width="3" height="2"/><rect x="29" y="33" width="2" height="1"/><rect x="34" y="33" width="2" height="2"/>
+                  <rect x="9" y="35" width="2" height="2"/><rect x="13" y="35" width="1" height="2"/><rect x="17" y="35" width="2" height="1"/><rect x="20" y="35" width="2" height="2"/><rect x="26" y="35" width="2" height="1"/><rect x="29" y="35" width="3" height="2"/>
+                  <rect x="11" y="37" width="2" height="1"/><rect x="15" y="37" width="2" height="2"/><rect x="19" y="37" width="2" height="1"/><rect x="22" y="37" width="3" height="2"/><rect x="28" y="37" width="2" height="2"/><rect x="32" y="37" width="2" height="1"/><rect x="36" y="37" width="2" height="2"/>
+                </g>
+              </svg>
+              <div class="logo-overlay">MY</div>
+            </div>
+            <div class="qr-hint">스마트폰 카메라로 스캔</div>
+            <div class="url-chip">my-insa.app/install</div>
+          </div>
+
+          <div class="info-side">
+            <h2>모바일 앱 설치 안내</h2>
+            <p>QR 코드를 스캔하거나 카카오톡으로 직원에게 발송하세요. 직원은 별도 회원가입 없이 사번으로 즉시 로그인할 수 있습니다.</p>
+            <div class="step"><span class="n">1</span><div class="t">스마트폰으로 QR 스캔 또는 카카오톡 링크 클릭</div></div>
+            <div class="step"><span class="n">2</span><div class="t">앱 설치 (또는 웹 모바일 진입)</div></div>
+            <div class="step"><span class="n">3</span><div class="t">사번으로 로그인 → 바로 시작</div></div>
+            <div class="onb-actions">
+              <a href="#none" class="btn">QR 다운로드</a>
+              <a href="#none" class="btn">링크 복사</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 직원 설치 현황 + 개별 카카오톡 발송 -->
+        <div class="panel">
+          <div class="panel-head">
+            <h3>직원 설치 현황</h3>
+            <div class="stat-row">
+              <span class="stat-label">미설치 <strong class="text-danger" id="notInstCount">4</strong>명</span>
+            </div>
+          </div>
+
+          <!-- 필터 칩 -->
+          <div class="chip-bar">
+            <a href="#none" class="btn btn-sm active" id="ifilter-all" onclick="setInstFilter('all')">전체</a>
+            <a href="#none" class="btn btn-sm" id="ifilter-not" onclick="setInstFilter('not')">미설치만</a>
+            <a href="#none" class="btn btn-sm" id="ifilter-done" onclick="setInstFilter('done')">설치 완료만</a>
+          </div>
+
+          <table class="tbl" id="installTable">
+            <thead>
+              <tr>
+                <th style="width:110px">이름</th>
+                <th style="width:110px">부서</th>
+                <th style="width:90px">직급</th>
+                <th style="width:140px">연락처</th>
+                <th class="center" style="width:110px">설치 상태</th>
+                <th class="center" style="width:110px">최근 활동</th>
+                <th class="center" style="width:150px">카카오톡 발송</th>
+              </tr>
+            </thead>
+            <tbody id="installTbody">
+              <!-- JS로 렌더 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 직원용: 대시보드 ===== -->
+      <div class="page" data-page="emp-dashboard">
+
+        <!-- ① 상단: 연차 현황 카드 (좌: 잔여연차 / 우: QR + 칩) -->
+        <div class="panel panel--outlined mb-9">
+          <div class="panel-body panel-body--lg">
+            <div class="leave-remain-grid">
+
+              <!-- 좌: 연차 수치 + 프로그레스 바 -->
+              <div>
+                <div class="leave-card-hd">
+                  <div>
+                    <div class="leave-card-label">잔여 연차</div>
+                    <div class="leave-num-row">
+                      <span class="leave-num-big">11</span>
+                      <span class="leave-num-unit">일</span>
+                    </div>
+                  </div>
+                  <div class="leave-stat-chips">
+                    <div class="leave-stat-chip">
+                      <span class="leave-stat-num">15</span>총
+                    </div>
+                    <div class="leave-stat-chip">
+                      <span class="leave-stat-num">4</span>사용
+                    </div>
+                  </div>
+                </div>
+                <div class="leave-progress">
+                  <div class="leave-progress-fill" style="width:26.7%"></div>
+                </div>
+                <div class="leave-progress-meta">
+                  <span>사용 4일</span>
+                  <span>잔여 11일 / 총 15일</span>
+                </div>
+              </div>
+
+              <!-- 우: QR -->
+              <div class="qr-card">
+                <div class="qr-box">
+                  <svg viewBox="0 0 41 41" width="58" height="58" xmlns="http://www.w3.org/2000/svg"><rect width="41" height="41" fill="#fff"/><g fill="#0a0a0a"><rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3"/><rect x="34" y="0" width="7" height="7"/><rect x="35" y="1" width="5" height="5" fill="#fff"/><rect x="36" y="2" width="3" height="3"/><rect x="0" y="34" width="7" height="7"/><rect x="1" y="35" width="5" height="5" fill="#fff"/><rect x="2" y="36" width="3" height="3"/><rect x="9" y="2" width="2" height="2"/><rect x="13" y="2" width="2" height="2"/><rect x="17" y="2" width="2" height="2"/><rect x="22" y="2" width="2" height="2"/><rect x="9" y="9" width="3" height="3"/><rect x="14" y="9" width="2" height="2"/><rect x="23" y="9" width="3" height="2"/><rect x="29" y="9" width="3" height="3"/><rect x="9" y="14" width="2" height="2"/><rect x="18" y="14" width="2" height="2"/><rect x="29" y="14" width="2" height="2"/><rect x="9" y="18" width="3" height="2"/><rect x="18" y="18" width="3" height="2"/><rect x="28" y="18" width="3" height="3"/><rect x="9" y="22" width="2" height="3"/><rect x="22" y="22" width="3" height="2"/><rect x="29" y="22" width="2" height="2"/><rect x="9" y="27" width="3" height="2"/><rect x="23" y="27" width="2" height="3"/><rect x="28" y="27" width="3" height="2"/><rect x="9" y="31" width="2" height="2"/><rect x="13" y="31" width="3" height="3"/><rect x="23" y="31" width="3" height="2"/><rect x="29" y="31" width="2" height="3"/></g></svg>
+                  <div class="qr-badge">MY</div>
+                </div>
+                <div>
+                  <div class="qr-title">모바일 앱 설치</div>
+                  <div class="qr-desc">QR 스캔으로 언제 어디서나<br>연차·증명서 신청</div>
+                  <div class="qr-link">my-insa.app/install</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 중간: 연차 사용 이력 + 증명서 관리 -->
+        <div class="emp-dash-grid">
+          <!-- 연차 사용 이력 -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>연차 사용 이력</h3>
+            </div>
+            <div class="p-0">
+              <table class="tbl">
+                <colgroup>
+                  <col style="width:148px"><!-- 날짜: 2026.05.04 (월) -->
+                  <col style="width:96px"> <!-- 구분: 오전 반차 -->
+                  <col style="width:76px"> <!-- 일수: 0.5일 여유 -->
+                  <col>                    <!-- 사유: 나머지 -->
+                  <col style="width:80px"> <!-- 상태 -->
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th class="center">일수</th>
+                    <th>사유</th>
+                    <th class="center">상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2026.05.04 (월)</td>
+                    <td>연차</td>
+                    <td class="center val-accent">1일</td>
+                    <td>가족 행사</td>
+                    <td class="center"><span class="badge w">대기</span></td>
+                  </tr>
+                  <tr>
+                    <td>2026.04.15 (수)</td>
+                    <td>오전 반차</td>
+                    <td class="center val-accent">0.5일</td>
+                    <td>병원 방문</td>
+                    <td class="center"><span class="badge s">승인</span></td>
+                  </tr>
+                  <tr>
+                    <td>2026.03.12 (목)</td>
+                    <td>오전 반차</td>
+                    <td class="center val-accent">0.5일</td>
+                    <td>개인 사유</td>
+                    <td class="center"><span class="badge s">승인</span></td>
+                  </tr>
+                  <tr>
+                    <td>2026.01.08 (목)</td>
+                    <td>연차</td>
+                    <td class="center val-accent">1일</td>
+                    <td>개인 사유</td>
+                    <td class="center"><span class="badge s">승인</span></td>
+                  </tr>
+                  <tr>
+                    <td>2025.12.24 (수)</td>
+                    <td>연차</td>
+                    <td class="center val-accent">1일</td>
+                    <td>연말 휴가</td>
+                    <td class="center"><span class="badge s">승인</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 증명서 관리 -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>증명서 관리</h3>
+              <a href="#none" class="btn btn-sm btn-primary" onclick="openEmpCertModal()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                증명서 신청
+              </a>
+            </div>
+            <div class="panel-body p-0">
+              <!-- 최근 신청 내역 -->
+              <div class="panel-inner">
+                <div class="section-label">최근 신청 내역</div>
+                <div class="cert-row">
+                  <div>
+                    <div class="item-name">재직증명서</div>
+                    <div class="item-meta">2026.04.29 · 은행 대출</div>
+                  </div>
+                  <span class="badge w">대기</span>
+                </div>
+                <div class="cert-row">
+                  <div>
+                    <div class="item-name">재직증명서</div>
+                    <div class="item-meta">2026.04.01 · 관공서 제출</div>
+                  </div>
+                  <span class="badge s">발급완료</span>
+                </div>
+                <div class="cert-row">
+                  <div>
+                    <div class="item-name">경력증명서</div>
+                    <div class="item-meta">2026.02.15 · 이직 준비</div>
+                  </div>
+                  <span class="badge s">발급완료</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== 직원용: 업무신청 ===== -->
+      <div class="page" data-page="emp-cert">
+
+        <div class="toolbar">
+          <div class="filters">
+            <select class="filter-input">
+              <option>전체 종류</option>
+              <option>재직증명서</option>
+              <option>경력증명서</option>
+              <option>기타증명서</option>
+            </select>
+            <select class="filter-input">
+              <option>전체 상태</option>
+              <option>대기</option>
+              <option>발급완료</option>
+              <option>반려</option>
+            </select>
+          </div>
+          <a href="#none" class="btn btn-primary" onclick="openEmpCertModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            증명서 신청
+          </a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:160px">신청일</th>
+                <th style="width:150px">증명서 종류</th>
+                <th>제출처 / 용도</th>
+                <th class="center" style="width:60px">부수</th>
+                <th class="center" style="width:110px">상태</th>
+                <th style="width:130px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026.04.29 09:14</td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td>은행 대출 신청용</td>
+                <td class="center">1</td>
+                <td class="center"><span class="badge w">대기</span></td>
+                <td><a href="#none" class="btn btn-sm" onclick="showToastV7('신청이 취소되었습니다.')">신청 취소</a></td>
+              </tr>
+              <tr>
+                <td>2026.04.01 14:30</td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td>관공서 제출</td>
+                <td class="center">1</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 재직증명서를 다운로드합니다.')">다운로드</a></td>
+              </tr>
+              <tr>
+                <td>2026.02.15 10:22</td>
+                <td><span class="cert-badge cert-badge-exp">경력증명서</span></td>
+                <td>이직 준비</td>
+                <td class="center">2</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 경력증명서를 다운로드합니다.')">다운로드</a></td>
+              </tr>
+              <tr>
+                <td>2025.12.10 11:05</td>
+                <td><span class="cert-badge cert-badge-other">기타증명서</span></td>
+                <td>육아휴직 신청용 근속확인서</td>
+                <td class="center">1</td>
+                <td class="center"><span class="badge s">발급완료</span></td>
+                <td><a href="#none" class="btn btn-sm btn-primary" onclick="showToastV7('📄 기타증명서를 다운로드합니다.')">다운로드</a></td>
+              </tr>
+              <tr>
+                <td>2025.09.03 16:48</td>
+                <td><span class="cert-badge cert-badge-emp">재직증명서</span></td>
+                <td>비자 신청</td>
+                <td class="center">1</td>
+                <td class="center"><span class="badge d">반려</span></td>
+                <td><a href="#none" class="btn btn-sm" onclick="openCertReasonModal('홍길동','신청하신 재직증명서는 제출처 확인이 필요합니다. 용도란에 기재하신 내용만으로는 발급이 어려우니, 제출처 기관명을 구체적으로 기재하여 재신청해 주세요.')">사유보기</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 직원용: 프로필 관리 ===== -->
+      <div class="page" data-page="emp-profile">
+
+        <!-- topbar 대체 액션 버튼 (수정/저장/취소) -->
+        <div class="profile-actions" id="profileActions">
+          <!-- 조회 모드 버튼 -->
+          <a href="#none" id="profileEditBtn" class="btn" onclick="setProfileMode('edit')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            수정
+          </a>
+          <!-- 수정 모드 버튼 (기본 숨김) -->
+          <a href="#none" id="profileCancelBtn" class="btn" style="display:none" onclick="setProfileMode('view')">취소</a>
+          <a href="#none" id="profileSaveBtn" class="btn btn-primary" style="display:none" onclick="saveProfile()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            저장
+          </a>
+        </div>
+
+        <div class="profile-layout">
+          <!-- 좌측: 프로필 사진 + 인사 기본 정보 -->
+          <div class="flex-col">
+            <div class="panel">
+              <div class="panel-head"><h3>프로필 사진</h3></div>
+              <div class="panel-body panel-body--center">
+                <div class="profile-avatar-wrap">
+                  <div class="profile-avatar">홍</div>
+                  <!-- 수정 모드에서만 표시되는 카메라 아이콘 -->
+                  <a href="#none" id="profilePhotoEditBtn"
+                    onclick="document.getElementById('profilePhotoInput').click()"
+                    class="profile-photo-btn" style="display:none">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </a>
+                  <!-- 숨김 파일 입력 -->
+                  <input type="file" id="profilePhotoInput" accept="image/*" style="display:none"
+                    onchange="if(this.files&&this.files.length){showToastV7('✅ 프로필이 설정되었습니다.');this.value='';}">
+                </div>
+                <div class="profile-name">홍길동</div>
+                <div class="profile-dept">마케팅팀 · 대리</div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3>인사 기본 정보</h3></div>
+              <div class="panel-body p-0">
+                <div class="hr-info-row"><span class="text-secondary">사번</span><strong>EMP-2103</strong></div>
+                <div class="hr-info-row"><span class="text-secondary">입사일</span><strong>2021.03.02</strong></div>
+                <div class="hr-info-row"><span class="text-secondary">부서</span><strong>마케팅팀</strong></div>
+                <div class="hr-info-row"><span class="text-secondary">직급</span><strong>대리</strong></div>
+                <div class="hr-info-row"><span class="text-secondary">고용형태</span><strong>정규직</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 우측: 개인 정보 + 내 인사 정보 -->
+          <div class="flex-col">
+
+            <!-- 개인 정보 패널 -->
+            <div class="panel">
+              <div class="panel-head"><h3>개인 정보</h3></div>
+              <div class="panel-body">
+
+                <!-- 조회 모드 -->
+                <div id="profileViewMode">
+                  <div class="profile-view-grid">
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">이름</div>
+                      <div class="item-title">홍길동</div>
+                    </div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">영문 이름</div>
+                      <div class="item-title">Hong Gil Dong</div>
+                    </div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">이메일</div>
+                      <div class="item-title">hong@company.com</div>
+                    </div>
+                    <div class="profile-view-cell">
+                      <div class="profile-view-label">연락처</div>
+                      <div class="item-title">010-1234-5678</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 수정 모드 (기본 숨김) -->
+                <div id="profileEditMode" style="display:none">
+                  <div class="form-row">
+                    <div class="field">
+                      <label>이름 <span class="req">*</span></label>
+                      <input type="text" value="홍길동" />
+                    </div>
+                    <div class="field">
+                      <label>영문 이름</label>
+                      <input type="text" value="Hong Gil Dong" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="field">
+                      <label>이메일 <span class="req">*</span></label>
+                      <input type="email" value="hong@company.com" />
+                    </div>
+                    <div class="field">
+                      <label>연락처 <span class="req">*</span></label>
+                      <input type="tel" value="010-1234-5678" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 내 인사 정보 -->
+            <div class="panel">
+              <div class="panel-head">
+                <h3>내 인사 정보</h3>
+                <a href="#none" id="hrInfoAddBtn" class="btn btn-sm" style="display:none" onclick="openHrInfoModal()">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  항목 추가
+                </a>
+              </div>
+              <div class="panel-body p-0">
+
+                <!-- 자격증 -->
+                <div class="hr-section">
+                  <div class="section-label">자격증</div>
+                  <div class="hr-item-list">
+                    <div class="hr-item">
+                      <div class="hr-item-inner">
+                        <div class="hr-item-icon hr-item-icon--cert"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                        <div><div class="item-title">정보처리기사</div><div class="item-meta">한국산업인력공단 · 2020.06.05</div></div>
+                      </div>
+                      <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','정보처리기사','한국산업인력공단','2020.06.05','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+                    </div>
+                    <div class="hr-item">
+                      <div class="hr-item-inner">
+                        <div class="hr-item-icon hr-item-icon--cert"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                        <div><div class="item-title">SQLD (SQL 개발자)</div><div class="item-meta">한국데이터산업진흥원 · 2022.09.02</div></div>
+                      </div>
+                      <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('cert','SQLD (SQL 개발자)','한국데이터산업진흥원','2022.09.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 학력 -->
+                <div class="hr-section">
+                  <div class="section-label">학력</div>
+                  <div class="hr-item">
+                    <div class="hr-item-inner">
+                      <div class="hr-item-icon hr-item-icon--edu"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                      <div><div class="item-title">○○대학교 컴퓨터공학과</div><div class="item-meta">학사 졸업 · 2015.03 ~ 2021.02</div></div>
+                    </div>
+                    <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('edu','○○대학교 컴퓨터공학과','학사 졸업','2015.03 ~ 2021.02','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+                  </div>
+                </div>
+
+                <!-- 어학 -->
+                <div class="hr-section">
+                  <div class="section-label">어학</div>
+                  <div class="hr-item">
+                    <div class="hr-item-inner">
+                      <div class="hr-item-icon hr-item-icon--lang"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M21 21l-9-9M11 11l3.5 9 1.5-4 4-1.5L11 11z"/></svg></div>
+                      <div><div class="item-title">TOEIC 875점</div><div class="item-meta">ETS · 2023.04.16 취득</div></div>
+                    </div>
+                    <a href="#none" class="icon-btn hr-edit-btn" style="display:none" onclick="openHrEditModal('lang','TOEIC 875점','ETS','2023.04.16','')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+
+<!-- ===== 카카오톡 발송 모달 ===== -->
+<div class="modal-backdrop" id="kakaoModalBg" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="kakaoModalTitle">💬 카카오톡 발송</h3>
+      <div class="close" onclick="closeKakaoModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="field mb-6">
+        <label>📞 받는 사람</label>
+        <div class="info-box" id="kakaoTargetInfo">-</div>
+      </div>
+      <div class="field mb-6">
+        <label>📝 발송 메시지 (수정 가능)</label>
+        <textarea id="kakaoMsgInput" rows="10" class="textarea" style="line-height:1.6" oninput="updateKakaoPreview()"></textarea>
+        <div class="field-hint">
+          💡 일괄 발송 시 <span class="code-chip">{이름}</span> 자리에 직원 이름이 자동 입력됩니다
+        </div>
+      </div>
+      <div class="kakao-preview">
+        <div class="kakao-bubble" id="kakaoPreviewBubble"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="closeKakaoModal()">취소</a>
+      <a href="#none" class="btn btn-kakao" onclick="sendKakao()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.83 1.91 5.31 4.79 6.7-.21.78-.76 2.83-.87 3.27-.14.55.2.54.42.39.18-.12 2.78-1.89 3.91-2.66.57.08 1.15.13 1.75.13 5.52 0 10-3.48 10-7.83C22 6.48 17.52 3 12 3z"/></svg>
+        💬 카카오톡 발송
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- 연차 툴팁 -->
+<div class="leave-tooltip" id="leaveTooltip"></div>
+
+<script>
+/* ===== 연차 월별 툴팁 ===== */
+const LEAVE_MONTH_DETAILS = {
+  // 반차(오전/오후)=0.5일, 연차(종일)=1일
+  '홍길동': {1:['01월 08일 연차(1일)'], 3:['03월 12일 오전반차(0.5일)'], 4:['04월 15일 오후반차(0.5일)']},
+  '박직원': {1:['01월 10일 연차(1일)','01월 11일 연차(1일)'], 2:['02월 20일 오전반차(0.5일)'], 3:['03월 07일 연차(1일)'], 4:['04월 22일 오후반차(0.5일)']},
+  '이대리': {1:['01월 06일 연차(1일)','01월 07일 연차(1일)'], 2:['02월 13일 오전반차(0.5일)','02월 14일 연차(1일)'], 3:['03월 20일 연차(1일)'], 4:['04월 02일 연차(1일)','04월 09일 오후반차(0.5일)']},
+  '최사원': {2:['02월 21일 오전반차(0.5일)'], 4:['04월 30일 오후반차(0.5일)']},
+  '김팀장': {1:['01월 20일 연차(1일)','01월 21일 연차(1일)'], 2:['02월 10일 오전반차(0.5일)'], 3:['03월 14일 연차(1일)','03월 15일 연차(1일)'], 4:['04월 08일 오전반차(0.5일)']},
+  '한과장': {1:['01월 15일 연차(1일)'], 2:['02월 05일 오전반차(0.5일)'], 3:['03월 22일 연차(1일)'], 4:['04월 10일 오후반차(0.5일)']},
+  '강주임': {1:['01월 20일 연차(1일)'], 3:['03월 11일 오전반차(0.5일)'], 4:['04월 10일 오후반차(0.5일)']},
+  '정사원': {1:['01월 27일 연차(1일)'], 3:['03월 18일 오전반차(0.5일)']},
+  '오주임': {1:['01월 09일 오전반차(0.5일)'], 2:['02월 27일 연차(1일)'], 3:['03월 26일 오전반차(0.5일)'], 4:['04월 16일 오후반차(0.5일)']},
+};
+
+const leaveTooltipEl = document.getElementById('leaveTooltip');
+let _activeTipCell = null; // 현재 클릭으로 고정된 셀
+
+/* 툴팁 위치 계산 — 셀 기준 위쪽 중앙 */
+function _posTooltipAboveCell(cell) {
+  const rect = cell.getBoundingClientRect();
+  leaveTooltipEl.style.display = 'block';
+  const tw = leaveTooltipEl.offsetWidth;
+  const th = leaveTooltipEl.offsetHeight;
+  let x = rect.left + rect.width / 2 - tw / 2;
+  let y = rect.bottom + 12;
+  // 화면 밖 보정
+  if (x < 8) x = 8;
+  if (x + tw > window.innerWidth - 8) x = window.innerWidth - tw - 8;
+  if (y + th > window.innerHeight - 8) y = rect.top - th - 12; // 아래 공간 없으면 위
+  leaveTooltipEl.style.left = x + 'px';
+  leaveTooltipEl.style.top  = y + 'px';
+}
+
+/* 툴팁 닫기 */
+function _closeLeaveTooltip() {
+  leaveTooltipEl.style.display = 'none';
+  if (_activeTipCell) {
+    _activeTipCell.classList.remove('tt-active');
+    _activeTipCell = null;
+  }
+}
+
+function attachLeaveTooltips() {
+  document.querySelectorAll('#leaveTbody tr').forEach(tr => {
+    const nameEl = tr.querySelector('td:first-child strong');
+    if (!nameEl) return;
+    const emp = nameEl.textContent.trim();
+    const allCells = tr.querySelectorAll('td');
+
+    // 1월=index 4 ~ 12월=index 15
+    for (let i = 4; i <= 15; i++) {
+      const cell = allCells[i];
+      if (!cell) continue;
+
+      const val = parseFloat(cell.textContent.trim());
+      if (isNaN(val) || val === 0) continue; // 0이면 아무것도 안 함
+
+      const month = i - 3; // 1~12
+      const details = (LEAVE_MONTH_DETAILS[emp] || {})[month];
+
+      // 파란색 폰트 적용 (0이 아닌 모든 셀)
+      cell.classList.add('month-used-nonzero');
+
+      if (!details || details.length === 0) continue; // 상세 데이터 없으면 색만 적용
+
+      // 헤더 텍스트 (예: "홍길동 · 1월 사용내역")
+      const monthLabel = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'][month-1];
+
+      cell.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // 같은 셀 재클릭 → 닫기
+        if (_activeTipCell === cell) {
+          _closeLeaveTooltip();
+          return;
+        }
+
+        // 다른 셀이 열려 있으면 닫고
+        if (_activeTipCell) {
+          _activeTipCell.classList.remove('tt-active');
+        }
+
+        _activeTipCell = cell;
+        cell.classList.add('tt-active');
+
+        // 툴팁 내용 구성
+        const header = `${emp} · ${monthLabel} 사용내역`;
+        const divider = '─'.repeat(Math.max(header.length, ...details.map(d=>d.length)));
+        leaveTooltipEl.textContent = header + '\n' + divider + '\n' + details.join('\n');
+
+        _posTooltipAboveCell(cell);
+      });
+    }
+  });
+
+  // 다른 곳 클릭 시 툴팁 닫기
+  document.addEventListener('click', (e) => {
+    if (e.target !== leaveTooltipEl && !e.target.closest('.month-used-nonzero')) {
+      _closeLeaveTooltip();
+    }
+  });
+
+  // 스크롤 시 툴팁 닫기
+  document.getElementById('leaveScroll')?.addEventListener('scroll', _closeLeaveTooltip);
+}
+
+document.addEventListener('DOMContentLoaded', attachLeaveTooltips);
+</script>
+<div class="toast-v7" id="toastV7"></div>
+
+<!-- ===== FAQ 답변 작성/보기 팝업 ===== -->
+<div class="modal-backdrop" id="faqDetailModalBg">
+  <div class="modal modal--lg">
+    <div class="modal-head">
+      <div>
+        <h3 id="faqDetailModalTitle">답변 작성</h3>
+        <div class="item-sub" id="faqDetailModalMeta"></div>
+      </div>
+      <div class="flex-center">
+        <span id="faqDetailBadge" class="badge w">답변 대기</span>
+        <div class="close" onclick="closeFaqDetailModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body modal-body--flush">
+      <!-- 질문 영역 -->
+      <div class="modal-section">
+        <div class="faq-detail-q" id="faqDetailQuestion"></div>
+        <div class="faq-detail-body" id="faqDetailBody"></div>
+        <div class="faq-detail-meta" id="faqDetailMeta2"></div>
+      </div>
+      <!-- 답변 완료 시: 기존 답변 표시 -->
+      <div id="faqDetailAnswerView" class="modal-section--sep" style="display:none">
+        <div class="section-label">등록된 답변</div>
+        <div class="faq-answer-box" id="faqDetailAnswerText"></div>
+        <div class="faq-answer-meta" id="faqDetailAnswerMeta"></div>
+      </div>
+      <!-- 답변 대기 시: 작성 영역 -->
+      <div id="faqDetailWriteArea" class="modal-section--plain">
+        <div class="section-label">답변 작성 <span class="req">*</span></div>
+        <textarea id="faqDetailTextarea" rows="8" class="textarea" style="line-height:1.7" placeholder="답변을 작성해주세요. 등록 시 신청자에게 즉시 알림이 발송됩니다."></textarea>
+        <div class="mt-4">
+          <div class="file-attach-row">
+            <label class="file-attach-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+              파일 첨부
+              <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx" style="display:none" onchange="handleFaqAnswerFile(this,'faqDetailFileList')" />
+            </label>
+            <span class="item-meta">PDF · 이미지 · 문서 · 최대 10MB</span>
+          </div>
+          <div id="faqDetailFileList" class="file-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="closeFaqDetailModal()">닫기</a>
+      <a href="#none" class="btn btn-primary" id="faqDetailSubmitBtn" onclick="submitFaqAnswer()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        답변 등록
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 연차 결재현황 사이드 패널 ===== -->
+<div class="leave-side-overlay" id="lspOverlay" onclick="closeLeavePanel()"></div>
+<div class="leave-side-panel" id="lspPanel">
+  <div class="lsp-head">
+    <h3 id="lspTitle">연차 결재 현황</h3>
+    <div class="lsp-close" onclick="closeLeavePanel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+  <div class="lsp-body">
+    <!-- 프로필 -->
+    <div class="lsp-profile">
+      <div class="emp-name" id="lspName">홍길동</div>
+      <div class="emp-meta" id="lspMeta">마케팅팀</div>
+    </div>
+    <!-- 연차 통계 -->
+    <div class="lsp-stats">
+      <div class="lsp-stat">
+        <div class="sv" id="lspTotal">15</div>
+        <div class="sl">총 연차</div>
+      </div>
+      <div class="lsp-stat">
+        <div class="sv" id="lspUsed">3</div>
+        <div class="sl">사용</div>
+      </div>
+      <div class="lsp-stat accent">
+        <div class="sv" id="lspRemain">12</div>
+        <div class="sl">잔여</div>
+      </div>
+    </div>
+
+    <!-- 결재 현황 -->
+    <div class="lsp-section">
+      <div class="lsp-section-title">결재 현황</div>
+      <div id="lspApprList"><!-- JS로 채움 --></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 경리나라 일반근로자 불러오기 모달 (경량 UI) ===== -->
+<div class="modal-backdrop" id="importEmpModal">
+  <div class="modal modal--md">
+    <div class="modal-head">
+      <div>
+        <h3>경리나라 직원 불러오기</h3>
+        <div class="item-sub">연차 관리에 등록할 직원을 확인하세요</div>
+      </div>
+      <div class="close" onclick="document.getElementById('importEmpModal').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body p-0">
+      <!-- 요약 배너 -->
+      <div class="modal-banner">
+        <div>
+          경리나라에서 <strong class="text-accent">미등록 직원 5명</strong>이 확인됩니다
+        </div>
+        <span class="badge i">재직 중</span>
+      </div>
+      <!-- 직원 카드 리스트 -->
+      <div class="modal-scroll-list">
+        <div class="list-row" id="impRow1">
+          <div class="icon-avatar icon-avatar--accent">김</div>
+          <div class="flex-1">
+            <div class="item-bold">김지원</div>
+            <div class="item-meta-t">개발팀 · 2024.01.02 입사</div>
+          </div>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow1')">등록</a>
+        </div>
+        <div class="list-row" id="impRow2">
+          <div class="icon-avatar icon-avatar--accent">이</div>
+          <div class="flex-1">
+            <div class="item-bold">이도현</div>
+            <div class="item-meta-t">영업팀 · 2024.04.10 입사</div>
+          </div>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow2')">등록</a>
+        </div>
+        <div class="list-row" id="impRow3">
+          <div class="icon-avatar icon-avatar--accent">장</div>
+          <div class="flex-1">
+            <div class="item-bold">장하나</div>
+            <div class="item-meta-t">CS팀 · 2025.08.01 입사</div>
+          </div>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow3')">등록</a>
+        </div>
+        <div class="list-row" id="impRow4">
+          <div class="icon-avatar icon-avatar--accent">홍</div>
+          <div class="flex-1">
+            <div class="item-bold">홍서영</div>
+            <div class="item-meta-t">인사팀 · 2024.09.15 입사</div>
+          </div>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow4')">등록</a>
+        </div>
+        <div class="list-row" id="impRow5">
+          <div class="icon-avatar icon-avatar--accent">최</div>
+          <div class="flex-1">
+            <div class="item-bold">최민준</div>
+            <div class="item-meta-t">마케팅팀 · 2025.11.01 입사</div>
+          </div>
+          <a href="#none" class="btn btn-sm btn-primary" onclick="importSingle(this,'impRow5')">등록</a>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot modal-foot--between">
+      <a href="#none" class="btn" onclick="document.getElementById('importEmpModal').classList.remove('show')">닫기</a>
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('importEmpModal').classList.remove('show');alert('5명 전체가 연차 관리에 등록되었습니다.')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        전체 일괄 등록
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ 수정 모달 ===== -->
+<div class="modal-backdrop" id="editFaqModal">
+  <div class="modal modal--md">
+    <div class="modal-head">
+      <h3>FAQ 수정</h3>
+      <div class="close" onclick="document.getElementById('editFaqModal').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field">
+          <label>카테고리</label>
+          <select id="editFaqCat"><option>연차</option><option>증명서</option><option>급여</option><option>기타</option></select>
+        </div>
+        <div class="field">
+          <label>노출 상태</label>
+          <select id="editFaqVisible"><option>노출 중</option><option>비노출</option></select>
+        </div>
+      </div>
+      <div class="field mb-5">
+        <label>질문 <span class="req">*</span></label>
+        <input type="text" id="editFaqQ" placeholder="질문을 입력하세요" />
+      </div>
+      <div class="field">
+        <label>답변 <span class="req">*</span></label>
+        <textarea rows="6" id="editFaqA" placeholder="답변 내용을 입력하세요"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot modal-foot--between">
+      <a href="#none" class="btn btn--danger" onclick="confirmFaqDelete()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        삭제
+      </a>
+      <div class="btn-group">
+        <a href="#none" class="btn" onclick="document.getElementById('editFaqModal').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" onclick="saveFaqEdit()">저장</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ 삭제 확인 모달 ===== -->
+<div class="modal-backdrop" id="deleteFaqModal">
+  <div class="modal modal--xs">
+    <div class="modal-head">
+      <h3>FAQ 삭제</h3>
+      <div class="close" onclick="document.getElementById('deleteFaqModal').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-row">
+        <div class="confirm-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="confirm-title">이 FAQ를 삭제하시겠습니까?</div>
+          <div class="confirm-body" id="deleteFaqPreview"></div>
+          <div class="confirm-warn">삭제 후 복구할 수 없습니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="document.getElementById('deleteFaqModal').classList.remove('show');document.getElementById('editFaqModal').classList.add('show')">취소</a>
+      <a href="#none" class="btn btn--danger" onclick="executeFaqDelete()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        삭제 확정
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ 등록 모달 ===== -->
+<div class="modal-backdrop" id="addFaqModal">
+  <div class="modal modal--md">
+    <div class="modal-head">
+      <h3>FAQ 등록</h3>
+      <div class="close" onclick="document.getElementById('addFaqModal').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field">
+          <label>카테고리</label>
+          <select><option>연차</option><option>증명서</option><option>급여</option><option>기타</option></select>
+        </div>
+        <div class="field">
+          <label>노출 상태</label>
+          <select><option>노출 중</option><option>비노출</option></select>
+        </div>
+      </div>
+      <div class="field mb-5">
+        <label>질문 <span class="req">*</span></label>
+        <input type="text" placeholder="예) 연차는 언제부터 사용할 수 있나요?" />
+      </div>
+      <div class="field">
+        <label>답변 <span class="req">*</span></label>
+        <textarea rows="6" placeholder="답변 내용을 입력하세요. 직원 앱 FAQ에 그대로 표시됩니다."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="document.getElementById('addFaqModal').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('addFaqModal').classList.remove('show');alert('FAQ가 등록되었습니다.')">등록</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 업무신청관리: 발급처리 팝업 ===== -->
+<div class="modal-backdrop" id="certIssueModalBg">
+  <div class="modal modal--md">
+    <div class="modal-head">
+      <div>
+        <h3 id="certIssueTitle">증명서 발급 처리</h3>
+        <div class="item-sub" id="certIssueMeta"></div>
+      </div>
+      <div class="close" onclick="document.getElementById('certIssueModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="flex-col">
+        <div class="modal-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>직접 작성한 PDF 파일을 첨부하여 발급합니다. 발급 완료 시 신청자의 MY인사 앱으로 즉시 전달됩니다.</span>
+        </div>
+        <div>
+          <label class="label-sm">증명서 파일 첨부 <span class="req">*</span></label>
+          <div class="file-drop-zone"
+            onclick="document.getElementById('certIssueFileInput').click()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="drop-icon"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <div class="drop-title">PDF 파일을 클릭하여 업로드</div>
+            <div class="item-meta">PDF · 최대 10MB</div>
+            <input type="file" id="certIssueFileInput" accept=".pdf" style="display:none" onchange="handleModalIssueFile(this)" />
+          </div>
+          <div id="certIssueFileList" class="mt-3"></div>
+        </div>
+        <div>
+          <label class="label-sm">인사담당자 메모 <span class="text-opt">(선택, 직원에게 전달)</span></label>
+          <textarea rows="3" class="textarea" placeholder="예) 요청하신 대로 발급 완료했습니다. 문의 사항 있으시면 연락주세요."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot modal-foot--between">
+      <a href="#none" class="btn btn--link-danger" onclick="document.getElementById('certIssueModalBg').classList.remove('show');document.getElementById('certRejectModalBg').classList.add('show')">반려</a>
+      <div class="btn-group">
+        <a href="#none" class="btn" onclick="document.getElementById('certIssueModalBg').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" style="min-width:120px" onclick="if(!document.getElementById('certIssueFileList').children.length){alert('파일을 첨부해주세요.');}else{document.getElementById('certIssueModalBg').classList.remove('show');showToastV7('✅ 발급이 완료되었습니다. 신청자에게 발송되었습니다.')}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          발급 완료
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 업무신청관리: 이력보기 팝업 ===== -->
+<div class="modal-backdrop" id="certHistoryModalBg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <div>
+        <h3 id="certHistoryTitle">발급 이력</h3>
+        <div class="item-sub" id="certHistoryMeta"></div>
+      </div>
+      <div class="close" onclick="document.getElementById('certHistoryModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="section-card">
+        <div class="panel-section-hd">발급 상세</div>
+        <div class="info-row"><span class="text-secondary">증명서 종류</span><strong id="certHistoryKind">재직증명서</strong></div>
+        <div class="info-row"><span class="text-secondary">신청자</span><strong id="certHistoryName2">-</strong></div>
+        <div class="info-row"><span class="text-secondary">발급일시</span><span id="certHistoryDate">-</span></div>
+        <div class="info-row"><span class="text-secondary">발급 담당자</span><span>한관리자</span></div>
+        <div class="info-row"><span class="text-secondary">수령 방법</span><span>앱 내 다운로드</span></div>
+      </div>
+      <!-- 첨부파일 섹션 -->
+      <div class="section-card" id="certHistoryFileSection">
+        <div class="panel-section-hd">첨부파일</div>
+        <div id="certHistoryFileList" class="section-body"></div>
+      </div>
+      <div class="section-card">
+        <div class="panel-section-hd">인사담당자 메모</div>
+        <div id="certHistoryMemo" class="section-content">요청하신 대로 발급 완료했습니다. 문의 사항 있으시면 연락주세요.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 업무신청관리: 반려 팝업 ===== -->
+<div class="modal-backdrop" id="certRejectModalBg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <h3>신청 반려</h3>
+      <div class="close" onclick="document.getElementById('certRejectModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-summary">
+        <div class="row-between mb-2"><span class="text-secondary">신청자</span><strong id="certRejectApplicant">-</strong></div>
+        <div class="row-between"><span class="text-secondary">증명서 종류</span><span id="certRejectKind">-</span></div>
+      </div>
+      <div class="field">
+        <label>반려 사유 <span class="req">*</span></label>
+        <textarea rows="5" placeholder="예) 첨부 서류 누락으로 반려합니다. 재신청 시 관련 서류를 첨부해주세요."></textarea>
+      </div>
+      <div class="note">* 작성한 사유는 신청자에게 전달됩니다.</div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="document.getElementById('certRejectModalBg').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn--danger" onclick="document.getElementById('certRejectModalBg').classList.remove('show');showToastV7('반려 처리가 완료되었습니다.')">반려 확정</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 업무신청관리: 반려 사유 보기 팝업 ===== -->
+<div class="modal-backdrop" id="certReasonModalBg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <h3>반려 사유</h3>
+      <div class="close" onclick="document.getElementById('certReasonModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="certReasonText" class="modal-reason-box"></div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn btn-primary" onclick="document.getElementById('certReasonModalBg').classList.remove('show')">확인</a>
+    </div>
+  </div>
+</div>
+
+<script>
+
+/* ===== FAQ 상태 필터 ===== */
+function filterFaqByStatus(val) {
+  document.querySelectorAll('#faqTbody tbody tr').forEach(tr => {
+    if (val === 'all') { tr.style.display = ''; return; }
+    tr.style.display = (tr.dataset.faqStatus === val) ? '' : 'none';
+  });
+}
+
+/* ===== 업무신청관리 팝업 함수 ===== */
+function openCertIssueModal(name, kind, purpose, date) {
+  document.getElementById('certIssueTitle').textContent = kind + ' 발급 처리';
+  document.getElementById('certIssueMeta').innerHTML = `<strong>${name}</strong> · ${purpose} · ${date}`;
+  document.getElementById('certIssueFileList').innerHTML = '';
+  document.getElementById('certIssueModalBg').classList.add('show');
+}
+
+/* 발급이력별 첨부파일 예시 데이터 */
+const CERT_HISTORY_FILES = {
+  '이대리':  [{ name:'재직증명서_이대리_20260427.pdf',  size:'142 KB' }],
+  '최사원':  [{ name:'재직증명서_최사원_20260427.pdf',  size:'138 KB' }],
+  '한과장':  [{ name:'재직증명서_한과장_20260425.pdf',  size:'145 KB' }],
+  '강주임':  [{ name:'재직증명서_강주임_20260424.pdf',  size:'141 KB' }, { name:'재직증명서_강주임_20260424_2부.pdf', size:'141 KB' }],
+};
+
+function openCertHistoryModal(name, kind, date) {
+  document.getElementById('certHistoryTitle').textContent = '발급 이력 — ' + name;
+  document.getElementById('certHistoryMeta').innerHTML = `<strong>${name}</strong> · ${kind} · ${date} 발급`;
+  document.getElementById('certHistoryName2').textContent = name;
+  document.getElementById('certHistoryKind').textContent = kind;
+  document.getElementById('certHistoryDate').textContent = date;
+  const memoEl = document.getElementById('certHistoryMemo');
+  if(memoEl) memoEl.textContent = '요청하신 대로 발급 완료했습니다. 문의 사항 있으시면 연락주세요.';
+
+  /* 첨부파일 렌더 */
+  const fileList = document.getElementById('certHistoryFileList');
+  const files = CERT_HISTORY_FILES[name] || [];
+  if (files.length === 0) {
+    fileList.innerHTML = '<div class="empty-msg">첨부파일이 없습니다.</div>';
+  } else {
+    fileList.innerHTML = files.map(f => `
+      <div class="cert-file-item"
+           onclick="downloadCertFile('${f.name}')">
+        <div class="cert-file-icon">
+          <span class="file-ext-label">PDF</span>
+        </div>
+        <div class="flex-1-min">
+          <div class="item-title truncate">${f.name}</div>
+          <div class="item-meta-t">${f.size}</div>
+        </div>
+        <div class="download-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          다운로드
+        </div>
+      </div>`).join('');
+  }
+
+  document.getElementById('certHistoryModalBg').classList.add('show');
+}
+
+function downloadCertFile(filename) {
+  showToastV7(`📄 ${filename} 다운로드를 시작합니다.`);
+}
+
+function openCertRejectModal(name, kind) {
+  document.getElementById('certRejectApplicant').textContent = name;
+  document.getElementById('certRejectKind').textContent = kind;
+  document.getElementById('certRejectModalBg').classList.add('show');
+}
+
+function openCertReasonModal(name, reason) {
+  document.getElementById('certReasonText').textContent = reason;
+  document.getElementById('certReasonModalBg').classList.add('show');
+}
+
+function handleModalIssueFile(input) {
+  const list = document.getElementById('certIssueFileList');
+  list.innerHTML = '';
+  Array.from(input.files).forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `
+      <div class="file-type-badge">
+        <span class="file-type-label">PDF</span>
+      </div>
+      <div class="flex-1-min">
+        <div class="item-title truncate">${file.name}</div>
+        <div class="item-meta-t">${(file.size/1024).toFixed(1)} KB</div>
+      </div>
+      <div class="attach-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        첨부됨
+      </div>`;
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+const SIDEBAR_PROFILES = {
+  admin: { avatar:'한', name:'한관리자', role:'인사팀 · 팀장 · 관리자' },
+  emp:   { avatar:'홍', name:'홍길동',   role:'마케팅팀 · 대리 · 직원' }
+};
+const EMP_PAGES = new Set(['emp-dashboard','emp-cert','emp-profile']);
+
+/* ── 드롭다운 토글 ── */
+let _sbDropdownOpen = false;
+
+function toggleSbDropdown() {
+  _sbDropdownOpen ? _closeSbDD() : _openSbDD();
+}
+
+function _openSbDD() {
+  _sbDropdownOpen = true;
+  document.getElementById('sbpDropdown').classList.add('show');
+  document.getElementById('sbProfile').classList.add('open');
+}
+
+function _closeSbDD() {
+  _sbDropdownOpen = false;
+  document.getElementById('sbpDropdown').classList.remove('show');
+  document.getElementById('sbProfile').classList.remove('open');
+}
+
+function closeSbDropdown() { _closeSbDD(); }
+
+/* 외부 클릭 시 드롭다운 닫기 */
+document.addEventListener('click', function(e) {
+  if (!_sbDropdownOpen) return;
+  if (!document.getElementById('sbProfile').contains(e.target)) {
+    _closeSbDD();
+  }
+});
+
+/* ── 역할 전환 (관리자 ↔ 직원) ── */
+let _currentRole = 'admin';
+function switchRole(role) {
+  _currentRole = role;
+  closeSbDropdown();
+
+  const p = SIDEBAR_PROFILES[role];
+  document.getElementById('sbpAvatar').textContent = p.avatar;
+  document.getElementById('sbpName').textContent   = p.name;
+  document.getElementById('sbpRole').textContent   = p.role;
+
+  // 선택 체크 표시
+  document.getElementById('sbpOptAdmin').classList.toggle('selected', role === 'admin');
+  document.getElementById('sbpOptEmp').classList.toggle('selected',   role === 'emp');
+
+  const navAdmin   = document.getElementById('navAdmin');
+  const navDivider = document.getElementById('navDivider');
+  const navEmp     = document.getElementById('navEmp');
+  const navBottom  = document.getElementById('navBottom');
+
+  if (role === 'admin') {
+    navAdmin.style.display   = '';
+    navDivider.style.display = '';
+    navEmp.style.display     = '';
+    navBottom.style.display  = '';
+    const el = document.querySelector('.nav-item[data-page="dashboard"]');
+    if (el) goPage(el);
+  } else {
+    navAdmin.style.display   = 'none';
+    navDivider.style.display = 'none';
+    navEmp.style.display     = '';
+    navBottom.style.display  = 'none';
+    const el = document.querySelector('.nav-item[data-page="emp-dashboard"]');
+    if (el) goPage(el);
+  }
+}
+
+/* ── 사이드바 프로필 싱크 (goPage 호출 시) ── */
+function _syncSidebarProfile(pageName) {
+  // 직원 페이지로 이동했을 때 역할을 emp로 자동 전환하지 않음.
+  // 역할 전환은 스위처에서만 가능. 현재 role 유지.
+}
+
+/* ── 프로필 관리 조회/수정 모드 ── */
+function setProfileMode(mode) {
+  const isEdit = mode === 'edit';
+  // 버튼 토글
+  document.getElementById('profileEditBtn').style.display   = isEdit ? 'none'  : '';
+  document.getElementById('profileCancelBtn').style.display = isEdit ? ''      : 'none';
+  document.getElementById('profileSaveBtn').style.display   = isEdit ? ''      : 'none';
+  // 조회/수정 영역 토글
+  document.getElementById('profileViewMode').style.display  = isEdit ? 'none'  : '';
+  document.getElementById('profileEditMode').style.display  = isEdit ? ''      : 'none';
+  // 사진 수정 아이콘: 수정 모드에서만 표시
+  const photoBtn = document.getElementById('profilePhotoEditBtn');
+  if (photoBtn) photoBtn.style.display = isEdit ? 'grid' : 'none';
+  // 인사 정보 수정 버튼들
+  document.querySelectorAll('.hr-edit-btn').forEach(b => b.style.display = isEdit ? '' : 'none');
+  // 항목 추가 버튼
+  document.getElementById('hrInfoAddBtn').style.display = isEdit ? '' : 'none';
+  // 내 인사 정보 패널 헤더 버튼 (btn-sm)
+  const addBtn = document.getElementById('hrInfoAddBtn');
+  if (addBtn) addBtn.style.display = isEdit ? '' : 'none';
+}
+
+function saveProfile() {
+  setProfileMode('view');
+  showToastV7('✅ 프로필이 저장되었습니다.');
+}
+
+
+
+const PAGE_META = {
+  dashboard:       {title:'대시보드', crumb:'관리자 / 대시보드'},
+  leave:           {title:'연차 관리', crumb:'관리자 / 연차 관리'},
+  cert:            {title:'업무신청관리', crumb:'관리자 / 업무신청관리'},
+  'cert-issue':    {title:'증명서 발급 처리', crumb:'관리자 / 업무신청관리 / 발급 처리'},
+  'cert-other':    {title:'기타증명서 발급 처리', crumb:'관리자 / 업무신청관리 / 기타증명서 발급'},
+  'cert-history':  {title:'발급 이력', crumb:'관리자 / 업무신청관리 / 발급 이력'},
+  faq:             {title:'FAQ 답변 관리', crumb:'관리자 / FAQ 답변 관리'},
+  onboard:         {title:'모바일 안내', crumb:'관리자 / 모바일 안내'},
+  intro:           {title:'MY인사 소개', crumb:'관리자 / MY인사 소개'},
+  'emp-dashboard': {title:'대시보드', crumb:'직원 / 대시보드'},
+  'emp-cert':      {title:'업무신청', crumb:'직원 / 업무신청'},
+  'emp-profile':   {title:'프로필 관리', crumb:'직원 / 프로필 관리'},
+};
+
+function goPageByName(name) {
+  const navItem = document.querySelector(`.nav-item[data-page="${name}"]`);
+  if (navItem) goPage(navItem);
+  else goPCPage(name);
+}
+function goPage(el){
+  const name = el.dataset.page;
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.dataset.page===name));
+  const m = PAGE_META[name];
+  if(m){
+    document.getElementById('pageTitle').textContent = m.title;
+    document.getElementById('pageCrumb').textContent = m.crumb;
+  }
+  _syncSidebarProfile(name);
+}
+function goPCPage(name){
+  if(name === 'cert-issue'){
+    openCertIssueModal('홍길동','재직증명서','은행 대출 신청용','2026.04.29 09:14');
+    return;
+  }
+  if(name === 'cert-history'){
+    openCertHistoryModal('이대리','재직증명서','2026.04.27 14:22');
+    return;
+  }
+  if(name === 'cert-other'){
+    openCertIssueModal('김팀장','기타증명서','육아휴직 신청용 근속확인서','2026.04.28 14:05');
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.dataset.page===name));
+  const m = PAGE_META[name];
+  if(m){
+    document.getElementById('pageTitle').textContent = m.title;
+    document.getElementById('pageCrumb').textContent = m.crumb;
+  }
+  let baseName = name;
+  if(name.startsWith('cert-')) baseName = 'cert';
+  else if(name.startsWith('faq')) baseName = 'faq';
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.toggle('active', i.dataset.page===baseName));
+}
+
+
+/* ===== 연차 결재현황 사이드 패널 ===== */
+const LEAVE_APPR_DATA = {
+  '홍길동': [
+    ['휴가신청서', '2026.05.04 (월) — 종일 1일', '4월 29일 상신', 'wait'],
+    ['휴가신청서', '2026.04.15 (수) — 오전 반차', '4월 14일 상신', 'done'],
+    ['연차사용계획서', '2026 2분기 — 3일', '3월 28일 상신', 'done']
+  ],
+  '박직원': [
+    ['휴가신청서', '2026.05.02 (목) — 오후 반차', '4월 29일 상신', 'wait'],
+    ['휴가신청서', '2026.03.10 (월) — 종일 1일', '3월 8일 상신', 'done']
+  ],
+  '이대리': [
+    ['휴가신청서', '2026.05.06~05.08 — 3일', '4월 28일 상신', 'wait'],
+    ['휴가신청서', '2026.04.20 (토) — 종일 1일', '4월 18일 상신', 'done']
+  ],
+  '최사원': [
+    ['휴가신청서', '2026.04.30 (수) — 오후 2시간', '4월 28일 상신', 'wait'],
+    ['휴가신청서', '2026.02.14 (금) — 오전 반차', '2월 12일 상신', 'done']
+  ],
+  '김팀장': [
+    ['휴가신청서', '2026.04.10 (목) — 오전 반차', '4월 8일 상신', 'done'],
+    ['연차사용계획서', '2026 1분기 — 2일', '1월 15일 상신', 'done']
+  ],
+  '한과장': [
+    ['휴가신청서', '2026.03.22 (금) — 종일 1일', '3월 20일 상신', 'done'],
+    ['휴가신청서', '2026.02.05 (수) — 오전 반차', '2월 3일 상신', 'done']
+  ],
+  '강주임': [
+    ['휴가신청서', '2026.04.10 (수) — 오후 반차', '4월 8일 상신', 'done'],
+    ['휴가신청서', '2026.01.20 (월) — 종일 1일', '1월 17일 상신', 'done']
+  ],
+  '윤사원': [
+    ['휴가신청서', '2026.03.14 (금) — 종일 1일', '3월 12일 상신', 'done']
+  ]
+};
+
+function openLeavePanel(name, dept, total, used, remain, status){
+  document.getElementById('lspTitle').textContent = name + ' · 연차 결재 현황';
+  document.getElementById('lspName').textContent = name;
+  document.getElementById('lspMeta').textContent = dept;
+  document.getElementById('lspTotal').textContent = total;
+  document.getElementById('lspUsed').textContent = used;
+  document.getElementById('lspRemain').textContent = remain;
+
+  // 결재 현황
+  const apprList = document.getElementById('lspApprList');
+  const items = LEAVE_APPR_DATA[name] || [];
+  if(items.length === 0){
+    apprList.innerHTML = '<div class="empty-state">결재 이력이 없습니다</div>';
+  } else {
+    apprList.innerHTML = items.map(([type, summary, meta, s]) => {
+      const badge = s === 'wait'
+        ? '<span class="badge w">대기</span>'
+        : '<span class="badge s">승인</span>';
+      return `<div class="lsp-appr-item">
+        <div class="ai-info">
+          <div class="ai-title">${summary}</div>
+          <div class="ai-meta">${type} · ${meta}</div>
+        </div>
+        ${badge}
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('lspOverlay').classList.add('show');
+  document.getElementById('lspPanel').classList.add('show');
+}
+
+function closeLeavePanel(){
+  document.getElementById('lspOverlay').classList.remove('show');
+  document.getElementById('lspPanel').classList.remove('show');
+}
+
+/* 총 연차 더블클릭 인라인 편집 (키보드 입력 전용, 스피너 없음) */
+function recalcRow(tr) {
+  /* 월별 셀(td index 4~15)을 합산해 사용·잔여 재계산 */
+  const allCells = tr.querySelectorAll('td');
+  const totalCell  = allCells[2];
+  const usedCell   = allCells[3];
+  const remainCell = tr.querySelector('.remain');
+  if (!totalCell || !usedCell || !remainCell) return;
+  let monthSum = 0;
+  for (let i = 4; i <= 15; i++) {
+    if (allCells[i]) monthSum += parseFloat(allCells[i].textContent) || 0;
+  }
+  const total = parseFloat(totalCell.textContent) || 0;
+  // 소수점 불필요한 .0 제거
+  usedCell.textContent   = Number.isInteger(monthSum)  ? monthSum  : monthSum;
+  remainCell.textContent = Number.isInteger(total - monthSum) ? (total - monthSum) : (total - monthSum);
+}
+
+function recalcAll() {
+  document.querySelectorAll('#leaveTbody tr').forEach(recalcRow);
+}
+
+document.addEventListener('DOMContentLoaded', recalcAll);
+
+function editTotal(td){
+  if(td.classList.contains('editing')) return;
+  const original = td.textContent.trim();
+  td.classList.add('editing');
+  td.innerHTML = `<input type="text" inputmode="numeric" class="edit-input" value="${original}" maxlength="2" />`;
+  const input = td.querySelector('input');
+  input.focus();
+  input.select();
+
+  // 숫자 키 + 제어키만 허용
+  input.addEventListener('keydown', (e) => {
+    const allowed = ['Backspace','Delete','Tab','Escape','Enter','ArrowLeft','ArrowRight','Home','End'];
+    if(allowed.includes(e.key)) return;
+    if(e.ctrlKey || e.metaKey) return;
+    if(!/^[0-9]$/.test(e.key)) e.preventDefault();
+  });
+  // 붙여넣기 등 비숫자 제거
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 2);
+  });
+
+  const finish = (commit) => {
+    let newVal = original;
+    if(commit){
+      const v = input.value.trim();
+      newVal = v === '' ? original : v;
+    }
+    td.classList.remove('editing');
+    td.textContent = newVal;
+    if(commit && newVal !== original){
+      recalcRow(td.closest('tr'));
+    }
+  };
+  input.addEventListener('blur', () => finish(true));
+  input.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+    if(e.key === 'Escape'){ finish(false); }
+  });
+}
+
+/* 무한스크롤 — 연차 관리 / 업무신청관리 */
+(function(){
+  // 연차 관리: 추가 직원 데이터 풀
+  const leavePool = [
+    {n:'홍길동',d:'영업팀',t:15,u:4,r:11,m:[1,1,1,1],s:'정상'},
+    {n:'서과장',d:'영업팀',t:18,u:8,r:10,m:[2,2,2,2],s:'정상'},
+    {n:'노대리',d:'CS팀',t:15,u:5,r:10,m:[1,2,1,1],s:'정상'},
+    {n:'장사원',d:'개발팀',t:11,u:0,r:11,m:[0,0,0,0],s:'정상'},
+    {n:'문주임',d:'마케팅팀',t:15,u:6,r:9,m:[1,2,2,1],s:'정상'},
+    {n:'배사원',d:'영업팀',t:11,u:2,r:9,m:[1,0,1,0],s:'정상'},
+    {n:'송과장',d:'개발팀',t:18,u:9,r:9,m:[2,3,2,2],s:'정상'},
+    {n:'유주임',d:'CS팀',t:15,u:4,r:11,m:[1,1,1,1],s:'정상'},
+    {n:'임대리',d:'마케팅팀',t:17,u:7,r:10,m:[2,2,2,1],s:'정상'},
+    {n:'백사원',d:'영업팀',t:11,u:1,r:10,m:[0,0,1,0],s:'정상'},
+    {n:'고팀장',d:'CS팀',t:20,u:5,r:15,m:[1,2,1,1],s:'정상'},
+    {n:'조과장',d:'인사팀',t:18,u:6,r:12,m:[2,1,2,1],s:'정상'},
+    {n:'권주임',d:'개발팀',t:15,u:3,r:12,m:[1,1,0,1],s:'정상'},
+    {n:'안사원',d:'마케팅팀',t:11,u:2,r:9,m:[0,1,1,0],s:'정상'},
+    {n:'남대리',d:'영업팀',t:17,u:8,r:9,m:[2,2,2,2],s:'정상'},
+    {n:'양사원',d:'CS팀',t:11,u:0,r:11,m:[0,0,0,0],s:'정상'},
+    {n:'손과장',d:'개발팀',t:18,u:7,r:11,m:[2,1,2,2],s:'정상'}
+  ];
+
+  // 업무신청관리: 추가 신청 데이터 풀
+  const certPool = [
+    {dt:'2026.04.23 16:20',n:'홍길동',d:'영업팀',k:'재직증명서',l:'국문',c:1,p:'관공서 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.23 11:45',n:'서과장',d:'영업팀',k:'경력증명서',l:'국문',c:1,p:'이직 준비',s:'발급완료',a:'history'},
+    {dt:'2026.04.22 17:08',n:'노대리',d:'CS팀',k:'재직증명서',l:'국문',c:1,p:'은행 대출',s:'발급완료',a:'history'},
+    {dt:'2026.04.22 10:30',n:'장사원',d:'개발팀',k:'경력증명서',l:'영문',c:1,p:'해외 인턴십',s:'발급완료',a:'history'},
+    {dt:'2026.04.21 15:55',n:'문주임',d:'마케팅팀',k:'재직증명서',l:'국문',c:2,p:'금융기관 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.21 09:22',n:'배사원',d:'영업팀',k:'재직증명서',l:'국문',c:1,p:'관공서 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.20 14:11',n:'송과장',d:'개발팀',k:'경력증명서',l:'영문',c:2,p:'비자 신청',s:'발급완료',a:'history'},
+    {dt:'2026.04.20 10:48',n:'유주임',d:'CS팀',k:'재직증명서',l:'국문',c:1,p:'병원 보험 청구',s:'발급완료',a:'history'},
+    {dt:'2026.04.19 16:35',n:'임대리',d:'마케팅팀',k:'재직증명서',l:'국문',c:1,p:'은행 대출',s:'발급완료',a:'history'},
+    {dt:'2026.04.19 11:02',n:'백사원',d:'영업팀',k:'경력증명서',l:'국문',c:1,p:'이직 준비',s:'반려',a:'reject'},
+    {dt:'2026.04.18 17:20',n:'고팀장',d:'CS팀',k:'재직증명서',l:'영문',c:1,p:'해외 출장',s:'발급완료',a:'history'},
+    {dt:'2026.04.18 13:44',n:'조과장',d:'인사팀',k:'재직증명서',l:'국문',c:1,p:'관공서 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.17 10:18',n:'권주임',d:'개발팀',k:'경력증명서',l:'영문',c:2,p:'프리랜서 계약',s:'발급완료',a:'history'},
+    {dt:'2026.04.16 15:50',n:'안사원',d:'마케팅팀',k:'재직증명서',l:'국문',c:1,p:'금융기관 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.16 09:33',n:'남대리',d:'영업팀',k:'재직증명서',l:'국문',c:1,p:'은행 대출',s:'발급완료',a:'history'},
+    {dt:'2026.04.15 14:27',n:'양사원',d:'CS팀',k:'재직증명서',l:'국문',c:1,p:'관공서 제출',s:'발급완료',a:'history'},
+    {dt:'2026.04.15 11:09',n:'손과장',d:'개발팀',k:'경력증명서',l:'국문',c:1,p:'이직 준비',s:'발급완료',a:'history'}
+  ];
+
+
+  // FAQ 데이터 풀
+  const faqPool = [
+    {dt:'2026.04.21 10:05',n:'서과장',d:'영업팀',cat:'급여',q:'성과급 지급 기준이 어떻게 되나요?',s:'w'},
+    {dt:'2026.04.20 15:33',n:'노대리',d:'CS팀',cat:'연차',q:'연차 촉진 제도 대상자는 어떻게 확인하나요?',s:'s'},
+    {dt:'2026.04.19 11:48',n:'장사원',d:'개발팀',cat:'복지',q:'야근 식대 지원 금액과 신청 방법이 궁금합니다.',s:'s'},
+    {dt:'2026.04.18 16:22',n:'문주임',d:'마케팅팀',cat:'증명서',q:'재직증명서 발급 후 수정 요청이 가능한가요?',s:'s'},
+    {dt:'2026.04.17 09:15',n:'배사원',d:'영업팀',cat:'기타',q:'재택근무 신청 절차를 알고 싶습니다.',s:'w'},
+    {dt:'2026.04.16 14:40',n:'송과장',d:'개발팀',cat:'연차',q:'출산휴가와 육아휴직을 연속으로 사용할 수 있나요?',s:'s'},
+    {dt:'2026.04.15 11:27',n:'유주임',d:'CS팀',cat:'급여',q:'연장근로수당 산정 기준이 어떻게 되나요?',s:'s'},
+    {dt:'2026.04.14 17:03',n:'임대리',d:'마케팅팀',cat:'복지',q:'경조사 휴가는 몇 일까지 사용 가능한가요?',s:'s'},
+    {dt:'2026.04.13 10:55',n:'백사원',d:'영업팀',cat:'증명서',q:'영문 경력증명서 발급 시 추가 비용이 있나요?',s:'w'},
+    {dt:'2026.04.12 13:18',n:'고팀장',d:'CS팀',cat:'기타',q:'사내 추천 채용 제도에 대해 알고 싶습니다.',s:'s'},
+    {dt:'2026.04.11 09:44',n:'조과장',d:'인사팀',cat:'연차',q:'입사 첫 해 연차 발생 기준은 어떻게 되나요?',s:'s'},
+    {dt:'2026.04.10 15:29',n:'권주임',d:'개발팀',cat:'급여',q:'퇴직금 중간정산 신청이 가능한가요?',s:'s'},
+    {dt:'2026.04.09 11:06',n:'안사원',d:'마케팅팀',cat:'복지',q:'직원 가족 경조사도 지원이 되나요?',s:'w'},
+    {dt:'2026.04.08 16:51',n:'남대리',d:'영업팀',cat:'증명서',q:'퇴직 후에도 재직증명서 발급이 가능한가요?',s:'s'},
+    {dt:'2026.04.07 10:33',n:'양사원',d:'CS팀',cat:'기타',q:'사원증 분실 시 재발급 비용이 발생하나요?',s:'s'},
+    {dt:'2026.04.06 14:17',n:'손과장',d:'개발팀',cat:'연차',q:'병가 사용 시 연차에서 차감되나요?',s:'s'},
+  ];
+  function renderFaqRow(d){
+    const isPending = d.s === 'w';
+    const badgeClass = isPending ? 'badge w' : 'badge s';
+    const statusText = isPending ? '답변 대기' : '답변 완료';
+    const actionBtn = isPending
+      ? `<a href="#none" class="btn btn-sm btn-primary" onclick="openFaqDetailModal('${d.n}','write')">답변 작성</a>`
+      : `<a href="#none" class="btn btn-sm" onclick="openFaqDetailModal('${d.n}','view')">답변 보기</a>`;
+    return `<tr>
+      <td>${d.dt}</td>
+      <td><strong>${d.n}</strong></td>
+      <td>${d.q}</td>
+      <td class="center"><span class="${badgeClass}">${statusText}</span></td>
+      <td>${actionBtn}</td>
+    </tr>`;
+  }
+
+  function renderLeaveRow(d){
+    return `<tr>
+      <td><strong>${d.n}</strong></td>
+      <td>${d.d}</td>
+      <td class="num editable leave-total-cell" ondblclick="editTotal(this)" data-emp="${d.n}">${d.t}</td>
+      <td class="num used">${d.u}</td>
+      <td class="num remain">${d.r}</td>
+      <td class="num">${d.m[0]}</td>
+      <td class="num">${d.m[1]}</td>
+      <td class="num">${d.m[2]}</td>
+      <td class="num">${d.m[3]}</td>
+      <td class="center"><span class="badge s">${d.s}</span></td>
+    </tr>`;
+  }
+
+  function renderCertRow(d){
+    let badge = 'badge s';
+    if(d.s === '대기') badge = 'badge w';
+    else if(d.s === '반려') badge = 'badge d';
+    let action = '';
+    if(d.a === 'history') action = `<a href="#none" class="btn btn-sm" onclick="goPCPage('cert-history')">이력보기</a>`;
+    else if(d.a === 'reject') action = `<a href="#none" class="btn btn-sm">사유보기</a>`;
+    else action = `<a href="#none" class="btn btn-sm btn-primary" onclick="goPCPage('cert-issue')">발급처리</a>`;
+    return `<tr>
+      <td>${d.dt}</td>
+      <td><strong>${d.n}</strong> <span class="badge muted ml-1">${d.d}</span></td>
+      <td>${d.k}</td>
+      <td class="center">${d.c}</td>
+      <td>${d.p}</td>
+      <td class="center"><span class="${badge}">${d.s}</span></td>
+      <td>${action}</td>
+    </tr>`;
+  }
+
+  function setupInfinite(scrollId, tbodyId, loaderId, pool, renderFn, label){
+    const scroller = document.getElementById(scrollId);
+    const tbody = document.getElementById(tbodyId);
+    const loader = document.getElementById(loaderId);
+    if(!scroller || !tbody || !loader) return;
+
+    let loading = false;
+    let cursor = 0; // pool 내 인덱스
+    const batchSize = 5;
+    const total = parseInt(loader.dataset.total, 10);
+
+    function updateLoader(){
+      const cur = parseInt(loader.dataset.loaded, 10);
+      if(cur >= total){
+        loader.classList.add('done');
+        loader.innerHTML = `모든 ${label} 불러왔습니다 (${total} / ${total})`;
+      } else {
+        loader.innerHTML = `<span class="spin"></span>스크롤하여 더 불러오기 (${cur} / ${total}${label.endsWith('명') ? '명' : '건'})`;
+      }
+    }
+
+    function loadMore(){
+      if(loading) return;
+      const cur = parseInt(loader.dataset.loaded, 10);
+      if(cur >= total) return;
+      loading = true;
+      // 시뮬레이션 딜레이
+      setTimeout(() => {
+        const remain = total - cur;
+        const take = Math.min(batchSize, remain);
+        let html = '';
+        for(let i = 0; i < take; i++){
+          html += renderFn(pool[cursor % pool.length]);
+          cursor++;
+        }
+        tbody.insertAdjacentHTML('beforeend', html);
+        loader.dataset.loaded = (cur + take).toString();
+        updateLoader();
+        loading = false;
+      }, 350);
+    }
+
+    scroller.addEventListener('scroll', () => {
+      const nearBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 60;
+      if(nearBottom) loadMore();
+    });
+  }
+
+  // 초기화 — 로더 제거됨 (무한스크롤 표시 비활성)
+  document.addEventListener('DOMContentLoaded', () => {
+    // setupInfinite 호출 제거됨 (요구사항 12: 무한스크롤 강제 표시 제외)
+  });
+})();
+
+/* ===== 카카오톡 발송 & 모바일 안내 ===== */
+const installEmps = [
+  { id:1, name:'홍길동', dept:'마케팅팀', rank:'대리',  phone:'010-1234-5678', installed:true,  last:'5분 전' },
+  { id:2, name:'박직원', dept:'개발팀',   rank:'주임',  phone:'010-2345-6789', installed:true,  last:'2시간 전' },
+  { id:3, name:'이대리', dept:'CS팀',     rank:'대리',  phone:'010-3456-7890', installed:false, last:null },
+  { id:4, name:'최사원', dept:'CS팀',     rank:'사원',  phone:'010-4567-8901', installed:false, last:null },
+  { id:5, name:'김팀장', dept:'마케팅팀', rank:'팀장',  phone:'010-5678-9012', installed:true,  last:'어제' },
+  { id:6, name:'한과장', dept:'개발팀',   rank:'과장',  phone:'010-6789-0123', installed:true,  last:'3일 전' },
+  { id:7, name:'정사원', dept:'영업팀',   rank:'사원',  phone:'010-9012-3456', installed:false, last:null },
+  { id:8, name:'오주임', dept:'영업팀',   rank:'주임',  phone:'010-0123-4567', installed:true,  last:'1시간 전' },
+  { id:9, name:'강주임', dept:'인사팀',   rank:'주임',  phone:'010-7890-1234', installed:false, last:null },
+  { id:10,name:'윤사원', dept:'마케팅팀', rank:'사원',  phone:'010-8901-2345', installed:true,  last:'어제' },
+];
+let kakaoTargetIds = [];
+let installFilterState = 'all';
+
+function renderInstallTable() {
+  const tbody = document.getElementById('installTbody');
+  if (!tbody) return;
+  let list = installEmps.slice();
+  if (installFilterState === 'not')  list = list.filter(e => !e.installed);
+  if (installFilterState === 'done') list = list.filter(e =>  e.installed);
+  list.sort((a,b) => (a.installed === b.installed) ? 0 : (a.installed ? 1 : -1));
+  tbody.innerHTML = list.map(e => {
+    const statusBadge = e.installed
+      ? '<span class="badge s">설치 완료</span>'
+      : '<span class="badge w">미설치</span>';
+    const lastCell = e.last
+      ? `<span class="text-sm-secondary">${e.last}</span>`
+      : '<span class="text-muted">-</span>';
+    const kakaoBtn = e.installed
+      ? '<span class="text-muted">불필요</span>'
+      : `<a href="#none" class="kakao-btn" onclick="openKakaoSingle(${e.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.83 1.91 5.31 4.79 6.7-.21.78-.76 2.83-.87 3.27-.14.55.2.54.42.39.18-.12 2.78-1.89 3.91-2.66.57.08 1.15.13 1.75.13 5.52 0 10-3.48 10-7.83C22 6.48 17.52 3 12 3z"/></svg>카카오톡 발송</a>`;
+    return `<tr><td><strong>${e.name}</strong></td><td>${e.dept}</td><td>${e.rank}</td><td class="text-sm-secondary">${e.phone}</td><td class="center">${statusBadge}</td><td class="center">${lastCell}</td><td class="center">${kakaoBtn}</td></tr>`;
+  }).join('');
+  const notInst = installEmps.filter(e => !e.installed).length;
+  const el = document.getElementById('notInstCount');
+  if (el) el.textContent = notInst;
+}
+
+function setInstFilter(f) {
+  installFilterState = f;
+  ['all','not','done'].forEach(k => {
+    const btn = document.getElementById('ifilter-' + k);
+    if (!btn) return;
+    btn.classList.toggle('active', k === f);
+  });
+  renderInstallTable();
+}
+
+function getDefaultKakaoMsg(emp) {
+  return `안녕하세요 ${emp.name}님,\n인사팀입니다.\n\n📱 모바일 인사관리 앱 'MY인사'를 도입했습니다.\n\n주요 기능:\n· 연차 신청 (캘린더 자동 연동)\n· 증명서 발급 (앱으로 즉시 수령)\n· FAQ (인사 관련 질문 즉시 해결)\n\n📲 설치 링크\nhttps://my-insa.app/install\n\n문의: 인사팀 (02-XXXX-XXXX)`;
+}
+
+function openKakaoSingle(id) {
+  const emp = installEmps.find(e => e.id === id);
+  if (!emp) return;
+  kakaoTargetIds = [id];
+  document.getElementById('kakaoModalTitle').textContent = `💬 카카오톡 발송 — ${emp.name}`;
+  document.getElementById('kakaoTargetInfo').textContent = `${emp.name} (${emp.dept} · ${emp.rank}) · ${emp.phone}`;
+  document.getElementById('kakaoMsgInput').value = getDefaultKakaoMsg(emp);
+  updateKakaoPreview();
+  document.getElementById('kakaoModalBg').style.display = 'flex';
+}
+
+function openKakaoBulk() {
+  const notInst = installEmps.filter(e => !e.installed);
+  if (notInst.length === 0) { showToastV7('✅ 전 직원이 이미 설치 완료했습니다'); return; }
+  kakaoTargetIds = notInst.map(e => e.id);
+  document.getElementById('kakaoModalTitle').textContent = `💬 카카오톡 일괄 발송 (${notInst.length}명)`;
+  document.getElementById('kakaoTargetInfo').textContent = notInst.map(e => e.name).join(', ') + ` · 총 ${notInst.length}명 (미설치)`;
+  document.getElementById('kakaoMsgInput').value = getDefaultKakaoMsg({name:'{이름}'});
+  updateKakaoPreview();
+  document.getElementById('kakaoModalBg').style.display = 'flex';
+}
+
+function closeKakaoModal() {
+  document.getElementById('kakaoModalBg').style.display = 'none';
+}
+
+function updateKakaoPreview() {
+  const msg = document.getElementById('kakaoMsgInput').value;
+  const bubble = document.getElementById('kakaoPreviewBubble');
+  if (!bubble) return;
+  const previewName = (kakaoTargetIds.length === 1)
+    ? ((installEmps.find(e => e.id === kakaoTargetIds[0]) || {name:'{이름}'}).name)
+    : '{이름}';
+  bubble.textContent = msg.replace(/\{이름\}/g, previewName);
+}
+
+function sendKakao() {
+  const cnt = kakaoTargetIds.length;
+  const label = cnt === 1
+    ? ((installEmps.find(e => e.id === kakaoTargetIds[0]) || {name:'직원'}).name + '님')
+    : `${cnt}명`;
+  closeKakaoModal();
+  showToastV7(`💬 ${label}께 카카오톡 발송 완료`);
+}
+
+function showToastV7(msg) {
+  const t = document.getElementById('toastV7');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// onboard 페이지 진입 시 테이블 렌더
+(function() {
+  const _origGP = window.goPage;
+  if (_origGP) {
+    window.goPage = function(el) {
+      _origGP(el);
+      if (el.dataset.page === 'onboard') setTimeout(renderInstallTable, 50);
+    };
+  }
+  document.addEventListener('DOMContentLoaded', renderInstallTable);
+})();
+
+/* FAQ 질문 답변 관리 카테고리 필터 */
+function filterFaqTable(btn, cat) {
+  // 버튼 active 상태
+  btn.closest('div').querySelectorAll('.btn').forEach(b => {
+    b.style.background = ''; b.style.color = ''; b.style.borderColor = '';
+  });
+  btn.style.background = 'var(--accent)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--accent)';
+  // 행 필터
+  document.querySelectorAll('#faqTbody tbody tr').forEach(tr => {
+    if (cat === 'all') { tr.style.display = ''; return; }
+    const catCell = tr.querySelector('td:nth-child(3) .badge');
+    tr.style.display = (catCell && catCell.textContent.trim() === cat) ? '' : 'none';
+  });
+}
+
+/* 자주 묻는 질문 카테고리 필터 */
+function filterFaqCommonTable(btn, cat) {
+  btn.closest('div').querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#faqCommonTable tbody tr').forEach(tr => {
+    tr.style.display = (cat === 'all' || tr.dataset.faqCat === cat) ? '' : 'none';
+  });
+}
+
+/* FAQ 수정 팝업 열기 */
+let _faqEditTargetRow = null;
+
+function openFaqEdit(cat, q, a, btnEl) {
+  _faqEditTargetRow = btnEl ? btnEl.closest('tr') : null;
+  const catEl = document.getElementById('editFaqCat');
+  const qEl = document.getElementById('editFaqQ');
+  const aEl = document.getElementById('editFaqA');
+  if (catEl) {
+    Array.from(catEl.options).forEach(o => { o.selected = (o.value === cat || o.text === cat); });
+  }
+  if (qEl) qEl.value = q;
+  if (aEl) aEl.value = a;
+  document.getElementById('editFaqModal').classList.add('show');
+}
+
+function saveFaqEdit() {
+  document.getElementById('editFaqModal').classList.remove('show');
+  showToastV7('✅ FAQ가 수정되었습니다.');
+}
+
+function confirmFaqDelete() {
+  const q = document.getElementById('editFaqQ').value || '이 항목';
+  document.getElementById('deleteFaqPreview').textContent = '"' + q + '"';
+  document.getElementById('editFaqModal').classList.remove('show');
+  document.getElementById('deleteFaqModal').classList.add('show');
+}
+
+function executeFaqDelete() {
+  document.getElementById('deleteFaqModal').classList.remove('show');
+  if (_faqEditTargetRow) {
+    _faqEditTargetRow.remove();
+    _faqEditTargetRow = null;
+  }
+  showToastV7('🗑️ FAQ가 삭제되었습니다.');
+}
+
+
+function filterEmpStatus(btn, status) {
+  document.querySelectorAll('.emp-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#empStatusTable tbody tr').forEach(tr => {
+    tr.style.display = (status === 'all' || tr.dataset.empStatus === status) ? '' : 'none';
+  });
+}
+
+/* ===== FAQ 답변 작성/보기 팝업 ===== */
+const FAQ_DETAIL_DATA = {
+  '홍길동': {
+    q: '육아휴직 후 복직 시 연차 산정은 어떻게 되나요?',
+    body: '안녕하세요. 다음달부터 1년간 육아휴직을 사용 예정인 직원입니다.\n\n복직 후 연차가 어떤 방식으로 산정되는지 궁금합니다. 휴직 기간이 근속 기간에 포함되는지, 복직 시점에 연차가 즉시 부여되는지, 아니면 다음 정산일까지 기다려야 하는지 알려주시면 감사하겠습니다.',
+    from: '홍길동 · 마케팅팀 · 대리', date: '2026.04.29 11:24', status: 'w'
+  },
+  '박직원': {
+    q: '해외 비자용 영문 재직증명서에 직인 외 추가 서명도 가능한가요?',
+    body: '해외 취업 비자를 신청하려고 합니다. 대사관에서 직인 외에 담당자 서명도 함께 요구하는데, 영문 재직증명서 발급 시 서명 추가가 가능한지 문의드립니다.',
+    from: '박직원 · 개발팀 · 주임', date: '2026.04.28 16:08', status: 'w'
+  },
+  '최사원': {
+    q: '급여명세서를 PDF로 받을 수 있나요?',
+    body: '매월 받는 급여명세서를 PDF 파일로 저장하고 싶습니다. 앱에서 직접 다운로드할 수 있는 방법이 있는지, 혹은 요청하면 이메일로 받을 수 있는지 알고 싶습니다.',
+    from: '최사원 · CS팀 · 사원', date: '2026.04.28 09:42', status: 'w'
+  },
+  '이대리': {
+    q: '복지포인트 잔액은 매년 이월되나요?',
+    body: '복지포인트가 연말에 남아 있을 경우 다음 해로 이월이 되는지, 아니면 소멸되는지 알고 싶습니다. 또한 이월이 된다면 한도가 있는지도 함께 알려주세요.',
+    from: '이대리 · CS팀 · 대리', date: '2026.04.26 14:15', status: 's',
+    answer: '복지포인트는 매년 12월 31일 기준으로 잔여 포인트가 소멸됩니다. 이월은 지원되지 않으니 연말 전에 사용해주시기 바랍니다. 포인트 잔액은 MY인사 앱 > 복지 탭에서 실시간 확인 가능합니다.',
+    answeredBy: '인사팀 한관리자 · 2026.04.26 15:40'
+  },
+  '윤사원': {
+    q: '반반차도 결재선이 동일하게 적용되나요?',
+    body: '연차 신청 시와 동일하게 반반차도 팀장 → 인사팀 결재 순서인지 궁금합니다. 혹시 반반차는 별도 결재 없이 바로 처리되는지도 알려주세요.',
+    from: '윤사원 · 마케팅팀 · 사원', date: '2026.04.25 10:32', status: 's',
+    answer: '반반차 신청도 연차 신청과 동일한 결재선이 적용됩니다. 팀장 1차 승인 후 인사팀 최종 확인 순서입니다. 별도 간소화 결재는 현재 지원되지 않습니다.',
+    answeredBy: '인사팀 한관리자 · 2026.04.25 11:05'
+  },
+  '한과장': {
+    q: '경력증명서에 프로젝트 이력도 함께 기재 가능한가요?',
+    body: '이직을 준비 중인데, 경력증명서에 재직 기간 외에 주요 프로젝트 이력도 함께 기재해주실 수 있는지 여쭤봅니다. 별도 첨부 형태도 괜찮습니다.',
+    from: '한과장 · 개발팀 · 과장', date: '2026.04.24 17:18', status: 's',
+    answer: '표준 경력증명서 양식에는 프로젝트 이력이 포함되지 않습니다. 다만 별도 경력기술서(비공식 문서)를 함께 요청하시면 작성 검토가 가능합니다. 추가 서류 필요 시 인사팀으로 직접 연락 주세요.',
+    answeredBy: '인사팀 한관리자 · 2026.04.24 18:02'
+  }
+};
+
+function openFaqDetailModal(nameOrKey, mode) {
+  // key-based ('w_1') or name-based ('홍길동','write')
+  let d = FAQ_DETAIL_DATA[nameOrKey];
+  // fallback: 이름 못 찾으면 첫 대기 항목
+  if (!d) d = Object.values(FAQ_DETAIL_DATA).find(x => x.status === 'w') || Object.values(FAQ_DETAIL_DATA)[0];
+  const isPending = (mode === 'write') || (d.status === 'w' && mode !== 'view');
+
+  document.getElementById('faqDetailModalTitle').textContent = isPending ? '답변 작성' : '답변 보기';
+  document.getElementById('faqDetailModalMeta').innerHTML = `<strong>${d.from}</strong> · ${d.date}`;
+  const badge = document.getElementById('faqDetailBadge');
+  badge.textContent = isPending ? '답변 대기' : '답변 완료';
+  badge.className = isPending ? 'badge w' : 'badge s';
+
+  document.getElementById('faqDetailQuestion').textContent = d.q;
+  const bodyEl = document.getElementById('faqDetailBody');
+  bodyEl.style.whiteSpace = 'pre-line';
+  bodyEl.textContent = d.body;
+  document.getElementById('faqDetailMeta2').innerHTML = `<span>등록일 ${d.date}</span>`;
+
+  const writeArea = document.getElementById('faqDetailWriteArea');
+  const answerView = document.getElementById('faqDetailAnswerView');
+  const submitBtn = document.getElementById('faqDetailSubmitBtn');
+  if (isPending) {
+    writeArea.style.display = '';
+    answerView.style.display = 'none';
+    submitBtn.style.display = '';
+    document.getElementById('faqDetailTextarea').value = '';
+    document.getElementById('faqDetailFileList').innerHTML = '';
+  } else {
+    writeArea.style.display = 'none';
+    answerView.style.display = '';
+    submitBtn.style.display = 'none';
+    document.getElementById('faqDetailAnswerText').textContent = d.answer || '';
+    document.getElementById('faqDetailAnswerMeta').textContent = d.answeredBy || '';
+  }
+  document.getElementById('faqDetailModalBg').classList.add('show');
+}
+
+function closeFaqDetailModal() {
+  document.getElementById('faqDetailModalBg').classList.remove('show');
+}
+
+function submitFaqAnswer() {
+  const txt = document.getElementById('faqDetailTextarea').value.trim();
+  if (!txt) { alert('답변 내용을 입력해주세요.'); return; }
+  closeFaqDetailModal();
+  showToastV7('✅ 답변이 등록되었습니다. 신청자에게 알림이 발송됩니다.');
+}
+
+/* ===== FAQ 답변 파일 첨부 ===== */
+function handleFaqAnswerFile(input, listId) {
+  const list = document.getElementById(listId || 'faqAnswerFileList');
+  if (!list) return;
+  Array.from(input.files).forEach(file => {
+    const ext = file.name.split('.').pop().toUpperCase();
+    const extColors = {PDF:'var(--danger)',JPG:'var(--warning)',JPEG:'var(--warning)',PNG:'var(--info)',DOCX:'var(--accent)',XLSX:'var(--success)'};
+    const color = extColors[ext] || 'var(--text-tertiary)';
+    const tag = document.createElement('div');
+    tag.className = 'file-tag';
+    tag.innerHTML = `<span style="font-size:9px;font-weight:800;color:${color};background:${color}22;padding:1px 5px;border-radius:3px">${ext}</span><span class="truncate file-tag-name">${file.name}</span><a href="#none" onclick="this.closest('.file-tag').remove()" class="file-tag-remove">×</a>`;
+    list.appendChild(tag);
+  });
+  input.value = '';
+}
+
+/* 직원 개별 등록 */
+function importSingle(btn, rowId) {
+  const row = document.getElementById(rowId);
+  row.style.opacity = '0.5';
+  btn.textContent = '등록됨';
+  btn.disabled = true;
+  btn.style.background = 'var(--success)';
+  btn.style.borderColor = 'var(--success)';
+}
+
+
+(function(){
+  const resizer = document.getElementById('resizer');
+  const root = document.documentElement;
+  if(!resizer) return;
+  let dragging = false;
+
+  resizer.addEventListener('mousedown', (e) => {
+    dragging = true;
+    resizer.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', (e) => {
+    if(!dragging) return;
+    let w = e.clientX;
+    if(w < 180) w = 180;
+    if(w > 480) w = 480;
+    root.style.setProperty('--sidebar-w', w + 'px');
+  });
+  document.addEventListener('mouseup', () => {
+    if(dragging){
+      dragging = false;
+      resizer.classList.remove('dragging');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+  });
+})();
+
+/* ============ 테이블 컬럼 리사이저블 그리드 (v4.3) ============
+   모든 table.tbl의 thead th에 드래그 핸들 자동 주입.
+*/
+(function(){
+  function ensureWidths(table){
+    const ths = table.querySelectorAll('thead th');
+    ths.forEach(th => {
+      const rect = th.getBoundingClientRect();
+      // 테이블이 보이고, 아직 width 미설정이면 현재 렌더 너비 px로 잠금
+      if(rect.width > 0 && !th.dataset.widthFixed){
+        th.style.width = rect.width + 'px';
+        th.dataset.widthFixed = '1';
+      }
+    });
+  }
+
+  function attachResizers(table){
+    if(!table || table.dataset.resizable === 'true') return;
+    table.dataset.resizable = 'true';
+
+    const ths = table.querySelectorAll('thead th');
+    if(!ths.length) return;
+
+    // 핸들 주입
+    ths.forEach((th, idx) => {
+      if(idx === ths.length - 1) return;
+      const handle = document.createElement('div');
+      handle.className = 'col-resizer';
+      th.appendChild(handle);
+
+      let startX = 0;
+      let startW = 0;
+      let dragging = false;
+
+      handle.addEventListener('mousedown', (e) => {
+        ensureWidths(table); // 드래그 직전 한번 더 보장
+        dragging = true;
+        startX = e.clientX;
+        startW = th.getBoundingClientRect().width;
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      function onMove(e){
+        if(!dragging) return;
+        let w = startW + (e.clientX - startX);
+        if(w < 50) w = 50;
+        th.style.width = w + 'px';
+      }
+      function onUp(){
+        if(dragging){
+          dragging = false;
+          handle.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+
+  function processVisibleTables(){
+    document.querySelectorAll('table.tbl').forEach(t => {
+      // 핸들 주입은 1회만
+      attachResizers(t);
+      // 페이지가 active 상태(보임)일 때 width 잠금
+      if(t.offsetParent !== null){
+        ensureWidths(t);
+      }
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', processVisibleTables);
+  } else {
+    processVisibleTables();
+  }
+
+  // 페이지 전환 시 새로 보이는 테이블도 처리
+  const _origGoPage = window.goPage;
+  if(_origGoPage){
+    window.goPage = function(el){
+      _origGoPage(el);
+      setTimeout(processVisibleTables, 60);
+    };
+  }
+  const _origGoPCPage = window.goPCPage;
+  if(_origGoPCPage){
+    window.goPCPage = function(name){
+      _origGoPCPage(name);
+      setTimeout(processVisibleTables, 60);
+    };
+  }
+  // 모달 표시 시에도 (P-002)
+  document.addEventListener('click', () => setTimeout(processVisibleTables, 60));
+})();
+</script>
+
+<!-- ===== 직원용: 증명서 신청 팝업 ===== -->
+<div class="modal-backdrop" id="empCertStep1Bg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <h3>증명서 신청 — 종류 선택</h3>
+      <div class="close" onclick="closeEmpCertModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body modal-body--list">
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('재직증명서')">
+        <div class="icon-avatar icon-avatar--cert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="text-left">
+          <div class="item-md">재직증명서</div>
+          <div class="item-meta">현재 재직 사실을 증명하는 문서 · 국문/영문</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" class="push-right"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('경력증명서')">
+        <div class="icon-avatar icon-avatar--career">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9d174d" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+        </div>
+        <div class="text-left">
+          <div class="item-md">경력증명서</div>
+          <div class="item-meta">입사일·직위·담당업무 등 경력 증명 · 국문/영문</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" class="push-right"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="#none" class="btn cert-type-btn" onclick="openEmpCertStep2('기타증명서')">
+        <div class="icon-avatar icon-avatar--other">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        </div>
+        <div class="text-left">
+          <div class="item-md">기타증명서</div>
+          <div class="item-meta">근속확인서, 급여확인서 등 기타 문서</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" class="push-right"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- 증명서 신청 Step 2: 용도/메모 입력 -->
+<div class="modal-backdrop" id="empCertStep2Bg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <div>
+        <h3 id="empCertStep2Title">재직증명서 신청</h3>
+        <div class="item-sub">신청 정보를 입력해주세요</div>
+      </div>
+      <div class="close" onclick="closeEmpCertModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="field mb-5">
+        <label>제출처 / 용도 <span class="req">*</span></label>
+        <input type="text" id="empCertPurpose" placeholder="예) 은행 대출 신청용, 비자 신청용 등" />
+      </div>
+      <div class="field">
+        <label>요청 메모 <span class="label-opt">(선택)</span></label>
+        <textarea id="empCertMemo" rows="4" placeholder="특별 요청사항을 입력해주세요&#10;예) 영문 직인 포함 요청, 담당자 서명 추가 등"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="closeEmpCertModal()">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="submitEmpCert()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        신청하기
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 직원용: 인사정보 항목 추가 팝업 ===== -->
+<div class="modal-backdrop" id="hrInfoModalBg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <h3>인사 정보 추가</h3>
+      <div class="close" onclick="document.getElementById('hrInfoModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="field mb-5">
+        <label>항목 유형 <span class="req">*</span></label>
+        <select id="hrInfoType" onchange="updateHrInfoFields(this.value)">
+          <option value="">선택해주세요</option>
+          <option value="cert">자격증</option>
+          <option value="edu">학력</option>
+          <option value="lang">어학</option>
+          <option value="award">수상 / 표창</option>
+          <option value="etc">기타</option>
+        </select>
+      </div>
+      <div id="hrInfoFields" style="display:none">
+        <div class="form-row" id="hrInfoRow1">
+          <div class="field">
+            <label id="hrInfoLabel1">명칭 <span class="req">*</span></label>
+            <input type="text" id="hrInfoVal1" placeholder="" />
+          </div>
+          <div class="field">
+            <label id="hrInfoLabel2">발급 기관</label>
+            <input type="text" id="hrInfoVal2" placeholder="" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>취득일 / 기간</label>
+            <input type="text" id="hrInfoDate" placeholder="예) 2023.04.16" />
+          </div>
+          <div class="field">
+            <label>점수 / 등급 (선택)</label>
+            <input type="text" id="hrInfoScore" placeholder="예) 875점, 1급, 우수" />
+          </div>
+        </div>
+        <div class="field">
+          <label>메모 (선택)</label>
+          <textarea id="hrInfoMemo" rows="3" placeholder="추가 설명이 있으면 입력해주세요"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <a href="#none" class="btn" onclick="document.getElementById('hrInfoModalBg').classList.remove('show')">취소</a>
+      <a href="#none" class="btn btn-primary" onclick="submitHrInfo()">저장</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 직원용 증명서 신청 팝업 ===== */
+let _empCertType = '';
+
+function openEmpCertModal() {
+  document.getElementById('empCertStep1Bg').classList.add('show');
+  document.getElementById('empCertStep2Bg').classList.remove('show');
+}
+
+function openEmpCertStep2(type) {
+  _empCertType = type;
+  document.getElementById('empCertStep2Title').textContent = type + ' 신청';
+  document.getElementById('empCertPurpose').value = '';
+  document.getElementById('empCertMemo').value = '';
+  document.getElementById('empCertStep1Bg').classList.remove('show');
+  document.getElementById('empCertStep2Bg').classList.add('show');
+}
+
+function backToStep1() {
+  document.getElementById('empCertStep2Bg').classList.remove('show');
+  document.getElementById('empCertStep1Bg').classList.add('show');
+}
+
+function closeEmpCertModal() {
+  document.getElementById('empCertStep1Bg').classList.remove('show');
+  document.getElementById('empCertStep2Bg').classList.remove('show');
+}
+
+function submitEmpCert() {
+  const purpose = document.getElementById('empCertPurpose').value.trim();
+  if (!purpose) { alert('제출처 / 용도를 입력해주세요.'); return; }
+  closeEmpCertModal();
+  showToastV7('✅ ' + _empCertType + ' 신청이 완료되었습니다. 인사담당자 확인 후 발급됩니다.');
+}
+
+/* ===== 인사정보 추가 팝업 ===== */
+function openHrInfoModal() {
+  document.getElementById('hrInfoType').value = '';
+  document.getElementById('hrInfoFields').style.display = 'none';
+  document.getElementById('hrInfoModalBg').classList.add('show');
+}
+
+function updateHrInfoFields(type) {
+  const fields = document.getElementById('hrInfoFields');
+  const l1 = document.getElementById('hrInfoLabel1');
+  const v1 = document.getElementById('hrInfoVal1');
+  const l2 = document.getElementById('hrInfoLabel2');
+  const v2 = document.getElementById('hrInfoVal2');
+  const score = document.getElementById('hrInfoScore');
+  if (!type) { fields.style.display = 'none'; return; }
+  fields.style.display = 'block';
+  if (type === 'cert') {
+    l1.textContent = '자격증명'; v1.placeholder = '예) 정보처리기사, 운전면허 1종';
+    l2.textContent = '발급 기관'; v2.placeholder = '예) 한국산업인력공단';
+    score.parentElement.querySelector('label').textContent = '등급 / 종류 (선택)';
+    score.placeholder = '예) 1급, 기사';
+  } else if (type === 'edu') {
+    l1.textContent = '학교명'; v1.placeholder = '예) ○○대학교 컴퓨터공학과';
+    l2.textContent = '학위'; v2.placeholder = '예) 학사, 석사';
+    score.parentElement.querySelector('label').textContent = '졸업 구분 (선택)';
+    score.placeholder = '예) 졸업, 수료, 재학 중';
+  } else if (type === 'lang') {
+    l1.textContent = '시험명'; v1.placeholder = '예) TOEIC, JLPT, OPIc';
+    l2.textContent = '주관 기관'; v2.placeholder = '예) ETS, JEES';
+    score.parentElement.querySelector('label').textContent = '점수 / 등급 (선택)';
+    score.placeholder = '예) 875점, N2, AL';
+  } else if (type === 'award') {
+    l1.textContent = '수상명'; v1.placeholder = '예) 우수사원상, 매출왕상';
+    l2.textContent = '수여 기관'; v2.placeholder = '예) ○○주식회사';
+    score.parentElement.querySelector('label').textContent = '등급 (선택)';
+    score.placeholder = '예) 1위, 우수';
+  } else {
+    l1.textContent = '항목명'; v1.placeholder = '항목명을 입력하세요';
+    l2.textContent = '기관 / 출처'; v2.placeholder = '';
+    score.parentElement.querySelector('label').textContent = '세부 내용 (선택)';
+    score.placeholder = '';
+  }
+}
+
+function submitHrInfo() {
+  const type = document.getElementById('hrInfoType').value;
+  const val = document.getElementById('hrInfoVal1').value.trim();
+  if (!type) { alert('항목 유형을 선택해주세요.'); return; }
+  if (!val) { alert('내용을 입력해주세요.'); return; }
+  document.getElementById('hrInfoModalBg').classList.remove('show');
+  showToastV7('✅ 인사 정보가 추가되었습니다.');
+}
+</script>
+
+<!-- ===== 내 인사 정보 수정 모달 ===== -->
+<div class="modal-backdrop" id="hrEditModalBg">
+  <div class="modal modal--sm">
+    <div class="modal-head">
+      <h3 id="hrEditModalTitle">항목 수정</h3>
+      <div class="close" onclick="document.getElementById('hrEditModalBg').classList.remove('show')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" id="hrEditRow1">
+        <div class="field">
+          <label id="hrEditLabel1">명칭 <span class="req">*</span></label>
+          <input type="text" id="hrEditVal1" />
+        </div>
+        <div class="field">
+          <label id="hrEditLabel2">기관</label>
+          <input type="text" id="hrEditVal2" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label id="hrEditLabel3">취득일 / 기간</label>
+          <input type="text" id="hrEditVal3" />
+        </div>
+        <div class="field">
+          <label id="hrEditLabel4">점수 / 등급 (선택)</label>
+          <input type="text" id="hrEditVal4" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot modal-foot--between">
+      <a href="#none" class="btn btn--link-danger" onclick="document.getElementById('hrEditModalBg').classList.remove('show');showToastV7('항목이 삭제되었습니다.')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        삭제
+      </a>
+      <div class="btn-group">
+        <a href="#none" class="btn" onclick="document.getElementById('hrEditModalBg').classList.remove('show')">취소</a>
+        <a href="#none" class="btn btn-primary" onclick="saveHrEdit()">저장</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 내 인사 정보 항목 수정 팝업 ===== */
+const HR_TYPE_LABELS = {
+  cert: { title:'자격증 수정', l1:'자격증명',   l2:'발급 기관',  l3:'취득일',        l4:'등급/종류' },
+  edu:  { title:'학력 수정',   l1:'학교명/전공', l2:'학위',       l3:'재학 기간',     l4:'졸업 구분' },
+  lang: { title:'어학 수정',   l1:'시험명',      l2:'주관 기관',  l3:'취득일',        l4:'점수/등급' },
+  award:{ title:'수상 수정',   l1:'수상명',      l2:'수여 기관',  l3:'수상일',        l4:'등급'      },
+  etc:  { title:'기타 수정',   l1:'항목명',      l2:'기관/출처', l3:'날짜/기간',     l4:'세부 내용' },
+};
+
+function openHrEditModal(type, v1, v2, v3, v4) {
+  const cfg = HR_TYPE_LABELS[type] || HR_TYPE_LABELS.etc;
+  document.getElementById('hrEditModalTitle').textContent = cfg.title;
+  document.getElementById('hrEditLabel1').innerHTML = cfg.l1 + ' <span class="req">*</span>';
+  document.getElementById('hrEditLabel2').textContent = cfg.l2;
+  document.getElementById('hrEditLabel3').textContent = cfg.l3;
+  document.getElementById('hrEditLabel4').textContent = cfg.l4;
+  document.getElementById('hrEditVal1').value = v1 || '';
+  document.getElementById('hrEditVal2').value = v2 || '';
+  document.getElementById('hrEditVal3').value = v3 || '';
+  document.getElementById('hrEditVal4').value = v4 || '';
+  document.getElementById('hrEditModalBg').classList.add('show');
+}
+
+function saveHrEdit() {
+  const v1 = document.getElementById('hrEditVal1').value.trim();
+  if (!v1) { alert('필수 항목을 입력해주세요.'); return; }
+  document.getElementById('hrEditModalBg').classList.remove('show');
+  showToastV7('✅ 인사 정보가 수정되었습니다.');
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+

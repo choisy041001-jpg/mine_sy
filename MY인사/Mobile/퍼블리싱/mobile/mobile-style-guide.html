@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style Guide — MY인사 모바일</title>
+<link rel="stylesheet" href="../_common/my_tokens.css">
+<link rel="stylesheet" href="css/myinsa-mobile.css">
+<style>
+  /* ========================================
+     STYLE GUIDE 전용 레이아웃 (sg- prefix)
+     myinsa-mobile.css 와 충돌 방지
+  ======================================== */
+  * { box-sizing: border-box; }
+  html, body {
+    height: auto !important;
+    overflow: auto !important;
+    background: #F4F5F7 !important;
+  }
+  body {
+    margin: 0;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    color: #242424;
+    min-height: 100vh;
+  }
+
+  /* 사이드바 */
+  .sg-sidebar {
+    position: fixed; top: 0; left: 0; z-index: 100;
+    width: 220px; height: 100vh; overflow-y: auto;
+    background: #1A1A2E; color: #C8CDD8;
+    padding: 0 0 40px;
+  }
+  .sg-sidebar::-webkit-scrollbar { width: 4px; }
+  .sg-sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sg-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+  .sg-sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 8px;
+  }
+  .sg-sidebar-logo strong { display: block; font-size: 13px; color: #fff; margin-bottom: 4px; }
+  .sg-sidebar-logo span { font-size: 11px; color: #7A8499; }
+  .sg-nav-section { padding: 16px 20px 4px; font-size: 10px; font-weight: 600; color: #4A5568; letter-spacing: 0.08em; text-transform: uppercase; }
+  .sg-nav a {
+    display: block; padding: 7px 20px 7px 28px;
+    font-size: 12px; color: #A0AEC0; text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sg-nav a:hover { color: #fff; border-left-color: #2363a8; }
+  .sg-nav a.active { color: #fff; border-left-color: #2363a8; background: rgba(35,99,168,0.12); }
+
+  /* 본문 */
+  .sg-main { margin-left: 220px; padding: 88px 0 80px; min-width: 0; }
+
+  /* 페이지 헤더 */
+  .sg-page-header {
+    position: fixed; top: 0; left: 220px; right: 0; z-index: 99;
+    background: #fff; border-bottom: 1px solid #E1E1E1;
+    padding: 24px 48px 20px;
+  }
+  .sg-page-header h1 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+  .sg-page-header p { margin: 0; font-size: 13px; color: #6B7280; }
+  .sg-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+    background: #EEF2FF; color: #2363a8; margin-left: 8px; vertical-align: 2px;
+  }
+  .sg-badge.mobile { background: #F0FDF4; color: #16A34A; }
+
+  /* 섹션 */
+  .sg-section { padding: 48px 48px 0; }
+  .sg-section-title {
+    font-size: 18px; font-weight: 700; margin: 0 0 6px;
+    padding-bottom: 14px; border-bottom: 2px solid #E1E1E1;
+  }
+  .sg-section-desc { font-size: 13px; color: #6B7280; margin: 12px 0 28px; line-height: 1.7; }
+
+  /* 컴포넌트 카드 */
+  .sg-card {
+    background: #fff; border: 1px solid #E1E1E1; border-radius: 10px;
+    margin-bottom: 24px; overflow: hidden;
+  }
+  .sg-card-header {
+    padding: 14px 20px 13px;
+    background: #F8F9FA; border-bottom: 1px solid #E1E1E1;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .sg-card-title { font-size: 13px; font-weight: 600; margin: 0; }
+  .sg-card-tag {
+    padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 600;
+    background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0;
+  }
+  .sg-card-tag.modifier { background: #FFF7ED; color: #C2410C; border-color: #FED7AA; }
+  .sg-card-tag.state { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+  .sg-card-tag.danger { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
+
+  /* 프리뷰 영역 */
+  .sg-preview {
+    padding: 32px 40px;
+    background: repeating-linear-gradient(45deg, #F9FAFB, #F9FAFB 5px, #fff 5px, #fff 10px);
+    border-bottom: 1px solid #E1E1E1;
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;
+    min-height: 80px;
+  }
+  .sg-preview.white { background: #fff; }
+  .sg-preview.col { flex-direction: column; }
+  .sg-preview.phone-bg { background: #ddd8e8; padding: 24px 40px; }
+
+  /* 폰 프리뷰 래퍼 — 375px 고정폭 */
+  .sg-phone-wrap {
+    width: 375px; background: #f7f7fa; border-radius: 12px;
+    overflow: hidden; border: 1px solid #d0d0dc;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    flex-shrink: 0;
+  }
+  .sg-phone-wrap.white { background: #ffffff; }
+
+  /* 코드 블록 */
+  .sg-code-wrap { position: relative; }
+  .sg-code-label {
+    padding: 10px 20px 0;
+    font-size: 10px; font-weight: 600; color: #9CA3AF; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .sg-code-wrap pre {
+    margin: 0; padding: 16px 20px 20px;
+    font-size: 11.5px; line-height: 1.65;
+    font-family: 'Consolas', 'D2Coding', monospace;
+    color: #374151; overflow-x: auto;
+    white-space: pre;
+  }
+  .sg-code-wrap pre .c-tag   { color: #1E40AF; }
+  .sg-code-wrap pre .c-attr  { color: #7C3AED; }
+  .sg-code-wrap pre .c-val   { color: #065F46; }
+  .sg-code-wrap pre .c-cmt   { color: #9CA3AF; font-style: italic; }
+  .sg-copy-btn {
+    position: absolute; top: 8px; right: 12px;
+    padding: 4px 10px; border-radius: 4px;
+    background: #F3F4F6; border: 1px solid #D1D5DB;
+    font-size: 10px; color: #6B7280; cursor: pointer;
+  }
+  .sg-copy-btn:hover { background: #E5E7EB; }
+
+  /* 상태 라벨 */
+  .sg-state-label {
+    display: block; margin-bottom: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #9CA3AF;
+  }
+
+  /* 클래스 테이블 */
+  .sg-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sg-table th {
+    background: #F8F9FA; border-bottom: 2px solid #E1E1E1;
+    padding: 10px 14px; text-align: left; font-weight: 600; font-size: 11px;
+    color: #6B7280; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .sg-table td { padding: 10px 14px; border-bottom: 1px solid #F3F4F6; vertical-align: top; line-height: 1.5; }
+  .sg-table tr:last-child td { border-bottom: 0; }
+  .sg-table tr:hover td { background: #FAFAFA; }
+  .sg-table code {
+    display: inline-block; padding: 1px 6px; border-radius: 3px;
+    background: #F3F4F6; color: #1E40AF;
+    font-family: 'Consolas', 'D2Coding', monospace; font-size: 11px;
+  }
+  .sg-table .type-base { color: #16A34A; font-size: 10px; font-weight: 600; }
+  .sg-table .type-mod  { color: #C2410C; font-size: 10px; font-weight: 600; }
+  .sg-table .type-state{ color: #1D4ED8; font-size: 10px; font-weight: 600; }
+  .sg-table .type-util { color: #7C3AED; font-size: 10px; font-weight: 600; }
+
+  /* 구분선 */
+  .sg-divider { border: 0; border-top: 1px solid #F3F4F6; margin: 32px 0; }
+
+  /* 노트 */
+  .sg-note {
+    padding: 14px 16px; border-radius: 8px;
+    background: #EFF6FF; border-left: 3px solid #2363a8;
+    font-size: 12px; color: #1E40AF; line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .sg-note strong { font-weight: 700; }
+  .sg-note code { font-family: 'Consolas','D2Coding',monospace; background: #dbeafe; padding: 1px 5px; border-radius: 3px; }
+
+  /* 섹션 그룹 제목 */
+  .sg-group-title {
+    font-size: 13px; font-weight: 700; color: #374151;
+    margin: 32px 0 12px; padding-left: 10px;
+    border-left: 3px solid #2363a8;
+  }
+
+  /* 토큰 그리드 */
+  .sg-token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding: 20px; }
+  .sg-token-swatch { border: 1px solid #E1E1E1; border-radius: 8px; overflow: hidden; }
+  .sg-token-color { height: 40px; }
+  .sg-token-info { padding: 8px 10px; background: #fff; }
+  .sg-token-name { font-size: 11px; font-weight: 700; color: #374151; font-family: 'Consolas', monospace; }
+  .sg-token-val  { font-size: 10px; color: #9CA3AF; margin-top: 2px; font-family: 'Consolas', monospace; }
+
+  /* 사용 패턴 배지 */
+  .sg-usage {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; background: #F9FAFB; border: 1px solid #E5E7EB; color: #6B7280;
+  }
+  .sg-usage::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9CA3AF; }
+  .sg-usage.high::before { background: #EF4444; }
+  .sg-usage.medium::before { background: #F59E0B; }
+  .sg-usage.low::before { background: #6EE7B7; }
+
+  /* 타이포 샘플 행 */
+  .sg-typo-row {
+    display: flex; align-items: baseline; gap: 16px; padding: 12px 20px;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .sg-typo-row:last-child { border-bottom: 0; }
+  .sg-typo-meta { width: 180px; flex-shrink: 0; font-size: 11px; color: #9CA3AF; font-family: 'Consolas',monospace; line-height: 1.5; }
+  .sg-typo-sample { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ========== 사이드바 ========== -->
+<aside class="sg-sidebar">
+  <div class="sg-sidebar-logo">
+    <strong>Style Guide</strong>
+    <span>MY인사 모바일 · myinsa-mobile.css</span>
+  </div>
+  <nav class="sg-nav">
+    <div class="sg-nav-section">컴포넌트</div>
+    <a href="#sec-btn">버튼</a>
+    <a href="#sec-badge">뱃지 · 상태</a>
+    <a href="#sec-status-banner">상태 배너</a>
+    <a href="#sec-topbar">탑바</a>
+    <a href="#sec-tabbar">탭바</a>
+    <a href="#sec-sheet">바텀시트</a>
+    <a href="#sec-form">폼 필드</a>
+    <a href="#sec-toggle">토글 그룹</a>
+    <a href="#sec-chip">탭 필터</a>
+    <a href="#sec-list">목록 행</a>
+    <a href="#sec-flat-row">플랫 행</a>
+    <a href="#sec-home">홈 카드</a>
+    <a href="#sec-fab">FAB</a>
+    <a href="#sec-notif">알림 행</a>
+    <a href="#sec-login">로그인</a>
+    <a href="#sec-empty">빈 상태</a>
+    <a href="#sec-approval">결재선</a>
+    <a href="#sec-form-chip">폼 칩</a>
+    <a href="#sec-action-sheet">액션시트</a>
+    <a href="#sec-alp">결재선 팝업</a>
+    <div class="sg-nav-section">레퍼런스</div>
+    <a href="#sec-screen">화면 구조</a>
+    <a href="#sec-tokens">디자인 토큰</a>
+    <a href="#sec-typo">타이포그래피</a>
+    <a href="#sec-utils">유틸리티</a>
+  </nav>
+</aside>
+
+<!-- ========== 본문 ========== -->
+<main class="sg-main">
+
+  <!-- 페이지 헤더 -->
+  <div class="sg-page-header">
+    <h1>MY인사 모바일 Style Guide <span class="sg-badge mobile">Mobile</span></h1>
+    <p>myinsa-mobile.css 컴포넌트 라이브러리 ·<code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:3px;font-size:12px;">&lt;button&gt;</code> 태그 사용</p>
+  </div>
+
+  <!-- ===== 버튼 ===== -->
+  <section class="sg-section" id="sec-btn">
+    <h2 class="sg-section-title">버튼</h2>
+    <p class="sg-section-desc">기본 버튼 시스템. 나란히 배치할 때는 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.bottom-action.flex-gap-8</code>으로 감싸고 각 버튼에 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.flex-1</code>을 추가한다.</p>
+
+    <!-- 기본 행 버튼 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">기본 / 프라이머리</span>
+        <span class="sg-card-tag">.btn</span>
+        <span class="sg-card-tag modifier">.btn-primary</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview white" style="padding:24px 32px;">
+        <div class="flex-gap-8" style="max-width:375px;width:100%;">
+          <button class="btn flex-1">기본 버튼</button>
+          <button class="btn btn-primary flex-1">신청하기</button>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"bottom-action flex-gap-8"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"btn flex-1"</span><span class="c-tag">&gt;</span>기본 버튼<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"btn btn-primary flex-1"</span><span class="c-tag">&gt;</span>신청하기<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>유형</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.btn</code></td><td class="type-base">BASE</td><td>기본 아웃라인 버튼</td></tr>
+          <tr><td><code>.btn-primary</code></td><td class="type-mod">MOD</td><td>.btn에 추가. 파란 그라디언트, 그림자 포함</td></tr>
+          <tr><td><code>.flex-1</code></td><td class="type-mod">MOD</td><td>버튼에 추가. 남은 공간을 균등하게 채움</td></tr>
+          <tr><td><code>.flex-1-4</code></td><td class="type-mod">MOD</td><td>flex:1.4. 3버튼 중 강조 버튼에 사용</td></tr>
+          <tr><td><code>.bottom-action</code></td><td class="type-base">BASE</td><td>화면 하단 고정 버튼 영역 (position:absolute;bottom:64px)</td></tr>
+          <tr><td><code>.flex-gap-8</code></td><td class="type-base">BASE</td><td>display:flex;gap:8px. .bottom-action과 함께 사용</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 전폭 버튼 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">전폭 버튼 (바텀시트·폼 하단)</span>
+        <span class="sg-card-tag">.btn-full-lg</span>
+        <span class="sg-card-tag modifier">.btn-primary</span>
+      </div>
+      <div class="sg-preview white" style="padding:24px 32px;">
+        <div style="max-width:375px;width:100%;">
+          <button class="btn btn-primary btn-full-lg">제출하기</button>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"btn btn-primary btn-full-lg"</span><span class="c-tag">&gt;</span>제출하기<span class="c-tag">&lt;/button&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- 아이콘 버튼 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">아이콘 정방형 버튼</span>
+        <span class="sg-card-tag">.icon-btn-sq</span>
+        <span class="sg-card-tag modifier">.icon-btn-sq-rel</span>
+      </div>
+      <div class="sg-preview white" style="gap:12px;padding:24px 32px;">
+        <button class="icon-btn-sq">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </button>
+        <button class="icon-btn-sq-rel" style="position:relative;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="badge-dot-abs"></span>
+        </button>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"icon-btn-sq"</span><span class="c-tag">&gt;</span>…아이콘…<span class="c-tag">&lt;/button&gt;</span>
+
+<span class="c-cmt">&lt;!-- 뱃지 닷 포함: .icon-btn-sq-rel + .badge-dot-abs --&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"icon-btn-sq-rel"</span><span class="c-tag">&gt;</span>
+  …아이콘…
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"badge-dot-abs"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+<span class="c-tag">&lt;/button&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- 링크형 / 해제 버튼 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">링크형 · 해제 버튼</span>
+        <span class="sg-card-tag">.link-accent-btn</span>
+        <span class="sg-card-tag modifier">.dismiss-btn</span>
+      </div>
+      <div class="sg-preview white" style="gap:16px;padding:24px 32px;flex-direction:column;align-items:flex-start;">
+        <button class="link-accent-btn">더보기</button>
+        <button class="dismiss-btn">닫기</button>
+      </div>
+    </div>
+
+    <!-- FAB 하단 고정 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">FAB (Floating Action Button)</span>
+        <span class="sg-card-tag">.fab-bottom-right</span>
+        <span class="sg-usage medium">중빈도</span>
+      </div>
+      <div class="sg-preview" style="position:relative;min-height:120px;background:#ddd8e8;">
+        <div style="position:relative;width:375px;height:120px;background:#f7f7fa;border-radius:8px;overflow:hidden;">
+          <button class="fab-bottom-right" style="bottom:16px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-cmt">&lt;!-- .app (position:relative) 안에서 absolute 배치 --&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"fab-bottom-right"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/button&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 뱃지·상태 ===== -->
+  <section class="sg-section" id="sec-badge">
+    <h2 class="sg-section-title">뱃지 · 상태</h2>
+    <p class="sg-section-desc">결재 상태, 문서 분류 등에 사용하는 상태 배지. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.status-badge</code>에 상태 클래스를 조합한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">결재 상태 배지</span>
+        <span class="sg-card-tag">.status-badge</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview white" style="gap:10px;flex-wrap:wrap;padding:24px 32px;">
+        <span class="status-badge wait">진행중</span>
+        <span class="status-badge done">승인</span>
+        <span class="status-badge reject">반려</span>
+        <span class="status-badge wait badge-sm">진행중</span>
+        <span class="status-badge done badge-sm">발급완료</span>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"status-badge wait"</span><span class="c-tag">&gt;</span>진행중<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"status-badge done"</span><span class="c-tag">&gt;</span>승인<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"status-badge reject"</span><span class="c-tag">&gt;</span>반려<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-cmt">&lt;!-- 소형: .badge-sm 추가 (font-size:10px) --&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"status-badge done badge-sm"</span><span class="c-tag">&gt;</span>발급완료<span class="c-tag">&lt;/span&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>색상</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><code>.wait</code></td><td class="type-state">warning</td><td>진행중, 결재 대기</td></tr>
+          <tr><td><code>.done</code></td><td class="type-state">success</td><td>승인, 발급완료, 상신완료</td></tr>
+          <tr><td><code>.reject</code></td><td class="type-state">danger</td><td>반려</td></tr>
+          <tr><td><code>.badge-sm</code></td><td>—</td><td>소형 배지 (font-size:10px). 목록 행 내 사용</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 상태 칩 (탑바용) -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">상태 칩 (탑바 오른쪽)</span>
+        <span class="sg-card-tag">.status-chip-*</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="topbar with-back">
+            <button class="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <span class="title">휴가신청서</span>
+            <div class="right status-chip-warning">진행중</div>
+          </div>
+          <div class="topbar with-back">
+            <button class="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <span class="title">휴가신청서</span>
+            <div class="right status-chip-success">승인</div>
+          </div>
+          <div class="topbar with-back">
+            <button class="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <span class="title">휴가신청서</span>
+            <div class="right status-chip-danger">반려</div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"topbar with-back"</span><span class="c-tag">&gt;</span>
+  …
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"right status-chip-warning"</span><span class="c-tag">&gt;</span>진행중<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"right status-chip-success"</span><span class="c-tag">&gt;</span>승인<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"right status-chip-danger"</span><span class="c-tag">&gt;</span>반려<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 상태 배너 ===== -->
+  <section class="sg-section" id="sec-status-banner">
+    <h2 class="sg-section-title">상태 배너</h2>
+    <p class="sg-section-desc">화면 상단 탑바 바로 아래 전폭으로 표시되는 상태 안내 배너. 결재 진행중·승인·반려 3가지 상태에 대응한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">진행중 · 승인 · 반려</span>
+        <span class="sg-card-tag">.status-banner-*</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="status-banner-warning">
+            <div class="status-banner-icon-warning">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div class="text-body-warning">결재 진행중</div>
+              <div class="note-warning-dark">결재자 김팀장 확인 전입니다</div>
+            </div>
+          </div>
+          <div class="status-banner-success">
+            <div class="status-banner-icon-success">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-body-success">승인 완료</div>
+              <div class="note-success-dark">김팀장이 승인하였습니다</div>
+            </div>
+          </div>
+          <div class="status-banner-danger">
+            <div class="status-banner-icon-danger">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+            <div>
+              <div class="text-body-danger">반려 처리됨</div>
+              <div class="note-danger-dark">김팀장이 반려하였습니다</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"status-banner-warning"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"status-banner-icon-warning"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-body-warning"</span><span class="c-tag">&gt;</span>결재 진행중<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"note-warning-dark"</span><span class="c-tag">&gt;</span>결재자 김팀장 확인 전입니다<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>상태</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.status-banner-warning</code></td><td class="type-state">warning</td><td>진행중 배너. 배경·하단 구분선 warning 색상</td></tr>
+          <tr><td><code>.status-banner-success</code></td><td class="type-state">success</td><td>승인 배너</td></tr>
+          <tr><td><code>.status-banner-danger</code></td><td class="type-state">danger</td><td>반려 배너</td></tr>
+          <tr><td><code>.status-banner-icon-*</code></td><td>—</td><td>36×36 원형 아이콘 래퍼. 상태별 접미사 일치 필요</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 탑바 ===== -->
+  <section class="sg-section" id="sec-topbar">
+    <h2 class="sg-section-title">탑바</h2>
+    <p class="sg-section-desc">화면 상단 네비게이션 바. 홈/게시판 등 루트 화면의 기본형과, 서브 화면의 뒤로가기형 두 가지 패턴이 있다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">기본형 (루트 화면)</span>
+        <span class="sg-card-tag">.topbar</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="topbar">
+            <h1>전자결재</h1>
+            <div class="sub">총 12건 대기 중</div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"topbar"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;h1&gt;</span>전자결재<span class="c-tag">&lt;/h1&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sub"</span><span class="c-tag">&gt;</span>총 12건 대기 중<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">뒤로가기형 (서브 화면)</span>
+        <span class="sg-card-tag">.topbar.with-back</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="topbar with-back">
+            <button class="back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="title">연차 신청</span>
+            <button class="right primary">제출</button>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"topbar with-back"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"back"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"title"</span><span class="c-tag">&gt;</span>연차 신청<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"right primary"</span><span class="c-tag">&gt;</span>제출<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>유형</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.topbar</code></td><td class="type-base">BASE</td><td>루트 화면용. h1 + .sub 구조</td></tr>
+          <tr><td><code>.topbar.with-back</code></td><td class="type-mod">MOD</td><td>서브 화면용. flex 레이아웃으로 변환</td></tr>
+          <tr><td><code>.back</code></td><td class="type-base">BASE</td><td>34×34 뒤로가기 버튼</td></tr>
+          <tr><td><code>.title</code></td><td class="type-base">BASE</td><td>flex:1 화면 제목</td></tr>
+          <tr><td><code>.right</code></td><td class="type-base">BASE</td><td>오른쪽 액션. 텍스트 버튼</td></tr>
+          <tr><td><code>.right.primary</code></td><td class="type-mod">MOD</td><td>강조 액션 (accent 색상, 배경)</td></tr>
+          <tr><td><code>.topbar-board</code></td><td class="type-mod">MOD</td><td>게시판 탑바 — 태블릿에서 min-height:69px</td></tr>
+          <tr><td><code>.topbar-more</code></td><td class="type-mod">MOD</td><td>더보기 탑바 — 태블릿에서 min-height:68px; padding-top:21px</td></tr>
+          <tr><td><code>.topbar-leave</code></td><td class="type-mod">MOD</td><td>연차 탑바 — 태블릿에서 min-height:70px; border-bottom:2px</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 탭바 ===== -->
+  <section class="sg-section" id="sec-tabbar">
+    <h2 class="sg-section-title">탭바</h2>
+    <p class="sg-section-desc">화면 하단 고정 내비게이션. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.app</code> 컨테이너 안에서 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">position:absolute;bottom:0</code>으로 배치된다. 탭바 높이(64px)만큼 콘텐츠 하단에 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.pb-tabbar</code>(padding-bottom:80px)를 추가해야 한다.</p>
+
+    <div class="sg-note">
+      <strong>주의:</strong> <code>.tabbar</code>는 <code>.app</code>(position:relative) 기준으로 <code>position:absolute;bottom:0</code>이다. 탭바 위 콘텐츠 영역에 반드시 <code>.pb-tabbar</code>를 추가한다.
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">탭바</span>
+        <span class="sg-card-tag">.tabbar</span>
+        <span class="sg-card-tag state">.tab.active</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap" style="height:80px;position:relative;overflow:visible;">
+          <div class="tabbar" style="position:relative;bottom:auto;">
+            <div class="tab active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span class="label">게시판</span>
+            </div>
+            <div class="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+              <span class="label">연차</span>
+            </div>
+            <div class="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
+              <span class="label">영수증</span>
+            </div>
+            <div class="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+              <span class="label">증명서</span>
+            </div>
+            <div class="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+              <span class="label">더보기</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"tabbar"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"tab active"</span><span class="c-tag">&gt;</span>
+    …SVG…
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"label"</span><span class="c-tag">&gt;</span>게시판<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"tab"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-cmt">&lt;!-- 탭 순서: 게시판 / 연차 / 영수증 / 증명서 / 더보기 --&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 바텀시트 ===== -->
+  <section class="sg-section" id="sec-sheet">
+    <h2 class="sg-section-title">바텀시트</h2>
+    <p class="sg-section-desc">화면 하단에서 올라오는 오버레이 패널. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.sheet-backdrop</code>에 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.show</code>를 토글해 열고 닫는다.</p>
+
+    <div class="sg-note">
+      <strong>배치 방식:</strong> <code>.sheet-backdrop</code>은 <code>.app</code>(position:relative;inset:0) 기준으로 <code>position:absolute;inset:0</code>이다. <code>display:flex;align-items:flex-end</code>로 .sheet를 하단 정렬한다.
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">바텀시트 구조</span>
+        <span class="sg-card-tag">.sheet-backdrop</span>
+        <span class="sg-card-tag state">.show</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap" style="position:relative;height:340px;">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;">
+            <div class="sheet" style="animation:none;">
+              <div class="sheet-handle"></div>
+              <div class="sheet-head">
+                <span class="title">연차 신청</span>
+                <button class="close">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <div class="sheet-body">
+                <div class="field">
+                  <label>신청 유형</label>
+                  <select><option>연차 (1일)</option></select>
+                </div>
+                <div class="row2">
+                  <div class="field"><label>시작일</label><input type="text" value="2025-06-01"></div>
+                  <div class="field"><label>종료일</label><input type="text" value="2025-06-01"></div>
+                </div>
+              </div>
+              <div class="sheet-foot">
+                <button class="btn btn-primary btn-full-lg">신청하기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-cmt">&lt;!-- .app 안에서 backdrop 배치 --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-backdrop"</span> <span class="c-attr">id</span>=<span class="c-val">"mySheet"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-handle"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-head"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"title"</span><span class="c-tag">&gt;</span>제목<span class="c-tag">&lt;/span&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"close"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-body"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-foot"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+
+<span class="c-cmt">&lt;!-- JS: 열기 --&gt;</span>
+document.getElementById('mySheet').classList.add('show');</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 폼 필드 ===== -->
+  <section class="sg-section" id="sec-form">
+    <h2 class="sg-section-title">폼 필드</h2>
+    <p class="sg-section-desc">입력 폼 구성 요소. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.form-section</code> 안에 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.form-label</code> + 인풋을 배치한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">기본 입력 필드</span>
+        <span class="sg-card-tag">.form-input</span>
+        <span class="sg-card-tag modifier">.form-textarea</span>
+        <span class="sg-card-tag modifier">.form-select</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="form-section">
+            <label class="form-label">사유 <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="신청 사유를 입력하세요">
+            <div class="form-hint">최대 200자</div>
+          </div>
+          <div class="form-section">
+            <label class="form-label">유형</label>
+            <select class="form-select"><option>연차</option><option>반차</option></select>
+          </div>
+          <div class="form-section no-border-b">
+            <label class="form-label">상세 내용</label>
+            <textarea class="form-textarea" rows="3" placeholder="상세 내용을 입력하세요"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"form-section"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"form-label"</span><span class="c-tag">&gt;</span>사유 <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"req"</span><span class="c-tag">&gt;</span>*<span class="c-tag">&lt;/span&gt;&lt;/label&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">class</span>=<span class="c-val">"form-input"</span> <span class="c-attr">type</span>=<span class="c-val">"text"</span> <span class="c-attr">placeholder</span>=<span class="c-val">"입력하세요"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"form-hint"</span><span class="c-tag">&gt;</span>최대 200자<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 토글 그룹 ===== -->
+  <section class="sg-section" id="sec-toggle">
+    <h2 class="sg-section-title">토글 그룹</h2>
+    <p class="sg-section-desc">상호 배타적 선택지에 사용하는 그리드형 버튼 그룹. 2열/3열 레이아웃을 지원한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">2열 토글 그룹</span>
+        <span class="sg-card-tag">.toggle-group</span>
+        <span class="sg-card-tag state">.toggle-btn.active</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white" style="padding:20px;">
+          <div class="toggle-group">
+            <button class="toggle-btn active">오전</button>
+            <button class="toggle-btn">오후</button>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"toggle-group"</span><span class="c-tag">&gt;</span>  <span class="c-cmt">&lt;!-- 기본 2열 --&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"toggle-btn active"</span><span class="c-tag">&gt;</span>오전<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"toggle-btn"</span><span class="c-tag">&gt;</span>오후<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+
+<span class="c-cmt">&lt;!-- 3열: .toggle-group.toggle-3col --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"toggle-group toggle-3col"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 탭 필터 ===== -->
+  <section class="sg-section" id="sec-chip">
+    <h2 class="sg-section-title">탭 필터</h2>
+    <p class="sg-section-desc">상태·카테고리 필터에 사용하는 가로 스크롤 가능한 탭 목록. 연차·증명서 화면에서 사용.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">탭 필터</span>
+        <span class="sg-card-tag">.tabs-filter</span>
+        <span class="sg-card-tag state">.tab-pill.active</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="tabs-filter">
+            <span class="tab-pill active">전체</span>
+            <span class="tab-pill">진행중</span>
+            <span class="tab-pill">발급완료</span>
+            <span class="tab-pill">반려</span>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"tabs-filter"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"tab-pill active"</span><span class="c-tag">&gt;</span>전체<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"tab-pill"</span> <span class="c-attr">onclick</span>=<span class="c-val">"filterCertStatus(this,'wait')"</span><span class="c-tag">&gt;</span>진행중<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 목록 행 ===== -->
+  <section class="sg-section" id="sec-list">
+    <h2 class="sg-section-title">목록 행</h2>
+    <p class="sg-section-desc">게시판, 메뉴 등 목록형 UI. 사용 맥락에 따라 다양한 행 패턴이 있다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">기본 목록 행</span>
+        <span class="sg-card-tag">.list-row</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="list">
+            <div class="list-row">
+              <span class="name">MY인사 시작하기</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="list-row">
+              <span class="name">연차 사용 가이드</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="list-row">
+              <span class="name">증명서 발급 가이드</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"list"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"list-row"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"name"</span><span class="c-tag">&gt;</span>항목 이름<span class="c-tag">&lt;/span&gt;</span>
+    <span class="c-tag">&lt;svg</span> <span class="c-attr">class</span>=<span class="c-val">"chev"</span> <span class="c-attr">viewBox</span>=<span class="c-val">"0 0 24 24"</span> …<span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/svg&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- 메뉴 행 -->
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">메뉴 그룹 행 (더보기 화면)</span>
+        <span class="sg-card-tag">.menu-group</span>
+        <span class="sg-card-tag modifier">.menu-row</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap" style="background:#f7f7fa;">
+          <div class="menu-group" style="margin:16px;">
+            <div class="menu-row">
+              <span class="label">알림 설정</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="menu-row">
+              <span class="label">언어</span>
+              <span class="value">한국어</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="menu-row">
+              <span class="label">로그아웃</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 플랫 행 ===== -->
+  <section class="sg-section" id="sec-flat-row">
+    <h2 class="sg-section-title">플랫 행</h2>
+    <p class="sg-section-desc">게시판 목록과 이력 목록에 사용되는 행 패턴. 기본 목록 행(.list-row)보다 밀도가 높고 구분선 기반으로 나열된다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">게시글 행</span>
+        <span class="sg-card-tag">.flat-post-row</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="flat-post-row">
+            <div class="u-flex-fill">
+              <div class="board-new-title">오늘 점심 같이 드실 분 구해요 🍜<span class="post-new-badge">N</span></div>
+              <div class="board-new-meta">자유게시판 · 홍길동</div>
+            </div>
+            <div class="row-end-8">
+              <div class="bbs-new-count">3</div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="flat-post-row">
+            <div class="u-flex-fill">
+              <div class="board-new-title">사무실 에어컨 온도 관련 건의드립니다</div>
+              <div class="board-new-meta">자유게시판 · 이사원</div>
+            </div>
+            <div class="row-end-8">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"flat-post-row"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"u-flex-fill"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"board-new-title"</span><span class="c-tag">&gt;</span>제목<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"board-new-meta"</span><span class="c-tag">&gt;</span>게시판 · 작성자<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"row-end-8"</span><span class="c-tag">&gt;</span>…chevron SVG…<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">이력 행</span>
+        <span class="sg-card-tag">.flat-hist-row</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap">
+          <div class="flat-hist-row">
+            <div class="u-flex-fill">
+              <div class="item-title">휴가신청서</div>
+              <div class="text-sm-sub">2026.05.04 (월) — 종일 1일</div>
+              <div class="text-hint">상신 4월 29일 · 결재자 김팀장</div>
+            </div>
+            <div class="row-end-8">
+              <span class="status-badge wait">진행중</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="flat-hist-row">
+            <div class="u-flex-fill">
+              <div class="item-title">연차사용계획서</div>
+              <div class="text-sm-sub">2026 2분기 — 3일</div>
+              <div class="text-hint">상신 3월 28일 · 결재자 김팀장</div>
+            </div>
+            <div class="row-end-8">
+              <span class="status-badge done">승인</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="flat-hist-row no-border-b">
+            <div class="u-flex-fill">
+              <div class="item-title">휴가신청서</div>
+              <div class="text-sm-sub">2026.02.14 (금) — 종일 1일</div>
+              <div class="text-hint">상신 2월 11일 · 결재자 김팀장</div>
+            </div>
+            <div class="row-end-8">
+              <span class="status-badge reject">반려</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"flat-hist-row"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"u-flex-fill"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"item-title"</span><span class="c-tag">&gt;</span>휴가신청서<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-sm-sub"</span><span class="c-tag">&gt;</span>2026.05.04 (월) — 종일 1일<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-hint"</span><span class="c-tag">&gt;</span>상신 4월 29일 · 결재자 김팀장<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"row-end-8"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"status-badge wait"</span><span class="c-tag">&gt;</span>진행중<span class="c-tag">&lt;/span&gt;</span>
+    …chevron SVG…
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.flat-post-row</code></td><td>게시판 글 목록 행. 제목+메타+카운트 구조</td></tr>
+          <tr><td><code>.flat-hist-row</code></td><td>이력 목록 행. 제목+날짜+힌트+상태배지 구조</td></tr>
+          <tr><td><code>.no-border-b</code></td><td>마지막 행의 하단 구분선 제거</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 홈 카드 ===== -->
+  <section class="sg-section" id="sec-home">
+    <h2 class="sg-section-title">홈 카드</h2>
+    <p class="sg-section-desc">홈 화면의 연차 현황 등 카드형 컴포넌트.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">연차 요약 카드</span>
+        <span class="sg-card-tag">.leave-summary-card</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap" style="padding:16px 16px;background:#f7f7fa;">
+          <div class="leave-summary-card" style="margin-top:0">
+            <div class="lsc-top">
+              <div>
+                <div class="lsc-remain-label">잔여 연차</div>
+                <div class="lsc-remain-big">12<span>일</span></div>
+              </div>
+              <div class="lsc-chip-row">
+                <div class="lsc-chip"><span>15</span>총</div>
+                <div class="lsc-chip"><span>3</span>사용</div>
+              </div>
+            </div>
+            <div class="lsc-bar-wrap">
+              <div class="lsc-bar-track"><div class="lsc-bar-fill"></div></div>
+              <div class="lsc-bar-labels"><span>사용 3일</span><span>잔여 12일 / 총 15일</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"leave-summary-card"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-top"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-remain-label"</span><span class="c-tag">&gt;</span>잔여 연차<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-remain-big"</span><span class="c-tag">&gt;</span>12<span class="c-tag">&lt;span&gt;</span>일<span class="c-tag">&lt;/span&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-chip-row"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-chip"</span><span class="c-tag">&gt;&lt;span&gt;</span>15<span class="c-tag">&lt;/span&gt;</span>총<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-chip"</span><span class="c-tag">&gt;&lt;span&gt;</span>3<span class="c-tag">&lt;/span&gt;</span>사용<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-bar-wrap"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-bar-track"</span><span class="c-tag">&gt;&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-bar-fill"</span><span class="c-tag">&gt;&lt;/div&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"lsc-bar-labels"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;span&gt;</span>사용 3일<span class="c-tag">&lt;/span&gt;&lt;span&gt;</span>잔여 12일 / 총 15일<span class="c-tag">&lt;/span&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAB ===== -->
+  <section class="sg-section" id="sec-fab">
+    <h2 class="sg-section-title">FAB</h2>
+    <p class="sg-section-desc">화면 우하단 고정 플로팅 버튼. 게시판은 단순 화면 전환, 연차·비용처리는 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.sfab-actions</code>를 열어 하위 액션을 제공한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">단순 FAB (게시판)</span>
+        <span class="sg-card-tag">.fab</span>
+      </div>
+      <div class="sg-preview" style="background:#ddd8e8;min-height:140px;position:relative;">
+        <div style="position:relative;width:375px;height:140px;background:#f7f7fa;border-radius:8px;overflow:hidden;">
+          <div class="fab" style="position:absolute;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-cmt">&lt;!-- .app 안, position:absolute;right:20px;bottom:96px --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"fab"</span> <span class="c-attr">onclick</span>=<span class="c-val">"showScreen('compose')"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">확장 FAB (연차·비용처리)</span>
+        <span class="sg-card-tag">.sfab-actions</span>
+        <span class="sg-card-tag state">.show</span>
+        <span class="sg-card-tag modifier">.sfab-row</span>
+      </div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sfab-actions"</span> <span class="c-attr">id</span>=<span class="c-val">"leaveActions"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sfab-backdrop"</span> <span class="c-attr">onclick</span>=<span class="c-val">"toggleLeaveFab()"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sfab-list"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sfab-row"</span> <span class="c-attr">onclick</span>=<span class="c-val">"toggleLeaveFab();showScreen('leave-apply')"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sic"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sbody"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"st"</span><span class="c-tag">&gt;</span>연차 신청<span class="c-tag">&lt;/div&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sd"</span><span class="c-tag">&gt;</span>휴가신청서 작성<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 알림 행 ===== -->
+  <section class="sg-section" id="sec-notif">
+    <h2 class="sg-section-title">알림 행</h2>
+    <p class="sg-section-desc">알림 화면의 개별 알림 행. 읽지 않은 항목에는 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.unread</code>를 추가한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">알림 행</span>
+        <span class="sg-card-tag">.notif-row</span>
+        <span class="sg-card-tag state">.unread</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="notif-row unread">
+            <div class="notif-icon-wrap" style="background:#eff5fa;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2363a8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="notif-body">
+              <div class="notif-title">연차 신청이 승인되었습니다</div>
+              <div class="notif-desc">2025-06-01 연차 1일 · 김부장</div>
+              <div class="notif-time">방금 전</div>
+            </div>
+            <div class="notif-unread-dot"></div>
+          </div>
+          <div class="notif-row">
+            <div class="notif-icon-wrap" style="background:#f0fdf4;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="notif-body">
+              <div class="notif-title">비용처리 정산이 완료되었습니다</div>
+              <div class="notif-desc">영수증 3건 · 총 54,000원</div>
+              <div class="notif-time">2시간 전</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-row unread"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-icon-wrap"</span> <span class="c-attr">style</span>=<span class="c-val">"background:#eff5fa"</span><span class="c-tag">&gt;</span>…SVG…<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-body"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-title"</span><span class="c-tag">&gt;</span>제목<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-desc"</span><span class="c-tag">&gt;</span>설명<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-time"</span><span class="c-tag">&gt;</span>방금 전<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"notif-unread-dot"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 로그인 ===== -->
+  <section class="sg-section" id="sec-login">
+    <h2 class="sg-section-title">로그인</h2>
+    <p class="sg-section-desc">앱 진입 로그인 화면. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.login-screen</code> 전체가 flex 컬럼으로 중앙 정렬된다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">로그인 화면</span>
+        <span class="sg-card-tag">.login-screen</span>
+        <span class="sg-usage medium">중빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white" style="height:500px;overflow:hidden;">
+          <div class="login-screen" style="min-height:530px;">
+            <div class="center-mb32">
+              <div class="login-logo">MY</div>
+              <div class="heading-xxl-mb4">MY인사</div>
+              <div class="text-body-tertiary">중소기업용 통합 HR 솔루션</div>
+            </div>
+            <div class="flex-col-gap-10-mb14">
+              <input class="login-input mb-0" type="text" placeholder="이메일 또는 사번">
+              <div class="login-input-wrap mb-0">
+                <input class="login-input has-icon mb-0" type="password" placeholder="비밀번호">
+                <button class="login-eye">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <label class="login-check">
+              <input type="checkbox" checked>
+              <span>자동 로그인</span>
+            </label>
+            <button class="login-btn">로그인</button>
+            <div class="login-sub-links">
+              <span class="login-sub-link">아이디 찾기</span>
+              <div class="login-sub-divider"></div>
+              <span class="login-sub-link">비밀번호 변경</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"login-screen"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"center-mb32"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"login-logo"</span><span class="c-tag">&gt;</span>MY<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"heading-xxl-mb4"</span><span class="c-tag">&gt;</span>MY인사<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-body-tertiary"</span><span class="c-tag">&gt;</span>중소기업용 통합 HR 솔루션<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"flex-col-gap-10-mb14"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-attr">class</span>=<span class="c-val">"login-input mb-0"</span> <span class="c-attr">type</span>=<span class="c-val">"text"</span> <span class="c-attr">placeholder</span>=<span class="c-val">"이메일 또는 사번"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"login-input-wrap mb-0"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;input</span> <span class="c-attr">class</span>=<span class="c-val">"login-input has-icon mb-0"</span> <span class="c-attr">type</span>=<span class="c-val">"password"</span> <span class="c-attr">placeholder</span>=<span class="c-val">"비밀번호"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"login-eye"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"login-check"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"checkbox"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span&gt;</span>자동 로그인<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;/label&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"login-btn"</span><span class="c-tag">&gt;</span>로그인<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"login-sub-links"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"login-sub-link"</span><span class="c-tag">&gt;</span>아이디 찾기<span class="c-tag">&lt;/span&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"login-sub-divider"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"login-sub-link"</span><span class="c-tag">&gt;</span>비밀번호 변경<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 빈 상태 ===== -->
+  <section class="sg-section" id="sec-empty">
+    <h2 class="sg-section-title">빈 상태</h2>
+    <p class="sg-section-desc">데이터가 없거나 보조 안내 텍스트가 필요할 때 사용하는 텍스트 컴포넌트.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">푸터 · 캡션 텍스트</span>
+        <span class="sg-card-tag">.empty-state-note</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="empty-state-note">© 2026 Webcash. MY인사 v5.0.0</div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"empty-state-note"</span><span class="c-tag">&gt;</span>© 2026 Webcash. MY인사 v5.0.0<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- font-size:11px / color:--text-tertiary / text-align:center --&gt;</span></pre>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">빈 상태 안내</span>
+        <span class="sg-card-tag">.empty-section-sm</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="empty-section-sm">전환 가능한 다른 사업장이 없습니다</div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"empty-section-sm"</span><span class="c-tag">&gt;</span>전환 가능한 다른 사업장이 없습니다<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- font-size:13px / color:--text-tertiary / text-align:center --&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 결재선 ===== -->
+  <section class="sg-section" id="sec-approval">
+    <h2 class="sg-section-title">결재선</h2>
+    <p class="sg-section-desc">결재 흐름을 표시하는 레이아웃. 아바타 열 방식(휴가 신청·계획·취소)과 콤팩트 행 방식(비용처리) 두 가지 패턴을 사용한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">아바타 열 방식</span>
+        <span class="sg-card-tag">.approval-line-wrap</span>
+        <span class="sg-card-tag">.approver-col</span>
+        <span class="sg-card-tag modifier">.approver-avatar-primary</span>
+        <span class="sg-usage high">고빈도</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="form-section no-border-b">
+            <label class="form-label">결재선</label>
+            <div class="approval-line-wrap">
+              <div class="approver-col">
+                <div class="approver-avatar-primary">홍</div>
+                <div class="text-xs-strong">홍길동</div>
+                <div class="text-caption">신청자</div>
+              </div>
+              <div class="approver-arrow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+              <div class="approver-col">
+                <div class="approver-avatar">김</div>
+                <div class="text-xs-strong">김팀장</div>
+                <div class="text-caption">1차 결재</div>
+              </div>
+            </div>
+            <div class="approval-hint">
+              <span class="row-gap-5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                결재선은 경리나라를 기준으로 자동 지정됩니다
+              </span>
+              <span class="approval-change-link">결재선 변경</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approval-line-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approver-col"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approver-avatar-primary"</span><span class="c-tag">&gt;</span>홍<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-xs-strong"</span><span class="c-tag">&gt;</span>홍길동<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-caption"</span><span class="c-tag">&gt;</span>신청자<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approver-arrow"</span><span class="c-tag">&gt;</span>…chevron svg…<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approver-col"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approver-avatar"</span><span class="c-tag">&gt;</span>김<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-xs-strong"</span><span class="c-tag">&gt;</span>김팀장<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-caption"</span><span class="c-tag">&gt;</span>1차 결재<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approval-hint"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"row-gap-5"</span><span class="c-tag">&gt;</span>…info svg… 결재선 안내<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"approval-change-link"</span> <span class="c-attr">onclick</span>=<span class="c-val">"openApprovalLinePopup()"</span><span class="c-tag">&gt;</span>결재선 변경<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">콤팩트 행 방식</span>
+        <span class="sg-card-tag">.approval-compact-row</span>
+        <span class="sg-section-desc" style="margin:0;font-size:12px;">비용처리 등 결재자 3명 이상일 때 사용</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="form-section no-border-b">
+            <div class="row-between-mb6">
+              <label class="form-label mb0">결재선 <span class="fw-400-tertiary">(경리나라 자동 지정)</span></label>
+              <span class="approval-change-link">결재선 변경</span>
+            </div>
+            <div class="approval-compact-row">
+              <span class="text-xs-muted">신청자</span>
+              <span class="fw-500">홍길동</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg>
+              <span class="fw-500">김팀장</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg>
+              <span class="fw-500">이대표</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"approval-compact-row"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"text-xs-muted"</span><span class="c-tag">&gt;</span>신청자<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"fw-500"</span><span class="c-tag">&gt;</span>홍길동<span class="c-tag">&lt;/span&gt;</span>
+  …chevron svg…
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"fw-500"</span><span class="c-tag">&gt;</span>김팀장<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 폼 칩 ===== -->
+  <section class="sg-section" id="sec-form-chip">
+    <h2 class="sg-section-title">폼 칩</h2>
+    <p class="sg-section-desc">폼 내에서 상호 배타적 선택지를 버튼 형태로 표시. 영수증 등록의 사용처·지급처 선택에 사용. 탭 필터(<code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.tabs-filter</code>)와 다른 컴포넌트.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">폼 칩</span>
+        <span class="sg-card-tag">.form-chip-row</span>
+        <span class="sg-card-tag">.form-chip</span>
+        <span class="sg-card-tag state">.form-chip.active</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white">
+          <div class="form-section no-border-b">
+            <label class="form-label">사용처</label>
+            <div class="form-chip-row">
+              <button class="form-chip active">직접입력</button>
+              <button class="form-chip">거래처</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"form-chip-row"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"form-chip active"</span> <span class="c-attr">onclick</span>=<span class="c-val">"selectChip(this)"</span><span class="c-tag">&gt;</span>직접입력<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"form-chip"</span> <span class="c-attr">onclick</span>=<span class="c-val">"selectChip(this)"</span><span class="c-tag">&gt;</span>거래처<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 게시글 액션시트 ===== -->
+  <section class="sg-section" id="sec-action-sheet">
+    <h2 class="sg-section-title">게시글 액션시트</h2>
+    <p class="sg-section-desc">게시글 더보기(⋯) 버튼으로 여는 액션시트. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">#postActionSheet</code>에 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">style="display:none"</code>을 두고 JS로 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">el.style.display='flex'</code>로 열고 닫는다. position/background/z-index는 CSS ID 셀렉터가 담당.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">액션시트 구조</span>
+        <span class="sg-card-tag">.action-sheet-body</span>
+        <span class="sg-card-tag">.action-sheet-item</span>
+        <span class="sg-card-tag modifier">.action-sheet-item-danger</span>
+        <span class="sg-card-tag">.action-sheet-cancel</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap" style="position:relative;height:240px;">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;">
+            <div class="action-sheet-body" style="animation:none;width:100%;">
+              <div class="action-sheet-handle"></div>
+              <div class="action-sheet-item">수정하기</div>
+              <div class="action-sheet-item-danger">삭제하기</div>
+              <div class="action-sheet-cancel">취소</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">id</span>=<span class="c-val">"postActionSheet"</span> <span class="c-attr">style</span>=<span class="c-val">"display:none"</span> <span class="c-attr">onclick</span>=<span class="c-val">"closePostActionSheet()"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"action-sheet-body"</span> <span class="c-attr">onclick</span>=<span class="c-val">"event.stopPropagation()"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"action-sheet-handle"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"action-sheet-item"</span> <span class="c-attr">onclick</span>=<span class="c-val">"…"</span><span class="c-tag">&gt;</span>수정하기<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"action-sheet-item-danger"</span> <span class="c-attr">onclick</span>=<span class="c-val">"…"</span><span class="c-tag">&gt;</span>삭제하기<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"action-sheet-cancel"</span> <span class="c-attr">onclick</span>=<span class="c-val">"closePostActionSheet()"</span><span class="c-tag">&gt;</span>취소<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+
+<span class="c-cmt">&lt;!-- JS: 열기 --&gt;</span>
+document.getElementById('postActionSheet').style.display = 'flex';
+<span class="c-cmt">&lt;!-- JS: 닫기 --&gt;</span>
+document.getElementById('postActionSheet').style.display = 'none';</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 결재선 변경 팝업 ===== -->
+  <section class="sg-section" id="sec-alp">
+    <h2 class="sg-section-title">결재선 변경 팝업</h2>
+    <p class="sg-section-desc">경리나라에 등록된 결재선 중 하나를 선택하는 팝업. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">#approvalLinePopup</code>을 JS로 열고 닫는다. 내부 컨테이너는 기존 <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.result-overlay-sm</code> 재활용.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">결재선 옵션 목록</span>
+        <span class="sg-card-tag">.alp-option</span>
+        <span class="sg-card-tag state">.alp-option.active</span>
+        <span class="sg-card-tag">.alp-footer</span>
+      </div>
+      <div class="sg-preview phone-bg">
+        <div class="sg-phone-wrap white" style="padding:16px;">
+          <div class="popup-header">
+            <div class="label-caps-alt">결재선 선택</div>
+            <div class="heading-alt">결재선을 선택하세요</div>
+            <div class="text-sm-sub-mt4">경리나라에 등록된 결재선 중 하나를 선택하세요</div>
+          </div>
+          <div style="padding:0 12px;">
+            <label class="alp-option active">
+              <input type="radio" name="alp-demo" checked class="alp-option-radio">
+              <div>
+                <div class="text-body-strong">기본 결재선</div>
+                <div class="text-hint">홍길동 → 김팀장</div>
+              </div>
+            </label>
+            <label class="alp-option">
+              <input type="radio" name="alp-demo" class="alp-option-radio">
+              <div>
+                <div class="text-body-strong">임원 결재선</div>
+                <div class="text-hint">홍길동 → 김팀장 → 이대표</div>
+              </div>
+            </label>
+          </div>
+          <div class="alp-footer">
+            <button class="alp-btn-cancel">취소</button>
+            <button class="alp-btn-confirm">확인</button>
+          </div>
+        </div>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">id</span>=<span class="c-val">"approvalLinePopup"</span> <span class="c-attr">style</span>=<span class="c-val">"display:none"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"result-overlay-sm"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"popup-header"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"popup-list"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"alp-option active"</span> <span class="c-attr">onclick</span>=<span class="c-val">"selectApprovalLine(this)"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"radio"</span> <span class="c-attr">name</span>=<span class="c-val">"approvalLine"</span> <span class="c-attr">checked</span> <span class="c-attr">class</span>=<span class="c-val">"alp-option-radio"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;div&gt;</span>
+          <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-body-strong"</span><span class="c-tag">&gt;</span>기본 결재선<span class="c-tag">&lt;/div&gt;</span>
+          <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"text-hint"</span><span class="c-tag">&gt;</span>홍길동 → 김팀장<span class="c-tag">&lt;/div&gt;</span>
+        <span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/label&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"alp-footer"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"alp-btn-cancel"</span><span class="c-tag">&gt;</span>취소<span class="c-tag">&lt;/button&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"alp-btn-confirm"</span><span class="c-tag">&gt;</span>확인<span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 화면 구조 ===== -->
+  <section class="sg-section" id="sec-screen">
+    <h2 class="sg-section-title">화면 구조</h2>
+    <p class="sg-section-desc">앱 전체 레이아웃 구조. <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.phone</code> > <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.app</code> > <code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">.screen.active</code> 계층 구조.</p>
+
+    <div class="sg-note">
+      <strong>인라인 <code>style="display:none"</code> — 의도적으로 남겨둔 것</strong><br>
+      화면 전환·오버레이 토글은 JS가 <code>element.style.display = 'flex'</code> / <code>''</code> 방식으로 직접 제어한다.
+      인라인 스타일이 CSS 클래스보다 우선순위가 높기 때문에, 이 패턴에서 <code>display:none</code>은 반드시 인라인에 있어야 한다.
+      CSS 파일로 빼거나 클래스로 대체하면 JS 토글이 동작하지 않는다.
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">앱 레이아웃 구조</span>
+        <span class="sg-card-tag">.phone</span>
+        <span class="sg-card-tag modifier">.app</span>
+        <span class="sg-card-tag state">.screen.active</span>
+      </div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <div class="sg-code-label">HTML 구조</div>
+        <pre><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"phone"</span><span class="c-tag">&gt;</span>           <span class="c-cmt">&lt;!-- 앱 루트 컨테이너 (height:100%) --&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"app"</span><span class="c-tag">&gt;</span>            <span class="c-cmt">&lt;!-- flex col, position:relative --&gt;</span>
+
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"screen active"</span> <span class="c-attr">data-screen</span>=<span class="c-val">"home"</span><span class="c-tag">&gt;</span>
+      <span class="c-cmt">&lt;!-- 콘텐츠 + .pb-tabbar 로 탭바 높이 확보 --&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"screen"</span> <span class="c-attr">data-screen</span>=<span class="c-val">"approval"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+
+    <span class="c-cmt">&lt;!-- 탭바: position:absolute;bottom:0 --&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"tabbar"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+
+    <span class="c-cmt">&lt;!-- 바텀시트: position:absolute;inset:0 --&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet-backdrop"</span> <span class="c-attr">id</span>=<span class="c-val">"sheet-leave"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.phone</code></td><td>앱 루트 컨테이너. height:100%로 전체화면 채움</td></tr>
+          <tr><td><code>.app</code></td><td>앱 콘텐츠 컨테이너. flex col, position:relative</td></tr>
+          <tr><td><code>.screen</code></td><td>기본 display:none. JS로 화면 전환</td></tr>
+          <tr><td><code>.screen.active</code></td><td>display:block. overflow-y:auto, padding-bottom:80px</td></tr>
+          <tr><td><code>.pb-tabbar</code></td><td>padding-bottom:80px. 탭바에 가리지 않도록 추가</td></tr>
+          <tr><td><code>.mb-tabbar</code></td><td>margin-bottom:80px. 탭바 위 마지막 섹션에 사용</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header">
+        <span class="sg-card-title">오버레이 · 팝업 구조</span>
+        <span class="sg-card-tag">.modal-backdrop-sheet</span>
+        <span class="sg-card-tag modifier">.modal-backdrop-center</span>
+      </div>
+      <div class="sg-code-wrap">
+        <div class="sg-code-label">HTML 구조</div>
+        <pre><span class="c-cmt">&lt;!-- 바텀시트형 (하단에서 올라옴) --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"modal-backdrop-sheet"</span> <span class="c-attr">id</span>=<span class="c-val">"boardFilterSheet"</span> <span class="c-attr">style</span>=<span class="c-val">"display:none"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"sheet"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+
+<span class="c-cmt">&lt;!-- 중앙 팝업형 --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"modal-backdrop-center"</span> <span class="c-attr">id</span>=<span class="c-val">"certModal"</span> <span class="c-attr">style</span>=<span class="c-val">"display:none"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"modal"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+      </div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <div class="sg-code-label">CSS (myinsa-mobile.css)</div>
+        <pre><span class="c-cmt">/* 공통 베이스 — display:flex는 JS가 style.display로 제어 */</span>
+<span class="c-sel">.modal-backdrop-sheet</span> { <span class="c-prop">position</span>:<span class="c-val">absolute</span>; <span class="c-prop">inset</span>:<span class="c-val">0</span>; <span class="c-prop">align-items</span>:<span class="c-val">flex-end</span>; <span class="c-prop">justify-content</span>:<span class="c-val">center</span>; }
+<span class="c-sel">.modal-backdrop-center</span> { <span class="c-prop">position</span>:<span class="c-val">absolute</span>; <span class="c-prop">inset</span>:<span class="c-val">0</span>; <span class="c-prop">align-items</span>:<span class="c-val">center</span>; <span class="c-prop">justify-content</span>:<span class="c-val">center</span>; }
+
+<span class="c-cmt">/* 오버레이별 고유값 — ID 셀렉터로 관리 */</span>
+<span class="c-sel">#boardFilterSheet</span> { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.45)</span>; <span class="c-prop">z-index</span>:<span class="c-val">300</span>; }
+<span class="c-sel">#certModal</span>         { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.45)</span>; <span class="c-prop">z-index</span>:<span class="c-val">300</span>; }
+<span class="c-sel">#emailSheet</span>        { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.45)</span>; <span class="c-prop">z-index</span>:<span class="c-val">350</span>; }
+<span class="c-sel">#pfResultOverlay</span>   { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.5)</span>;  <span class="c-prop">z-index</span>:<span class="c-val">400</span>; }
+<span class="c-sel">#imgViewOverlay</span>    { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.85)</span>; <span class="c-prop">z-index</span>:<span class="c-val">350</span>; }
+<span class="c-sel">#deleteConfirmOverlay</span> { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.5)</span>; <span class="c-prop">z-index</span>:<span class="c-val">380</span>; }
+<span class="c-sel">#workplacePopup, #switchWorkplacePopup</span> { <span class="c-prop">background</span>:<span class="c-val">rgba(0,0,0,.55)</span>; <span class="c-prop">z-index</span>:<span class="c-val">400</span>; }</pre>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>클래스 / ID</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.modal-backdrop-sheet</code></td><td>바텀시트형. 콘텐츠를 하단 중앙 정렬</td></tr>
+          <tr><td><code>.modal-backdrop-center</code></td><td>중앙 팝업형. 콘텐츠를 화면 정중앙 정렬</td></tr>
+          <tr><td>ID 셀렉터</td><td>오버레이마다 z-index·배경 투명도가 달라 ID로 개별 지정</td></tr>
+          <tr><td><code>style="display:none"</code></td><td>JS가 <code>element.style.display</code>로 직접 제어 — 인라인 유지 필수</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 디자인 토큰 ===== -->
+  <section class="sg-section" id="sec-tokens">
+    <h2 class="sg-section-title">디자인 토큰</h2>
+    <p class="sg-section-desc"><code style="font-family:monospace;background:#f3f4f6;padding:1px 4px;border-radius:3px;">:root</code>에 정의된 CSS 커스텀 프로퍼티. 모든 컴포넌트가 이 변수를 참조한다.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">색상 — 기본</span></div>
+      <div class="sg-token-grid">
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#f7f7fa"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--bg</div><div class="sg-token-val">#f7f7fa</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#ffffff;border-bottom:1px solid #e8e8ef"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--surface</div><div class="sg-token-val">#ffffff</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#2363a8"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--accent</div><div class="sg-token-val">#2363a8</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#eff5fa"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--accent-light</div><div class="sg-token-val">#eff5fa</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#111118"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--text</div><div class="sg-token-val">#111118</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#4a4a5a"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--text-secondary</div><div class="sg-token-val">#4a4a5a</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#9898a8"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--text-tertiary</div><div class="sg-token-val">#9898a8</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#e8e8ef"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--border</div><div class="sg-token-val">#e8e8ef</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">색상 — 상태</span></div>
+      <div class="sg-token-grid">
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#16a34a"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--success</div><div class="sg-token-val">#16a34a</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#f0fdf4"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--success-bg</div><div class="sg-token-val">#f0fdf4</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#d97706"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--warning</div><div class="sg-token-val">#d97706</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#fffbeb"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--warning-bg</div><div class="sg-token-val">#fffbeb</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#dc2626"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--danger</div><div class="sg-token-val">#dc2626</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#fef2f2"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--danger-bg</div><div class="sg-token-val">#fef2f2</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#2563eb"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--info</div><div class="sg-token-val">#2563eb</div></div>
+        </div>
+        <div class="sg-token-swatch">
+          <div class="sg-token-color" style="background:#eff6ff"></div>
+          <div class="sg-token-info"><div class="sg-token-name">--info-bg</div><div class="sg-token-val">#eff6ff</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">반경 · 그림자</span></div>
+      <div class="sg-preview white" style="gap:16px;flex-wrap:wrap;padding:24px 32px;">
+        <div style="width:64px;height:64px;background:#eff5fa;border-radius:8px;"></div>
+        <div style="width:64px;height:64px;background:#eff5fa;border-radius:10px;"></div>
+        <div style="width:64px;height:64px;background:#eff5fa;border-radius:14px;"></div>
+        <div style="width:64px;height:64px;background:#eff5fa;border-radius:18px;"></div>
+      </div>
+      <table class="sg-table">
+        <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><code>--radius-sm</code></td><td>8px</td><td>버튼, 입력 필드</td></tr>
+          <tr><td><code>--radius-md</code></td><td>10px</td><td>카드 내부 요소</td></tr>
+          <tr><td><code>--radius-lg</code></td><td>14px</td><td>카드</td></tr>
+          <tr><td><code>--radius-xl</code></td><td>18px</td><td>홈 카드, 활동 목록</td></tr>
+          <tr><td><code>--shadow-sm</code></td><td>0 1px 3px …</td><td>아이콘 버튼</td></tr>
+          <tr><td><code>--shadow-md</code></td><td>0 4px 12px …</td><td>드롭다운, 팝업</td></tr>
+          <tr><td><code>--shadow-card</code></td><td>0 2px 8px …</td><td>홈 카드, 결재 카드</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">폰트 토큰</span></div>
+      <table class="sg-table">
+        <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><code>--font-xs</code></td><td>10px</td><td>뱃지, 레이블 최소</td></tr>
+          <tr><td><code>--font-sm</code></td><td>11px</td><td>캡션, 메타 정보</td></tr>
+          <tr><td><code>--font-note</code></td><td>12px</td><td>보조 설명, 날짜</td></tr>
+          <tr><td><code>--font-base</code></td><td>13px</td><td>목록 본문 기본</td></tr>
+          <tr><td><code>--font-md</code></td><td>14px</td><td>버튼, 입력 필드</td></tr>
+          <tr><td><code>--font-lg</code></td><td>15px</td><td>섹션 제목</td></tr>
+          <tr><td><code>--font-xl</code></td><td>16px</td><td>페이지 제목</td></tr>
+          <tr><td><code>--font-2xl</code></td><td>22px</td><td>로그인 헤딩</td></tr>
+          <tr><td><code>--font-display</code></td><td>30px</td><td>숫자 강조 (수당 등)</td></tr>
+        </tbody>
+      </table>
+      <table class="sg-table" style="margin-top:0;border-top:1px solid var(--border);">
+        <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><code>--fw-medium</code></td><td>500</td><td>일반 강조</td></tr>
+          <tr><td><code>--fw-semibold</code></td><td>600</td><td>버튼, 탭 레이블</td></tr>
+          <tr><td><code>--fw-bold</code></td><td>700</td><td>제목, 수치</td></tr>
+          <tr><td><code>--fw-extrabold</code></td><td>800</td><td>디스플레이 숫자</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 타이포그래피 ===== -->
+  <section class="sg-section" id="sec-typo">
+    <h2 class="sg-section-title">타이포그래피</h2>
+    <p class="sg-section-desc">폰트: Pretendard, -apple-system. 자주 쓰이는 텍스트 스타일 클래스.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">헤딩 · 디스플레이</span></div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <table class="sg-table">
+          <thead><tr><th>클래스</th><th>크기/굵기</th><th>샘플</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code>.heading-xxl-mb4</code></td>
+              <td>22px / 800</td>
+              <td><span class="heading-xxl-mb4">MY인사</span></td>
+            </tr>
+            <tr>
+              <td><code>.heading-xl</code></td>
+              <td>17px / 800</td>
+              <td><span class="heading-xl">전자결재</span></td>
+            </tr>
+            <tr>
+              <td><code>.heading-base</code></td>
+              <td>16px / 700</td>
+              <td><span class="heading-base">연차 신청 내역</span></td>
+            </tr>
+            <tr>
+              <td><code>.topbar-title</code></td>
+              <td>16px / 700</td>
+              <td><span class="topbar-title">연차 신청</span></td>
+            </tr>
+            <tr>
+              <td><code>.num-display</code></td>
+              <td>30px / 700 tabular</td>
+              <td><span class="num-display">8.5</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">본문 · 보조</span></div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <table class="sg-table">
+          <thead><tr><th>클래스</th><th>크기/굵기</th><th>색상</th><th>샘플</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code>.text-body-strong</code></td>
+              <td>13px / 600</td>
+              <td>--text</td>
+              <td><span class="text-body-strong">본문 강조</span></td>
+            </tr>
+            <tr>
+              <td><code>.text-sub</code></td>
+              <td>13px / 400</td>
+              <td>--text-secondary</td>
+              <td><span class="text-sub">보조 텍스트</span></td>
+            </tr>
+            <tr>
+              <td><code>.text-hint</code></td>
+              <td>11px / 400</td>
+              <td>--text-tertiary</td>
+              <td><span class="text-hint">힌트 텍스트</span></td>
+            </tr>
+            <tr>
+              <td><code>.section-label</code></td>
+              <td>11px / 700 UPPERCASE</td>
+              <td>--text-tertiary</td>
+              <td><span class="section-label">섹션 레이블</span></td>
+            </tr>
+            <tr>
+              <td><code>.num-strong</code></td>
+              <td>14px / 700 tabular</td>
+              <td>--text</td>
+              <td><span class="num-strong">42,000원</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">색상 유틸리티</span></div>
+      <div class="sg-code-wrap" style="border-bottom:0;">
+        <table class="sg-table">
+          <thead><tr><th>클래스</th><th>색상 변수</th><th>샘플</th></tr></thead>
+          <tbody>
+            <tr><td><code>.c-accent</code></td><td>--accent</td><td><span class="c-accent fw-700">강조</span></td></tr>
+            <tr><td><code>.c-secondary</code></td><td>--text-secondary</td><td><span class="c-secondary">보조</span></td></tr>
+            <tr><td><code>.c-tertiary</code></td><td>--text-tertiary</td><td><span class="c-tertiary">3차</span></td></tr>
+            <tr><td><code>.c-danger</code></td><td>--danger</td><td><span class="c-danger fw-700">위험</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 유틸리티 ===== -->
+  <section class="sg-section" id="sec-utils">
+    <h2 class="sg-section-title">유틸리티</h2>
+    <p class="sg-section-desc">자주 사용되는 레이아웃 · 간격 유틸리티 클래스 목록.</p>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">레이아웃</span></div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>속성</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.row-between</code></td><td>display:flex;justify-content:space-between;align-items:center</td><td>좌우 정렬</td></tr>
+          <tr><td><code>.row-gap-8</code></td><td>display:flex;align-items:center;gap:8px</td><td>가로 8px 간격</td></tr>
+          <tr><td><code>.row-gap-5</code></td><td>display:flex;align-items:center;gap:5px</td><td>가로 5px 간격 (결재선 힌트 등)</td></tr>
+          <tr><td><code>.flex-1</code></td><td>flex:1</td><td>가용 공간 채우기</td></tr>
+          <tr><td><code>.section-pad</code></td><td>padding:16px 20px;border-bottom:1px solid var(--border)</td><td>섹션 기본 패딩</td></tr>
+          <tr><td><code>.section-pad-bg</code></td><td>padding:16px 20px;border-bottom:1px;background:var(--bg)</td><td>회색 배경 섹션</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sg-card">
+      <div class="sg-card-header"><span class="sg-card-title">간격 · 기타</span></div>
+      <table class="sg-table">
+        <thead><tr><th>클래스</th><th>속성</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>.mt-8</code></td><td>margin-top:8px</td><td></td></tr>
+          <tr><td><code>.mt-12</code></td><td>margin-top:12px</td><td></td></tr>
+          <tr><td><code>.mt-16</code></td><td>margin-top:16px</td><td></td></tr>
+          <tr><td><code>.mt-6</code></td><td>margin-top:6px</td><td></td></tr>
+          <tr><td><code>.mb-8</code></td><td>margin-bottom:8px</td><td></td></tr>
+          <tr><td><code>.mb0</code></td><td>margin-bottom:0</td><td>폼 섹션 하단 마진 제거</td></tr>
+          <tr><td><code>.pb-tabbar</code></td><td>padding-bottom:80px</td><td>탭바 높이 확보 (필수)</td></tr>
+          <tr><td><code>.mb-tabbar</code></td><td>margin-bottom:80px;background:var(--surface)</td><td>마지막 섹션 탭바 회피</td></tr>
+          <tr><td><code>.pb73</code></td><td>padding-bottom:73px</td><td>서브 화면 하단 여백</td></tr>
+          <tr><td><code>.pb90</code></td><td>padding-bottom:90px</td><td>하단 버튼 고정 화면</td></tr>
+          <tr><td><code>.pb0</code></td><td>padding-bottom:0</td><td>전체 화면 오버레이 등</td></tr>
+          <tr><td><code>.fw-700</code></td><td>font-weight:700</td><td></td></tr>
+          <tr><td><code>.fw-600</code></td><td>font-weight:600</td><td></td></tr>
+          <tr><td><code>.fw-500</code></td><td>font-weight:500</td><td></td></tr>
+          <tr><td><code>.fw-400-tertiary</code></td><td>font-weight:400;color:var(--text-tertiary)</td><td>레이블 보조 텍스트</td></tr>
+          <tr><td><code>.text-xs-muted</code></td><td>font-size:11px;color:var(--text-tertiary);font-weight:500</td><td>결재선 콤팩트 행 레이블 등</td></tr>
+          <tr><td><code>.form-row-clickable</code></td><td>display:flex;align-items:center;justify-content:space-between;cursor:pointer</td><td>클릭 가능한 폼 행</td></tr>
+          <tr><td><code>.form-readonly-box</code></td><td>background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:11px 14px;font-size:13px;color:var(--text-tertiary)</td><td>읽기 전용 폼 박스</td></tr>
+          <tr><td><code>.w-full</code></td><td>width:100%</td><td></td></tr>
+          <tr><td><code>.d-flex</code></td><td>display:flex</td><td></td></tr>
+          <tr><td><code>.d-flex-center</code></td><td>display:flex;align-items:center</td><td></td></tr>
+          <tr><td><code>.pos-rel</code></td><td>position:relative</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="height:60px;"></div>
+  </section>
+
+</main>
+
+<script>
+  /* 사이드바 active 하이라이트 */
+  const sections = document.querySelectorAll('.sg-section[id]');
+  const navLinks = document.querySelectorAll('.sg-nav a');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector(`.sg-nav a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+
+  /* 복사 버튼 */
+  document.querySelectorAll('.sg-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = btn.closest('.sg-code-wrap').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = '복사됨!';
+        setTimeout(() => btn.textContent = '복사', 1500);
+      });
+    });
+  });
+</script>
+</body>
+</html>

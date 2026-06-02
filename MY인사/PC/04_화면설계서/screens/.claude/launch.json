@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "MY인사 모바일",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "C:\\Users\\user\\Desktop\\서비스관리\\project_groupware_all\\mockups\\my-hr-mobile", "-p", "3132", "--cors", "-c-1"],
+      "port": 3132
+    },
+    {
+      "name": "MY인사 PC",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "C:\\Users\\user\\Desktop\\서비스관리\\MY인사\\04_화면설계서", "-p", "3133", "--cors", "-c-1"],
+      "port": 3133
+    },
+    {
+      "name": "MY인사 퍼블리싱",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "C:\\Users\\user\\Desktop\\서비스관리\\MY인사\\퍼블리싱", "-p", "3134", "--cors", "-c-1"],
+      "port": 3134
+    }
+  ]
+}

@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY인사 모바일</title>
+<link rel="stylesheet" href="../_common/my_tokens.css">
+<link rel="stylesheet" href="css/myinsa-mobile.css">
+</head>
+<body>
+<div class="presentation-wrapper">
+<div class="phone-col">
+<div class="phone">
+  <div class="app">
+
+    <!-- ============================================================
+         M-001 로그인
+    ============================================================ -->
+    <div class="screen active pb-0" data-screen="login">
+      <div class="login-screen">
+
+        <!-- 로고 영역 -->
+        <div class="center-mb32">
+          <div class="login-logo">MY</div>
+          <div class="heading-xxl-mb4">MY인사</div>
+          <div class="text-body-tertiary">중소기업용 통합 HR 솔루션</div>
+        </div>
+
+        <!-- 입력 영역 -->
+        <div class="flex-col-gap-10-mb14">
+          <input id="loginIdInput" class="login-input mb-0" type="text"
+                 placeholder="이메일 또는 사번" maxlength="100" value="gd.hong">
+          <div class="login-input-wrap mb-0">
+            <input id="loginPwInput" class="login-input has-icon mb-0" type="password"
+                   placeholder="비밀번호" maxlength="50">
+            <button class="login-eye" onclick="toggleLoginPw()" aria-label="비밀번호 표시">
+              <svg id="loginEyeOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="loginEyeClosed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 로그인 오류/계정 잠금 안내 (5회 연속 실패 시 노출, 평소 숨김) -->
+        <div id="loginLockMsg" class="text-body-danger-bg mb-14" style="display:none">
+          로그인 시도 횟수를 초과하였습니다. 계정이 잠겼습니다. 관리자에게 문의하세요.
+        </div>
+
+        <!-- 옵션 영역 -->
+        <label class="login-check">
+          <input type="checkbox">
+          <span>자동 로그인</span>
+        </label>
+
+        <!-- 액션 영역 -->
+        <button class="login-btn" onclick="openWorkplacePopup()">로그인</button>
+
+        <div class="login-sub-links">
+          <span class="login-sub-link" onclick="goPwFind('id')">아이디 찾기</span>
+          <div class="login-sub-divider"></div>
+          <span class="login-sub-link" onclick="goPwFind('pw')">비밀번호 변경</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-009 아이디 찾기 / 비밀번호 변경
+    ============================================================ -->
+    <div class="screen white-scroll" data-screen="pw-find">
+
+      <!-- 헤더: 타이틀 진입 모드에 따라 동적 변경 -->
+      <div class="sheet-topbar">
+        <button class="topbar-btn" onclick="showScreen('login')" aria-label="닫기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span id="pfMainTitle" class="topbar-title">아이디 찾기</span>
+        <div class="min-w-44"></div>
+      </div>
+
+      <!-- ===== 아이디 찾기 패널 ===== -->
+      <div id="pfPanel_id" class="d-block">
+        <div class="pad-20-8">
+          <div class="text-sub">아이디를 찾을 방법을 선택하세요.</div>
+        </div>
+        <!-- 인증 방식 탭 -->
+        <div class="pf-tab-bar">
+          <button id="pfIdTab_phone" class="pf-tab-active" onclick="switchPfTab('id','phone')">휴대폰</button>
+          <button id="pfIdTab_email" class="pf-tab-inactive" onclick="switchPfTab('id','email')">이메일</button>
+        </div>
+
+        <!-- 아이디 찾기 — 휴대폰 인증 -->
+        <div id="pfIdPhone" class="d-block">
+          <div class="pf-input-group">
+            <input id="idP_name" class="pf-input" placeholder="성명">
+            <div class="pf-phone-row">
+              <div class="pf-country-code">
+                <span class="text-md">+82</span>
+              </div>
+              <input id="idP_phone" class="pf-input-flex-sm" placeholder="휴대폰번호" inputmode="numeric">
+              <button class="pf-send-btn" onclick="showToast('인증번호가 발송되었습니다')">인증</button>
+            </div>
+            <!-- CAPTCHA -->
+            <div class="pf-captcha-wrap">
+              <div class="pf-captcha-inner">
+                <span class="pf-captcha-text">mY4n5a</span>
+                <svg class="pf-captcha-lines" viewBox="0 0 280 64"><path d="M10,32 Q60,8 120,40 Q180,64 240,20" stroke="white" stroke-width="2.5" fill="none"/><path d="M20,50 Q80,20 160,44 Q200,56 260,28" stroke="white" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <button class="pf-captcha-refresh" onclick="showToast('새 CAPTCHA가 생성되었습니다')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                새로고침
+              </button>
+            </div>
+            <input id="idP_captcha" class="pf-input" placeholder="위 텍스트를 입력하세요.">
+            <div class="flex-center-border-b">
+              <input id="idP_code" class="pf-input-flex" placeholder="인증번호" inputmode="numeric">
+              <button class="pf-verify-btn" onclick="showToast('인증되었습니다')">확인</button>
+            </div>
+          </div>
+          <div class="pf-btn-row">
+            <button class="pf-btn-primary" onclick="pfFindId()">찾기</button>
+            <button class="pf-btn-cancel" onclick="showScreen('login')">취소</button>
+          </div>
+        </div>
+
+        <!-- 아이디 찾기 — 이메일 인증 -->
+        <div id="pfIdEmail" style="display:none">
+          <div class="pf-input-group">
+            <input id="idE_name" class="pf-input" placeholder="성명">
+            <input id="idE_email" class="pf-input-last" type="email" placeholder="이메일">
+          </div>
+          <div class="pf-btn-row">
+            <button class="pf-btn-primary" onclick="pfFindId()">찾기</button>
+            <button class="pf-btn-cancel" onclick="showScreen('login')">취소</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 비밀번호 변경 패널 ===== -->
+      <div id="pfPanel_pw" style="display:none">
+        <div class="pad-20-8">
+          <div class="text-sub">비밀번호를 변경할 방법을 선택하세요.</div>
+        </div>
+        <!-- 인증 방식 탭 -->
+        <div class="pf-tab-bar">
+          <button id="pfPwTab_phone" class="pf-tab-active" onclick="switchPfTab('pw','phone')">휴대폰</button>
+          <button id="pfPwTab_email" class="pf-tab-inactive" onclick="switchPfTab('pw','email')">이메일</button>
+        </div>
+
+        <!-- 비밀번호 변경 — 휴대폰 인증 -->
+        <div id="pfPwPhone" class="d-block">
+          <div class="pf-input-group">
+            <input id="pwId_phone" class="pf-input" placeholder="아이디">
+            <input id="pwName_phone" class="pf-input" placeholder="성명">
+            <div class="pf-phone-row">
+              <div class="pf-country-code">
+                <span class="text-md">+82</span>
+              </div>
+              <input id="pwPhone_phone" class="pf-input-flex-sm" placeholder="휴대폰번호" inputmode="numeric">
+              <button class="pf-send-btn" onclick="showToast('인증번호가 발송되었습니다')">인증</button>
+            </div>
+            <!-- CAPTCHA -->
+            <div class="pf-captcha-wrap">
+              <div class="pf-captcha-inner">
+                <span class="pf-captcha-text">fCa3d9</span>
+                <svg class="pf-captcha-lines" viewBox="0 0 280 64"><path d="M10,32 Q60,8 120,40 Q180,64 240,20" stroke="white" stroke-width="2.5" fill="none"/><path d="M20,50 Q80,20 160,44 Q200,56 260,28" stroke="white" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <button class="pf-captcha-refresh" onclick="showToast('새 CAPTCHA가 생성되었습니다')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                새로고침
+              </button>
+            </div>
+            <input id="pwP_captcha" class="pf-input" placeholder="위 텍스트를 입력하세요.">
+            <div class="flex-center-border-b">
+              <input id="pwP_code" class="pf-input-flex" placeholder="인증번호" inputmode="numeric">
+              <button class="pf-verify-btn" onclick="showToast('인증되었습니다')">확인</button>
+            </div>
+          </div>
+          <div class="pf-btn-row">
+            <button class="pf-btn-primary" onclick="pfChangePw()">변경</button>
+            <button class="pf-btn-cancel" onclick="showScreen('login')">취소</button>
+          </div>
+        </div>
+
+        <!-- 비밀번호 변경 — 이메일 인증 -->
+        <div id="pfPwEmail" style="display:none">
+          <div class="pf-input-group">
+            <input id="pwId_email" class="pf-input" placeholder="아이디">
+            <input id="pwName_email" class="pf-input" placeholder="성명">
+            <input id="pwEmail_email" class="pf-input-last" type="email" placeholder="이메일">
+          </div>
+          <div class="pf-btn-row">
+            <button class="pf-btn-primary" onclick="pfChangePw()">변경</button>
+            <button class="pf-btn-cancel" onclick="showScreen('login')">취소</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         M-001-P 사업장 선택 팝업  [오버레이]
+    ============================================================ -->
+    <div id="workplacePopup" class="modal-backdrop-center" style="display:none">
+      <div class="result-overlay-sm">
+        <div class="popup-header">
+          <div class="label-caps-alt">로그인</div>
+          <div class="heading-alt">사업장을 선택하세요</div>
+          <div class="text-sm-sub-mt4">홍길동 님이 소속된 사업장 목록입니다</div>
+        </div>
+        <div class="popup-list">
+          <div class="select-item-row" onclick="selectWorkplace('(주)웹케시')">
+            <div class="u-flex-fill">
+              <div class="text-body-strong">(주)웹케시</div>
+              <div class="text-hint">123-45-67890 · we경리나라</div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="select-item-row" onclick="selectWorkplace('웹케시테크(주)')">
+            <div class="u-flex-fill">
+              <div class="text-body-strong">웹케시테크(주)</div>
+              <div class="text-hint">234-56-78901 · we경리나라</div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="select-item-row" onclick="selectWorkplace('웹케시서비스(주)')">
+            <div class="u-flex-fill">
+              <div class="text-body-strong">웹케시서비스(주)</div>
+              <div class="text-hint">345-67-89012 · we경리나라</div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="popup-footer">
+          <button class="wp-btn-cancel" onclick="closeWorkplacePopup()">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-009 아이디 찾기 결과 팝업  [오버레이]
+    ============================================================ -->
+    <div id="pfResultOverlay" class="modal-backdrop-center" style="display:none">
+      <div class="pf-result-overlay">
+        <div class="dialog-center-head">
+          <div class="label-caps-accent-mb8">아이디 찾기 결과</div>
+          <div class="text-sub-mb6">회원님의 아이디는</div>
+          <div class="heading-lg">gd.hong</div>
+          <div class="text-sm-sub-mt6">가입일: 2024.03.15</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-left" onclick="closePfResult()">닫기</button>
+          <button class="dialog-btn-right c-accent" onclick="closePfResult();showScreen('login')">로그인</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-009-S 새로운 비밀번호 설정하기
+    ============================================================ -->
+    <div class="screen white-scroll" data-screen="pw-reset">
+      <div class="sheet-topbar">
+        <button class="topbar-btn" onclick="showScreen('login')" aria-label="닫기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span class="topbar-title"></span>
+        <div class="min-w-44"></div>
+      </div>
+      <!-- 타이틀 (accent 밑줄) -->
+      <div style="margin:18px 20px 0;border-bottom:1px solid var(--border)">
+        <span class="heading-lg" style="display:inline-block;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:-1px">새로운 비밀번호 설정하기</span>
+      </div>
+      <div class="pad-16-20">
+        <div class="text-sub">비밀번호를 재설정하여 주세요.</div>
+      </div>
+      <div class="pf-input-group">
+        <input id="newPw" class="pf-input" type="password" placeholder="비밀번호" maxlength="50">
+        <input id="newPwConfirm" class="pf-input-last" type="password" placeholder="비밀번호 확인" maxlength="50">
+      </div>
+      <div class="pf-btn-row">
+        <button class="pf-btn-primary" onclick="pfDoResetPw()">변경하기</button>
+        <button class="pf-btn-cancel" onclick="showScreen('login')">닫기</button>
+      </div>
+      <div class="pad-16-20">
+        <span onclick="showScreen('pw-find')" style="font-size:13px;color:var(--text-tertiary);text-decoration:underline;cursor:pointer">이전 페이지</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-009-R 비밀번호 변경 결과 (정보 불일치)
+    ============================================================ -->
+    <div class="screen white-scroll" data-screen="pw-change-result">
+      <div class="sheet-topbar">
+        <button class="topbar-btn" onclick="showScreen('login')" aria-label="닫기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span class="topbar-title"></span>
+        <div class="min-w-44"></div>
+      </div>
+      <!-- 타이틀 (accent 밑줄) -->
+      <div style="margin:18px 20px 0;border-bottom:1px solid var(--border)">
+        <span class="heading-lg" style="display:inline-block;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:-1px">비밀번호 변경 결과</span>
+      </div>
+      <div class="pad-16-20">
+        <div class="text-sub-lh16">입력하신 정보와는 일치하는 사용자가 없습니다.<br>본인의 사용자 정보가 맞다면 다음과 같은 이유로 오류가 표시될 수 있습니다.</div>
+        <div class="text-sub-lh16 mt-12">- 아이디 입력시 대 / 소문자가 잘못 입력된 경우<br>- 아이디 뒤에 자동으로 공란이 들어간 경우</div>
+        <div class="stat-divider" style="margin:16px 0"></div>
+        <div class="text-body-accent mb-8">[입력정보]</div>
+        <div class="detail-grid">
+          <span class="c-secondary fw-600">아이디</span><span class="text-body-strong" id="pcrId">-</span>
+          <span class="c-secondary fw-600">이름</span><span class="text-body-strong" id="pcrName">-</span>
+          <span class="c-secondary fw-600" id="pcrContactLabel">이메일</span><span class="text-body-strong" id="pcrContact">-</span>
+        </div>
+        <div class="stat-divider" style="margin:16px 0 0"></div>
+      </div>
+      <div class="pf-btn-row">
+        <button class="pf-btn-primary" onclick="showScreen('pw-find')">다시찾기</button>
+        <button class="pf-btn-cancel" onclick="showScreen('login')">취소</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-009-S 비밀번호 변경 결과 다이얼로그  [오버레이]
+    ============================================================ -->
+    <div id="pwResetResultOverlay" class="modal-backdrop-center" style="display:none">
+      <div class="result-overlay-sm">
+        <div class="dialog-center-head-sm">
+          <div id="pwResetResultMsg" class="text-md-strong">변경이 완료되었습니다.</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-confirm" onclick="closePwResetResult()">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         입력 누락 알림 다이얼로그  [오버레이]
+    ============================================================ -->
+    <div id="inputAlertOverlay" class="modal-backdrop-center" style="display:none">
+      <div class="result-overlay-sm">
+        <div class="dialog-center-head-sm">
+          <div id="inputAlertMsg" class="text-md-strong">항목이 입력되지 않았습니다.</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-confirm" onclick="closeInputAlert()">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-002 게시판 홈
+    ============================================================ -->
+    <div class="screen pb-tabbar" data-screen="board">
+      <div class="topbar pos-rel topbar-board">
+        <div class="row-between-start">
+          <div>
+            <h1>게시판</h1>
+            <div class="sub" id="boardFilterLabel">우리 회사 소식과 자유로운 대화</div>
+          </div>
+          <div class="row-end-8">
+            <button class="icon-btn-sq" id="boardFilterBtn" onclick="openBoardFilterSheet()" aria-label="게시판 필터">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+            </button>
+            <button class="icon-btn-sq-rel" onclick="showScreen('notifications')" aria-label="알림">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              <span class="badge-dot-abs" id="notifBadge"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="boardFeed">
+        <div class="flat-post-row" data-board="사내공지" onclick="openPostFromBoard('p1')">
+          <div class="u-flex-fill">
+            <div class="board-new-title">2026년 하계휴가 시행 안내<span class="post-new-badge">N</span></div>
+            <div class="board-new-meta">사내공지 · 인사팀 김부장 · 5월 20일</div>
+          </div>
+          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flat-post-row" data-board="자유게시판" onclick="openPostFromBoard('p2')">
+          <div class="u-flex-fill">
+            <div class="board-new-title">오늘 점심 같이 드실 분 구해요 🍜<span class="post-new-badge">N</span></div>
+            <div class="board-new-meta">자유게시판 · 홍길동 · 5월 18일</div>
+          </div>
+          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flat-post-row" data-board="자유게시판" onclick="openPostFromBoard('p3')">
+          <div class="u-flex-fill">
+            <div class="board-new-title">사내 풋살 동호회 신규 멤버 모집합니다</div>
+            <div class="board-new-meta">자유게시판 · 이대리 · 5월 17일</div>
+          </div>
+          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flat-post-row" data-board="경조사게시판" onclick="openPostFromBoard('p4')">
+          <div class="u-flex-fill">
+            <div class="board-new-title">[부고] 총무팀 김과장 모친상 안내</div>
+            <div class="board-new-meta">경조사게시판 · 총무팀 · 5월 15일</div>
+          </div>
+          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flat-post-row no-border-b" data-board="자유게시판" onclick="openPostFromBoard('p5')">
+          <div class="u-flex-fill">
+            <div class="board-new-title">지하철역 셔틀버스 시간표 변경 안내</div>
+            <div class="board-new-meta">자유게시판 · 박과장 · 5월 14일</div>
+          </div>
+          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div id="boardEmptyState" style="display:none">
+        <div class="text-md-strong mb-4">등록된 게시글이 없습니다.</div>
+        <div class="text-sm-sub">아직 작성된 게시글이 없어요.<br>첫 번째 글을 작성해 보세요!</div>
+      </div>
+
+      <button class="fab-bottom-right" onclick="openCompose()" aria-label="글쓰기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ============================================================
+         M-004 게시글 상세
+    ============================================================ -->
+    <div class="screen" data-screen="post-detail" style="padding-bottom:140px">
+      <div class="topbar with-back">
+        <button class="back" onclick="goBack()" aria-label="뒤로">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="title" id="postDetailBoardTitle">게시판</span>
+        <div id="postDetailMoreBtn" style="display:none" onclick="openPostActionSheet()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+        </div>
+      </div>
+      <div class="post-detail">
+        <h2 id="pdTitle"></h2>
+        <div class="meta" id="pdMeta"></div>
+        <div class="body" id="pdBody"></div>
+      </div>
+      <div id="pdImages"></div>
+      <div class="comments">
+        <h3 id="pdCommentHead">댓글 0</h3>
+        <div id="pdCommentList"></div>
+      </div>
+      <div class="comment-input">
+        <input id="pdCommentInput" placeholder="댓글을 입력하세요" maxlength="300">
+        <button onclick="showToast('댓글 등록은 준비 중입니다')">등록</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         M-005 글 작성 / 글 수정 (compose)
+    ============================================================ -->
+    <div class="screen" data-screen="compose">
+      <div class="compose-nav">
+        <button class="compose-cancel-btn" onclick="onComposeCancel()">취소</button>
+        <span class="compose-title-span" id="composeNavTitle">글 작성</span>
+        <button class="compose-submit-btn" id="composeSubmitBtn" onclick="onSubmitPost()">등록</button>
+      </div>
+      <div class="compose-row">
+        <span class="compose-label">게시판</span>
+        <div class="compose-select-wrap">
+          <select class="compose-select" id="composeBoardSelect" onchange="checkComposeReady()">
+            <option value="">게시판 선택</option>
+            <option>자유게시판</option>
+            <option>경조사게시판</option>
+            <option>사내공지</option>
+          </select>
+          <svg class="compose-select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="compose-title-wrap">
+        <input class="compose-title-input" id="composeTitleInput" placeholder="제목을 입력하세요" maxlength="100" oninput="checkComposeReady()">
+      </div>
+      <textarea class="compose-body-input" id="composeBodyInput" placeholder="내용을 입력하세요" maxlength="3000" oninput="checkComposeReady()"></textarea>
+      <div class="compose-toolbar">
+        <button class="compose-attach-btn" onclick="showToast('이미지 첨부는 준비 중입니다')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          이미지
+        </button>
+        <span class="text-hint" id="composeCounter">0 / 3,000</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         하단 탭바 (5개)
+    ============================================================ -->
+    <div class="tabbar" style="display:none">
+      <div class="tab active" data-tab="board" onclick="goTab('board')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/></svg>
+        <span class="label">게시판</span>
+      </div>
+      <div class="tab" data-tab="leave" onclick="goTab('leave')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+        <span class="label">연차</span>
+      </div>
+      <div class="tab" data-tab="expense" onclick="goTab('expense')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3v18l2-1 2 1 2-1 2 1 2-1 2 1V3l-2 1-2-1-2 1-2-1-2 1z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+        <span class="label">영수증</span>
+      </div>
+      <div class="tab" data-tab="cert" onclick="goTab('cert')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+        <span class="label">증명서</span>
+      </div>
+      <div class="tab" data-tab="more" onclick="goTab('more')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+        <span class="label">더보기</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         게시판 필터 시트  [바텀시트]
+    ============================================================ -->
+    <div class="modal-backdrop-sheet" id="boardFilterSheet" style="display:none" onclick="if(event.target===this)closeBoardFilterSheet()">
+      <div class="bottom-sheet-base">
+        <div class="sheet-handle-bar"></div>
+        <div class="sheet-header">
+          <span class="heading-md">게시판 선택</span>
+          <button class="sheet-close-btn" onclick="closeBoardFilterSheet()" aria-label="닫기">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div>
+          <div class="bfs-item bfs-active" onclick="selectBoardFilter(this,'전체')">전체</div>
+          <div class="bfs-item" onclick="selectBoardFilter(this,'자유게시판')">자유게시판</div>
+          <div class="bfs-item" onclick="selectBoardFilter(this,'경조사게시판')">경조사게시판</div>
+          <div class="bfs-item no-border-b" onclick="selectBoardFilter(this,'사내공지')">사내공지</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         게시글 더보기 액션시트  [오버레이]
+    ============================================================ -->
+    <div id="postActionSheet" style="display:none" onclick="if(event.target===this)closePostActionSheet()">
+      <div class="action-sheet-body">
+        <div class="action-sheet-handle"></div>
+        <div class="action-sheet-item" onclick="openPostEdit()">수정하기</div>
+        <div class="action-sheet-item-danger" onclick="closePostActionSheet();openPostDeleteConfirm()">삭제하기</div>
+        <div class="action-sheet-cancel" onclick="closePostActionSheet()">취소</div>
+      </div>
+    </div>
+
+    <!-- 게시글 삭제 확인  [오버레이] -->
+    <div id="postDeleteConfirmOverlay" style="display:none">
+      <div class="result-overlay-sm">
+        <div class="dialog-center-head-sm">
+          <div class="text-md-strong">게시글을 삭제하시겠습니까?</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-left" onclick="closePostDeleteConfirm()">취소</button>
+          <button class="dialog-btn-right c-danger" onclick="confirmDeletePost()">삭제</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 작업 취소 확인 (글 작성/수정)  [오버레이] -->
+    <div id="composeCancelConfirm" class="modal-backdrop-center" style="display:none;background:rgba(0,0,0,.5);z-index:400">
+      <div class="result-overlay-sm">
+        <div class="dialog-center-head-sm">
+          <div class="text-md-strong">작업을 취소하시겠습니까?</div>
+          <div class="text-sm-sub-mt4">작성 중인 내용은 저장되지 않습니다.</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-left" onclick="closeComposeCancel()">취소</button>
+          <button class="dialog-btn-right c-danger" onclick="confirmComposeCancel()">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 댓글 더보기 액션시트  [오버레이] -->
+    <div id="commentActionSheet" class="modal-backdrop-sheet" style="display:none;background:rgba(0,0,0,.45);z-index:350" onclick="if(event.target===this)closeCommentActionSheet()">
+      <div class="action-sheet-body">
+        <div class="action-sheet-handle"></div>
+        <div class="action-sheet-item" onclick="editComment()">수정하기</div>
+        <div class="action-sheet-item-danger" onclick="closeCommentActionSheet();openCommentDeleteConfirm()">삭제하기</div>
+        <div class="action-sheet-cancel" onclick="closeCommentActionSheet()">취소</div>
+      </div>
+    </div>
+
+    <!-- 댓글 삭제 확인  [오버레이] -->
+    <div id="commentDeleteConfirmOverlay" class="modal-backdrop-center" style="display:none;background:rgba(0,0,0,.5);z-index:400">
+      <div class="result-overlay-sm">
+        <div class="dialog-center-head-sm">
+          <div class="text-md-strong">댓글을 삭제하시겠습니까?</div>
+        </div>
+        <div class="d-flex">
+          <button class="dialog-btn-left" onclick="closeCommentDeleteConfirm()">취소</button>
+          <button class="dialog-btn-right c-danger" onclick="confirmDeleteComment()">삭제</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+/* ===== 화면 전환 ===== */
+const _screenHistory = [];
+const _TAB_ROOTS = new Set(['board','leave-approval','expense-hub','cert-types','more']);
+const _noTabScreens = new Set(['login','pw-find','pw-reset','pw-change-result']);
+const _fullHeightScreens = new Set(['login','pw-find','pw-reset','pw-change-result']);
+
+function showScreen(name, _skipHistory){
+  // 아직 제작되지 않은 화면이면 안내 후 현재 화면 유지
+  if(!document.querySelector(`[data-screen="${name}"]`)){ showToast('준비 중입니다'); return; }
+  const cur = document.querySelector('.screen.active');
+  const curName = cur ? cur.dataset.screen : null;
+  if(_TAB_ROOTS.has(name)){ _screenHistory.length = 0; }
+  else if(!_skipHistory && curName && curName !== name){ _screenHistory.push(curName); }
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+  const active = document.querySelector('.screen.active');
+  if(active) active.scrollTop = 0;
+  document.querySelector('.app').style.height = _fullHeightScreens.has(name) ? '100%' : '';
+  const tabbar = document.querySelector('.tabbar');
+  if(tabbar) tabbar.style.display = _noTabScreens.has(name) ? 'none' : 'flex';
+  syncTab(name);
+}
+function goBack(){
+  const prev = _screenHistory.pop();
+  showScreen(prev || 'board', true);
+}
+function goTab(name){
+  const TAB_SCREEN = { board:'board', leave:'leave-approval', expense:'expense-hub', cert:'cert-types', more:'more' };
+  showScreen(TAB_SCREEN[name] || name);
+}
+function syncTab(screenName){
+  const MAP = { board:'board', 'post-detail':'board', 'post-list':'board', compose:'board', notifications:'board',
+                'leave-approval':'leave', 'expense-hub':'expense', 'cert-types':'cert', more:'more' };
+  const tab = MAP[screenName];
+  if(tab) document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+}
+
+/* ===== 로그인 (M-001) ===== */
+function toggleLoginPw(){
+  const inp = document.getElementById('loginPwInput');
+  const isPw = inp.type === 'password';
+  inp.type = isPw ? 'text' : 'password';
+  document.getElementById('loginEyeOpen').style.display   = isPw ? 'none'  : 'block';
+  document.getElementById('loginEyeClosed').style.display = isPw ? 'block' : 'none';
+}
+
+/* ===== 사업장 선택 팝업 (M-001-P) ===== */
+function openWorkplacePopup(){ document.getElementById('workplacePopup').style.display = 'flex'; }
+function closeWorkplacePopup(){ document.getElementById('workplacePopup').style.display = 'none'; }
+function selectWorkplace(name){
+  closeWorkplacePopup();
+  showScreen('board');                 // 게시판 홈(M-002) — 후속 단계에서 제작
+  showToast(name + ' 사업장으로 로그인되었습니다');
+}
+
+/* ===== 아이디 찾기 / 비밀번호 변경 (M-009) ===== */
+function goPwFind(mode){
+  showScreen('pw-find');
+  document.getElementById('pfMainTitle').textContent = (mode === 'pw') ? '비밀번호 변경' : '아이디 찾기';
+  document.getElementById('pfPanel_id').style.display = (mode === 'pw') ? 'none' : 'block';
+  document.getElementById('pfPanel_pw').style.display = (mode === 'pw') ? 'block' : 'none';
+  switchPfTab(mode, 'phone');          // 진입 시 휴대폰 인증 탭 기본
+}
+
+function switchPfTab(mode, method){
+  const phoneTab = document.getElementById('pf' + (mode === 'pw' ? 'Pw' : 'Id') + 'Tab_phone');
+  const emailTab = document.getElementById('pf' + (mode === 'pw' ? 'Pw' : 'Id') + 'Tab_email');
+  const phonePanel = document.getElementById('pf' + (mode === 'pw' ? 'Pw' : 'Id') + 'Phone');
+  const emailPanel = document.getElementById('pf' + (mode === 'pw' ? 'Pw' : 'Id') + 'Email');
+  const onPhone = (method === 'phone');
+  phoneTab.className = onPhone ? 'pf-tab-active' : 'pf-tab-inactive';
+  emailTab.className = onPhone ? 'pf-tab-inactive' : 'pf-tab-active';
+  phonePanel.style.display = onPhone ? 'block' : 'none';
+  emailPanel.style.display = onPhone ? 'none' : 'block';
+}
+
+/* ===== 입력 누락 검증 (공통) ===== */
+// 받침 유무로 주격 조사(이/가) 판별
+function _josaIGa(word){
+  if(!word) return '이';
+  const code = word.charCodeAt(word.length - 1);
+  if(code < 0xAC00 || code > 0xD7A3) return '이';   // 한글 음절이 아니면 기본 '이'
+  return ((code - 0xAC00) % 28 !== 0) ? '이' : '가'; // 받침 있으면 '이', 없으면 '가'
+}
+function openInputAlert(label){
+  document.getElementById('inputAlertMsg').textContent = label + _josaIGa(label) + ' 입력되지 않았습니다.';
+  document.getElementById('inputAlertOverlay').style.display = 'flex';
+}
+function closeInputAlert(){ document.getElementById('inputAlertOverlay').style.display = 'none'; }
+// 위에서부터 첫 번째 미입력 항목을 찾아 알림. 모두 입력 시 true
+function validateFields(fields){
+  for(const f of fields){
+    const el = document.getElementById(f.id);
+    if(!el || !el.value.trim()){ openInputAlert(f.label); return false; }
+  }
+  return true;
+}
+
+function pfFindId(){
+  const phoneOn = getComputedStyle(document.getElementById('pfIdPhone')).display !== 'none';
+  const fields = phoneOn
+    ? [{id:'idP_name',label:'성명'},{id:'idP_phone',label:'휴대폰번호'},{id:'idP_captcha',label:'자동입력 방지문자'},{id:'idP_code',label:'인증번호'}]
+    : [{id:'idE_name',label:'성명'},{id:'idE_email',label:'이메일'}];
+  if(!validateFields(fields)) return;
+  // 토스트 없이 결과 팝업만 노출
+  document.getElementById('pfResultOverlay').style.display = 'flex';
+}
+function closePfResult(){ document.getElementById('pfResultOverlay').style.display = 'none'; }
+
+// 데모 계정: 입력 아이디가 이 값과 일치하면 정보 일치로 간주
+const DEMO_ACCOUNT_ID = 'gd.hong';
+
+function pfChangePw(){
+  const phoneOn = getComputedStyle(document.getElementById('pfPwPhone')).display !== 'none';
+  const fields = phoneOn
+    ? [{id:'pwId_phone',label:'아이디'},{id:'pwName_phone',label:'성명'},{id:'pwPhone_phone',label:'휴대폰번호'},{id:'pwP_captcha',label:'자동입력 방지문자'},{id:'pwP_code',label:'인증번호'}]
+    : [{id:'pwId_email',label:'아이디'},{id:'pwName_email',label:'성명'},{id:'pwEmail_email',label:'이메일'}];
+  if(!validateFields(fields)) return;
+  const id   = (phoneOn ? document.getElementById('pwId_phone')   : document.getElementById('pwId_email')).value.trim();
+  const name = (phoneOn ? document.getElementById('pwName_phone') : document.getElementById('pwName_email')).value.trim();
+  if(id === DEMO_ACCOUNT_ID){
+    // 정보 일치 → 새 비밀번호 설정 화면
+    document.getElementById('newPw').value = '';
+    document.getElementById('newPwConfirm').value = '';
+    showScreen('pw-reset');
+  } else {
+    // 정보 불일치 → 비밀번호 변경 결과 화면 (입력정보 노출)
+    const contactLabel = phoneOn ? '휴대폰' : '이메일';
+    let contact;
+    if(phoneOn){
+      const p = document.getElementById('pwPhone_phone').value.trim();
+      contact = p ? ('+82 ' + p) : '';
+    } else {
+      contact = document.getElementById('pwEmail_email').value.trim();
+    }
+    document.getElementById('pcrId').textContent = id || '-';
+    document.getElementById('pcrName').textContent = name || '-';
+    document.getElementById('pcrContactLabel').textContent = contactLabel;
+    document.getElementById('pcrContact').textContent = contact || '-';
+    showScreen('pw-change-result');
+  }
+}
+
+/* ===== 새 비밀번호 설정 (M-009-S) ===== */
+let _pwResetOk = false;
+function pfDoResetPw(){
+  const pw  = document.getElementById('newPw').value;
+  const pw2 = document.getElementById('newPwConfirm').value;
+  let reason = '';
+  if(!pw || !pw2){ reason = '비밀번호를 입력해주세요.'; }
+  else if(pw !== pw2){ reason = '비밀번호가 일치하지 않습니다.'; }
+  if(reason){ openPwResetResult(reason, false); }
+  else { openPwResetResult('변경이 완료되었습니다.', true); }
+}
+function openPwResetResult(msg, ok){
+  _pwResetOk = ok;
+  document.getElementById('pwResetResultMsg').textContent = msg;
+  document.getElementById('pwResetResultOverlay').style.display = 'flex';
+}
+function closePwResetResult(){
+  document.getElementById('pwResetResultOverlay').style.display = 'none';
+  if(_pwResetOk){
+    document.getElementById('newPw').value = '';
+    document.getElementById('newPwConfirm').value = '';
+    showScreen('login');   // 변경 완료 → 로그인 화면
+  }
+  // 실패 시: 팝업만 닫고 비밀번호 변경 화면 유지
+}
+
+/* ===== 토스트 (공통) ===== */
+function showToast(msg){
+  let toast = document.getElementById('appToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'appToast';
+    toast.style.cssText = 'position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(17,17,24,.88);color:#fff;font-size:13px;font-weight:600;padding:9px 18px;border-radius:24px;z-index:500;white-space:nowrap;pointer-events:none;transition:opacity .25s;';
+    document.querySelector('.phone').appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2200);
+}
+
+/* ============================================================
+   게시판 (M-002 ~ M-005)
+============================================================ */
+const _POSTS = {
+  p1:{board:'사내공지', notice:true, mine:false, title:'2026년 하계휴가 시행 안내', author:'인사팀 김부장', datetime:'2026.05.20 09:00',
+      body:'<p>안녕하세요, 인사팀입니다.</p><p>2026년 하계휴가는 <b>7월 21일 ~ 8월 31일</b> 사이 자유롭게 사용 가능합니다. 부서별 일정을 조율하여 신청해 주세요.</p><p>자세한 사용 기준은 사내 인트라넷 공지를 참고 바랍니다.</p>',
+      comments:[{author:'이대리',dept:'개발팀',text:'안내 감사합니다!',time:'5월 20일 09:30',mine:false}]},
+  p2:{board:'자유게시판', notice:false, mine:true, title:'오늘 점심 같이 드실 분 구해요 🍜', author:'홍길동', datetime:'2026.05.18 11:40',
+      body:'<p>12시에 회사 앞 국밥집 가실 분 모집합니다. 댓글 주세요!</p>',
+      comments:[{author:'김영희',dept:'인사팀',text:'저요 저요!',time:'5월 18일 11:45',mine:false},{author:'홍길동',dept:'영업팀',text:'좋아요, 11시 55분에 로비에서 봐요~',time:'5월 18일 11:50',mine:true}]},
+  p3:{board:'자유게시판', notice:false, mine:false, title:'사내 풋살 동호회 신규 멤버 모집합니다', author:'이대리', datetime:'2026.05.17 18:20',
+      body:'<p>매주 수요일 저녁에 풋살 하실 분 구합니다. 초보 환영! 관심 있으면 댓글 남겨주세요.</p>', comments:[]},
+  p4:{board:'경조사게시판', notice:false, mine:false, title:'[부고] 총무팀 김과장 모친상 안내', author:'총무팀', datetime:'2026.05.15 08:30',
+      body:'<p>총무팀 김과장님의 모친께서 별세하셨습니다.</p><p>삼가 고인의 명복을 빕니다.</p>', comments:[]},
+  p5:{board:'자유게시판', notice:false, mine:false, title:'지하철역 셔틀버스 시간표 변경 안내', author:'박과장', datetime:'2026.05.14 17:00',
+      body:'<p>6월부터 셔틀버스 배차 간격이 10분으로 조정됩니다. 자세한 시간표는 게시판 첨부를 확인해 주세요.</p>', comments:[]}
+};
+let _curPostId = null;
+let _curCommentIdx = null;
+let _composeMode = 'new';
+
+/* ── 게시판 필터 시트 (M-002) ── */
+function openBoardFilterSheet(){ document.getElementById('boardFilterSheet').style.display = 'flex'; }
+function closeBoardFilterSheet(){ document.getElementById('boardFilterSheet').style.display = 'none'; }
+function selectBoardFilter(el, board){
+  document.querySelectorAll('#boardFilterSheet .bfs-item').forEach(i => i.classList.remove('bfs-active'));
+  el.classList.add('bfs-active');
+  const rows = document.querySelectorAll('#boardFeed .flat-post-row');
+  let shown = 0;
+  rows.forEach(r => {
+    const on = (board === '전체') || (r.dataset.board === board);
+    r.style.display = on ? 'flex' : 'none';
+    if(on) shown++;
+  });
+  document.getElementById('boardFilterLabel').textContent = (board === '전체') ? '우리 회사 소식과 자유로운 대화' : board;
+  const btn = document.getElementById('boardFilterBtn');
+  btn.style.borderColor = (board === '전체') ? '' : 'var(--accent)';
+  btn.style.color = (board === '전체') ? '' : 'var(--accent)';
+  document.getElementById('boardEmptyState').style.display = shown ? 'none' : 'block';
+  closeBoardFilterSheet();
+}
+
+/* ── 게시글 상세 (M-004) ── */
+function openPostFromBoard(id){
+  _curPostId = id;
+  _renderPostDetail(id);
+  showScreen('post-detail');
+}
+function _renderPostDetail(id){
+  const p = _POSTS[id]; if(!p) return;
+  document.getElementById('postDetailBoardTitle').textContent = p.board;
+  document.getElementById('pdTitle').innerHTML = (p.notice ? '<span class="tag-type-code">공지</span>' : '') + p.title;
+  document.getElementById('pdMeta').textContent = p.author + ' · ' + p.datetime;
+  document.getElementById('pdBody').innerHTML = p.body;
+  document.getElementById('postDetailMoreBtn').style.display = p.mine ? 'grid' : 'none';
+  document.getElementById('pdCommentHead').textContent = '댓글 ' + p.comments.length;
+  const more = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>';
+  document.getElementById('pdCommentList').innerHTML = p.comments.map((c, i) => {
+    const who = c.author + (c.dept ? ' · ' + c.dept : '');
+    if(c.editing){
+      return `<div class="comment"><div class="who">${who}</div>`
+        + `<textarea id="cmtEdit${i}" class="form-textarea" style="min-height:auto;height:62px;margin-top:6px">${c.text}</textarea>`
+        + `<div class="flex-gap-8 mt-8"><button class="btn flex-1" onclick="cancelCommentEdit(${i})">취소</button>`
+        + `<button class="btn btn-primary flex-1" onclick="saveComment(${i})">저장</button></div></div>`;
+    }
+    const moreBtn = c.mine ? `<div class="cur-pointer c-tertiary mt-1-shrink" onclick="openCommentActionSheet(${i})">${more}</div>` : '';
+    return `<div class="comment"><div class="row-between-start"><div class="who">${who}</div>${moreBtn}</div>`
+      + `<div class="text">${c.text}</div><div class="when">${c.time}</div></div>`;
+  }).join('');
+}
+
+/* ── 게시글 더보기 / 삭제 (M-004) ── */
+function openPostActionSheet(){ document.getElementById('postActionSheet').style.display = 'flex'; }
+function closePostActionSheet(){ document.getElementById('postActionSheet').style.display = 'none'; }
+function openPostDeleteConfirm(){ document.getElementById('postDeleteConfirmOverlay').style.display = 'flex'; }
+function closePostDeleteConfirm(){ document.getElementById('postDeleteConfirmOverlay').style.display = 'none'; }
+function confirmDeletePost(){
+  closePostDeleteConfirm();
+  showScreen('board');
+  showToast('게시글이 삭제되었습니다');
+}
+
+/* ── 댓글 더보기 / 수정 / 삭제 (M-004) ── */
+function openCommentActionSheet(i){ _curCommentIdx = i; document.getElementById('commentActionSheet').style.display = 'flex'; }
+function closeCommentActionSheet(){ document.getElementById('commentActionSheet').style.display = 'none'; }
+function editComment(){
+  closeCommentActionSheet();
+  _POSTS[_curPostId].comments[_curCommentIdx].editing = true;
+  _renderPostDetail(_curPostId);
+}
+function saveComment(i){
+  const val = document.getElementById('cmtEdit' + i).value.trim();
+  const c = _POSTS[_curPostId].comments[i];
+  if(val) c.text = val;
+  c.editing = false;
+  _renderPostDetail(_curPostId);
+  showToast('댓글이 수정되었습니다');
+}
+function cancelCommentEdit(i){
+  _POSTS[_curPostId].comments[i].editing = false;
+  _renderPostDetail(_curPostId);
+}
+function openCommentDeleteConfirm(){ document.getElementById('commentDeleteConfirmOverlay').style.display = 'flex'; }
+function closeCommentDeleteConfirm(){ document.getElementById('commentDeleteConfirmOverlay').style.display = 'none'; }
+function confirmDeleteComment(){
+  _POSTS[_curPostId].comments.splice(_curCommentIdx, 1);
+  closeCommentDeleteConfirm();
+  _renderPostDetail(_curPostId);
+  showToast('댓글이 삭제되었습니다');
+}
+
+/* ── 글 작성 / 수정 (M-005) ── */
+function openCompose(){
+  _composeMode = 'new';
+  document.getElementById('composeNavTitle').textContent = '글 작성';
+  document.getElementById('composeSubmitBtn').textContent = '등록';
+  document.getElementById('composeBoardSelect').value = '';
+  document.getElementById('composeTitleInput').value = '';
+  document.getElementById('composeBodyInput').value = '';
+  checkComposeReady();
+  showScreen('compose');
+}
+function openPostEdit(){
+  closePostActionSheet();
+  const p = _POSTS[_curPostId]; if(!p) return;
+  _composeMode = 'edit';
+  document.getElementById('composeNavTitle').textContent = '글 수정';
+  document.getElementById('composeSubmitBtn').textContent = '저장';
+  document.getElementById('composeBoardSelect').value = p.board;
+  document.getElementById('composeTitleInput').value = p.title;
+  document.getElementById('composeBodyInput').value = p.body.replace(/<[^>]+>/g, '').trim();
+  checkComposeReady();
+  showScreen('compose');
+}
+function checkComposeReady(){
+  const board = document.getElementById('composeBoardSelect').value;
+  const title = document.getElementById('composeTitleInput').value.trim();
+  const body  = document.getElementById('composeBodyInput').value;
+  document.getElementById('composeCounter').textContent = body.length.toLocaleString() + ' / 3,000';
+  const ready = board && title && body.trim();
+  const btn = document.getElementById('composeSubmitBtn');
+  btn.style.color = ready ? 'var(--accent)' : '';
+  btn.style.borderColor = ready ? 'var(--accent)' : '';
+}
+function onSubmitPost(){
+  const board = document.getElementById('composeBoardSelect').value;
+  const title = document.getElementById('composeTitleInput').value.trim();
+  const body  = document.getElementById('composeBodyInput').value.trim();
+  if(!board){ showToast('게시판을 선택해주세요'); return; }
+  if(!title){ showToast('제목을 입력해주세요'); return; }
+  if(!body){ showToast('내용을 입력해주세요'); return; }
+  if(_composeMode === 'edit' && _curPostId){
+    const p = _POSTS[_curPostId];
+    p.board = board; p.title = title;
+    p.body = body.split(/\n+/).map(t => '<p>' + t + '</p>').join('');
+    _renderPostDetail(_curPostId);
+    showScreen('post-detail');
+    showToast('게시글이 수정되었습니다');
+  } else {
+    showScreen('board');
+    showToast('✅ 게시글이 등록되었습니다');
+  }
+  _composeMode = 'new';
+}
+function onComposeCancel(){
+  const dirty = document.getElementById('composeBoardSelect').value
+    || document.getElementById('composeTitleInput').value.trim()
+    || document.getElementById('composeBodyInput').value.trim();
+  if(dirty){ document.getElementById('composeCancelConfirm').style.display = 'flex'; }
+  else { confirmComposeCancel(); }
+}
+function closeComposeCancel(){ document.getElementById('composeCancelConfirm').style.display = 'none'; }
+function confirmComposeCancel(){
+  closeComposeCancel();
+  const editMode = (_composeMode === 'edit');
+  document.getElementById('composeBoardSelect').value = '';
+  document.getElementById('composeTitleInput').value = '';
+  document.getElementById('composeBodyInput').value = '';
+  _composeMode = 'new';
+  showScreen(editMode ? 'post-detail' : 'board');
+}
+</script>
+</body>
+</html>

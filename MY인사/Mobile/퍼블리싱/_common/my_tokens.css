@@ -1,0 +1,261 @@
+/* ============ TOKENS ============ */
+
+/* 웹폰트 */
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Thin.woff')format('woff');font-weight:100;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-ExtraLight.woff')format('woff');font-weight:200;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Light.woff')format('woff');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Regular.woff2')format('woff2'),url('fonts_Pretendard/Pretendard-Regular.woff')format('woff');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Medium.woff2')format('woff2'),url('fonts_Pretendard/Pretendard-Medium.woff')format('woff');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-SemiBold.woff2')format('woff2'),url('fonts_Pretendard/Pretendard-SemiBold.woff')format('woff');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Bold.woff2')format('woff2'),url('fonts_Pretendard/Pretendard-Bold.woff')format('woff');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-ExtraBold.woff2')format('woff2'),url('fonts_Pretendard/Pretendard-ExtraBold.woff')format('woff');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:'Pretendard';src:url('fonts_Pretendard/Pretendard-Black.woff')format('woff');font-weight:900;font-style:normal;font-display:swap}
+
+:root{
+  --font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --bg:#f7f7fa;
+  --surface:#ffffff;
+  --surface-hover:#f2f2f7;
+  --text:#111118;
+  --text-secondary:#4a4a5a;
+  --text-tertiary:#9898a8;
+  --border:#e8e8ef;
+  --border-strong:#d0d0dc;
+  --accent:#2363a8;
+  --accent-light:#eff5fa;
+  --accent-mid:#558ec3;
+  --accent-dk:#1b4d82;
+  --accent-fg:#ffffff;
+  --success:#16a34a;
+  --success-bg:#f0fdf4;
+  --warning:#d97706;
+  --warning-bg:#fffbeb;
+  --danger:#dc2626;
+  --danger-dk:#b91c1c;
+  --danger-bg:#fef2f2;
+  --info:#2563eb;
+  --info-bg:#eff6ff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(35,99,168,.08),0 2px 4px rgba(0,0,0,.04);
+  --shadow-card:0 2px 8px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);
+  --shadow-accent:rgba(35,99,168,.3); --shadow-accent-up:rgba(35,99,168,.4);
+  --sidebar-w:240px;
+  --radius-sm:6px;
+  --radius-md:8px;
+  --radius-lg:10px;
+  --radius-xl:14px;
+  --fs-2xs:10px;
+  --fs-xs:11px;
+  --fs-sm:12px;
+  --fs-body:13px;
+  --fs-md:14px;
+  --fs-lg:15px;
+  --fs-xl:17px;
+  --fw-normal:400;
+  --fw-medium:500;
+  --fw-semibold:600;
+  --fw-bold:700;
+  --fw-extrabold:800;
+  --z-sticky-body:1;
+  --z-sticky:2;
+  --z-sticky-col:3;
+  --z-dropdown:200;
+  --z-overlay:500;
+  --z-panel:501;
+  --z-modal:1000;
+  --z-toast:9999;
+  --transition:.15s;
+  --transition-md:.2s;
+  --transition-panel:.25s cubic-bezier(.4,0,.2,1);
+  --sp-1:4px;
+  --sp-2:6px;
+  --sp-3:8px;
+  --sp-4:10px;
+  --sp-5:12px;
+  --sp-6:14px;
+  --sp-7:16px;
+  --sp-8:18px;
+  --sp-9:20px;
+  --sp-10:24px;
+  --kpi-leave:#1a54a8; --kpi-leave-lt:#4d8fd4; --kpi-leave-shadow:rgba(26,84,168,.18);
+  --kpi-faq:#6b35c9; --kpi-faq-lt:#9b6de0; --kpi-faq-shadow:rgba(107,53,201,.18);
+  --kpi-cert:#0d8f6e; --kpi-cert-lt:#2bbf9a; --kpi-cert-shadow:rgba(13,143,110,.18);
+  --kpi-total:#c95f0a; --kpi-total-lt:#f08030; --kpi-total-shadow:rgba(201,95,10,.18);
+  --leave-track:rgba(35,99,168,.12);
+  --leave-cell-hover:#dbeafe;
+  --leave-total-fg:#1b4d82; --leave-total-border:#bfd9ef; --leave-used-dark:#0f3870;
+  --lux-accent:#4F46E5; --lux-accent-lt:#6366F1;
+  --lux-text:#0f172a; --lux-muted:#4b5563; --lux-border:#e5e5e5;
+  --lux-dark:#1f2937; --lux-subtle:#9ca3af; --lux-base:#fafafa; --lux-divide:#f0f0f0;
+  --badge-emp-bg:#dbeafe; --badge-emp-fg:#1e40af;
+  --badge-exp-bg:#fce7f3; --badge-exp-fg:#9d174d;
+  --badge-other-bg:#d1fae5; --badge-other-fg:#065f46;
+  --hr-cert-bg:#dbeafe; --hr-cert-fg:#1e40af;
+  --hr-edu-bg:#f3e8ff;  --hr-edu-fg:#7c3aed;
+  --hr-lang-bg:#fef9c3; --hr-lang-fg:#92400e;
+  --toast-bg:#18181b;
+}
+
+/* ── index.html 전용 토큰 ── */
+:root {
+  /* Primary */
+  --primary-normal: #0066FF;
+  --primary-strong: #005EEB;
+  --primary-heavy: #0054D1;
+
+  /* Label */
+  --label-normal: #171719;
+  --label-strong: #000000;
+  --label-neutral: rgba(46, 47, 51, 0.88);
+  --label-alternative: rgba(55, 56, 60, 0.61);
+  --label-assistive: rgba(55, 56, 60, 0.28);
+  --label-disable: rgba(55, 56, 60, 0.16);
+
+  /* Background */
+  --bg-normal: #FFFFFF;
+  --bg-alternative: #F7F7F8;
+  --bg-elevated: #FFFFFF;
+
+  /* Line */
+  --line-normal: rgba(112, 115, 124, 0.22);
+  --line-neutral: rgba(112, 115, 124, 0.16);
+  --line-alternative: rgba(112, 115, 124, 0.08);
+  --line-solid-normal: #E1E2E4;
+  --line-solid-alternative: #F4F4F5;
+
+  /* Fill */
+  --fill-normal: rgba(112, 115, 124, 0.08);
+  --fill-strong: rgba(112, 115, 124, 0.16);
+  --fill-alternative: rgba(112, 115, 124, 0.05);
+
+  /* Status */
+  --status-positive: #00BF40;
+  --status-cautionary: #FF9200;
+  --status-negative: #FF4242;
+
+  /* Static */
+  --static-white: #FFFFFF;
+  --static-black: #000000;
+
+  /* Interaction */
+  --interaction-inactive: #9B9DA4;
+  --interaction-disable: #F4F4F5;
+
+  /* Inverse */
+  --inverse-primary: #3385FF;
+  --inverse-bg: #1B1B1E;
+  --inverse-label: #F7F7F8;
+
+  /* Accent */
+  --accent-blue: #005EEB;
+  --accent-red: #E62222;
+  --accent-orange: #CC7600;
+  --accent-green: #009633;
+
+  /* Component */
+  --gap-normal: 16px;
+  --padding-card-tiny: 4px;
+  --margin-platform: 20px;
+  --viewport-lg: 1100px;
+  --viewport-xl: 1440px;
+
+  /* Frame - Medium */
+  --radius: 14px;
+  --padding-h: 16px;
+  --padding-v: 4px;
+
+  /* Primary 파생 */
+  --primary-muted: rgba(0, 102, 255, 0.5);
+  --primary-soft: rgba(0, 102, 255, 0.82);
+  --line-primary-subtle: rgba(0, 102, 255, 0.06);
+
+  /* Background 파생 */
+  --bg-translucent: rgba(255, 255, 255, 0.6);
+  --bg-overlay: rgba(255, 255, 255, 0.96);
+
+  /* Soft Card */
+  --fill-primary-light: #F0F4FF;
+  --fill-primary-hover: #DDEAFF;
+
+  /* Tag */
+  --tag-important-bg: #FEF0F0;
+  --tag-important-text: #E57373;
+  --tag-request-bg: #FFF8E8;
+  --tag-request-text: #FFB74D;
+  --tag-waiting-bg: #F0F7F1;
+  --tag-waiting-text: #81C784;
+  --tag-progress-bg: #E8F0FE;
+  --tag-progress-text: #4285F4;
+
+  /* Shadow */
+  --shadow-popup: 0 4px 24px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 6px 6px 16px rgba(0, 0, 0, 0.04), -4px -4px 12px rgba(255, 255, 255, 0.9);
+
+  /* Gradient */
+  --gradient-tint: #B8D0FF;
+
+  /* Focus */
+  --focus-ring: 0 0 0 2px var(--bg-normal), 0 0 0 4px var(--primary-normal);
+
+  /* Layout */
+  --content-w: 800px;
+  --header-h: 64px;
+
+  /* Overlay / Modal */
+  --overlay-bg: rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-tooltip: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  --primary-focus-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08);
+
+  /* Radius 추가 (index.html) */
+  --radius-popup: 12px;     /* 팝업·패널 공통 */
+  --radius-card-lg: 16px;   /* 주요 카드·모달 */
+
+  /* Transition 단축 (index.html) */
+  --t-quick: .12s ease;
+  --t-fast:  .15s ease;
+  --t-base:  .2s ease;
+  --t-enter: .25s ease;
+  --t-slow:  .3s ease;
+
+  /* 앱 진입 딜레이 (index.html) */
+  --app-delay-base: 0.15s;
+  --app-delay-step: 0.07s;
+
+  /* Z-index */
+  --z-header: 100;
+  --z-modal-overlay: 8000;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gap-normal: 20px;
+    --padding-card-tiny: 6px;
+  }
+}
+
+/* ── 결재함 전용 토큰 ── */
+:root {
+  --accent-dark:#1a5290;
+  --transition-fast:.12s;
+  --z-popup:50;
+  --z-backdrop:990;          /* 상세보기 full-screen overlay */
+  --z-picker:10;             /* 결재선 편집 내부 picker */
+  --backdrop:rgba(15,22,38,.45);
+  --modal-head-bg:#dde0e6;
+  --fs-modal-title:16px;     /* 모달 제목 h2 */
+  --fs-page-title:19px;      /* 페이지 헤더 h1 */
+  --fs-2xl:22px;             /* 결재 양식 제목, 큰 액션 버튼 */
+  --radius-xs:4px;           /* 소형 태그·chip */
+  --radius-pill:999px;       /* 완전 둥근 pill 배지 */
+  --status-wait:#C25E00;
+  --status-wait-bg:#FFEFD9;
+  --status-wait-row:rgba(255,184,77,.06);
+  --status-hold:#8A6200;
+  --status-hold-bg:#FFF4C2;
+  --status-done:#1A8A3D;
+  --status-done-bg:#DDF3E2;
+  --status-reject:#C42626;
+  --status-reject-bg:#FBDADA;
+  --shadow-popup:0 8px 24px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.04);
+}
