@@ -147,9 +147,11 @@ AI가 다음 세션에서 맥락 없이 작업하더라도 이 파일을 통해 
 ## 문서화
 
 ### MD 파일 구성
-- **결정**: `rules_README.md`(프로젝트 개요) + `rules_DECISIONS.md`(결정 맥락) + `rules_LAYOUT.md`(레이아웃 레퍼런스) + `rules_COMPONENTS.md`(컴포넌트 레퍼런스) + `rules_FLOWMAP.md`(화면 플로우맵) 5개 유지
+- **결정**: `rules_README.md`(프로젝트 개요) + `rules_DECISIONS.md`(결정 맥락) + `rules_LAYOUT.md`(레이아웃 레퍼런스) + `rules_COMPONENTS.md`(컴포넌트 레퍼런스) + `rules_FLOWMAP.md`(화면 플로우맵) + `checklist_new_screen_mobile.md`(신규 화면 생성 절차) 6개 유지
 - **이유**: 기획 파트에서 Claude가 읽는 컨텍스트로 사용. `mobile-style-guide.html`은 실제 렌더링 확인용이고, MD는 Claude가 코드 작성 시 참조하는 레퍼런스
 - **스타일 가이드 업데이트 시**: `mobile-style-guide.html`과 `rules_COMPONENTS.md`를 반드시 동시에 수정
+> 신규 화면·컴포넌트 생성은 퍼블 파트가 담당하며 `checklist_new_screen_mobile.md`를 단일 출처로 따른다.
+> 기획 파트는 기존 컴포넌트 조립·편집만 하고, 없는 것은 만들지 말고 퍼블에 요청한다.
 
 ---
 

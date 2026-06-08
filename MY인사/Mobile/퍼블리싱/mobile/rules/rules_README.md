@@ -2,6 +2,10 @@
 
 모바일 인사 관리 앱 UI 프로토타입. 빌드 도구 없이 브라우저에서 바로 실행되는 단일 HTML 파일 구조.
 
+> ⚠ **신규 화면·컴포넌트가 필요하면 직접 만들지 말고 퍼블 파트에 요청한다.**
+> 기획 파트는 기존 컴포넌트(`rules_COMPONENTS.md` 목록)를 조립·편집만 한다.
+> (신규 화면 생성 절차 `checklist_new_screen_mobile.md` 는 퍼블 작업용 문서다.)
+
 ---
 
 ## 파일 구조
@@ -17,7 +21,8 @@ MY인사/
 │   ├── rules_LAYOUT.md                    # 레이아웃 구조 레퍼런스
 │   ├── rules_COMPONENTS.md                # 컴포넌트 레퍼런스
 │   ├── rules_DECISIONS.md                 # 결정 맥락
-│   └── rules_FLOWMAP.md                   # 화면 전환 플로우맵
+│   ├── rules_FLOWMAP.md                   # 화면 전환 플로우맵
+│   └── checklist_new_screen_mobile.md     # 신규 화면 생성 절차 (퍼블 작업용)
 └── _common/
     └── fonts_Pretendard/                  # Pretendard 폰트
 ```
@@ -107,3 +112,4 @@ TABLET               ← @media (min-width:900px) 태블릿 분할 레이아웃
 | `rules_COMPONENTS.md` | 컴포넌트별 클래스·HTML 레퍼런스 |
 | `rules_DECISIONS.md` | 설계 결정 배경과 이유 |
 | `rules_FLOWMAP.md` | 화면 전환 플로우, 진입/이탈 경로, Mermaid 다이어그램 |
+| `checklist_new_screen_mobile.md` | 신규 화면 생성 7단계 절차 (퍼블 작업용) |

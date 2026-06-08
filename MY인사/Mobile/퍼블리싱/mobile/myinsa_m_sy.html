@@ -483,98 +483,6 @@
     </div>
 
     <!-- ============================================================
-         M-050 알림 (notifications)
-         게시판 홈(M-002) 상단 알림 아이콘(🔔) → 알림 목록
-    ============================================================ -->
-    <div class="screen pb-tabbar" data-screen="notifications" style="background:var(--surface)">
-      <div class="topbar with-back">
-        <button class="back" onclick="goBack()" aria-label="뒤로">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <span class="title">알림</span>
-        <span class="right primary" id="notifReadAllBtn" onclick="markAllNotifRead()">모두 읽음</span>
-      </div>
-
-      <div id="notifList">
-        <!-- 오늘 -->
-        <div class="notif-date-header">오늘</div>
-        <div class="notif-row unread" onclick="handleNotifClick(this,'cert-types')">
-          <div class="notif-icon-wrap notif-icon-accent" style="color:var(--accent)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">증명서 발급 완료</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">재직증명서 발급이 완료되었습니다. 확인해 보세요.</div>
-            <div class="notif-time">2026.06.05 13:20</div>
-          </div>
-          <span class="notif-unread-dot"></span>
-        </div>
-        <div class="notif-row unread" onclick="handleNotifClick(this,'leave-approval')">
-          <div class="notif-icon-wrap notif-icon-success" style="color:var(--success)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">연차 신청 승인</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">5월 4일(월) 휴가신청서가 승인되었습니다.</div>
-            <div class="notif-time">2026.06.05 11:05</div>
-          </div>
-          <span class="notif-unread-dot"></span>
-        </div>
-
-        <!-- 어제 -->
-        <div class="notif-date-header">어제</div>
-        <div class="notif-row unread" onclick="handleNotifClick(this,'cert-types')">
-          <div class="notif-icon-wrap notif-icon-danger" style="color:var(--danger)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">증명서 발급 반려</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">기타증명서 신청이 반려되었습니다. 사유를 확인해 주세요.</div>
-            <div class="notif-time">2026.06.04 16:30</div>
-          </div>
-          <span class="notif-unread-dot"></span>
-        </div>
-        <div class="notif-row" onclick="handleNotifClick(this,'board')">
-          <div class="notif-icon-wrap notif-icon-accent" style="color:var(--accent)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">새 공지사항</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">2026년 5월 정기 회의 일정 및 안건이 게시되었습니다.</div>
-            <div class="notif-time">2026.06.04 09:15</div>
-          </div>
-        </div>
-
-        <!-- 6월 2일 (화) -->
-        <div class="notif-date-header">6월 2일 (화)</div>
-        <div class="notif-row" onclick="handleNotifClick(this,'expense-hub')">
-          <div class="notif-icon-wrap notif-icon-success" style="color:var(--success)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">결의서 결재 완료</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">제출하신 4월 거래처 미팅 비용 결의서가 최종 승인되었습니다.</div>
-            <div class="notif-time">2026.06.02 14:22</div>
-          </div>
-        </div>
-        <div class="notif-row" onclick="handleNotifClick(this,'expense-hub')">
-          <div class="notif-icon-wrap notif-icon-danger" style="color:var(--danger)">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">결의서 결재 반려</div>
-            <div class="notif-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">제출하신 결의서가 반려되었습니다. 사유를 확인해 주세요.</div>
-            <div class="notif-time">2026.06.02 10:05</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="notifEmptyState" style="display:none;padding:80px 24px;text-align:center">
-        <div class="text-md-strong mb-4">받은 알림이 없습니다</div>
-      </div>
-    </div>
-
-    <!-- ============================================================
          M-010 연차 관리 (leave-approval)
     ============================================================ -->
     <div class="screen pb-tabbar" data-screen="leave-approval">
@@ -1425,175 +1333,6 @@
     </div>
 
     <!-- ============================================================
-         M-040 더보기 (more)
-    ============================================================ -->
-    <div class="screen pb-tabbar" data-screen="more">
-      <div class="topbar"><h1>더보기</h1></div>
-
-      <div class="profile">
-        <div class="avatar">홍</div>
-        <div class="info">
-          <div class="name">홍길동</div>
-          <div class="role"><span id="moreWorkplace">(주)웹케시</span> · PM · 마케팅팀</div>
-        </div>
-      </div>
-
-      <div class="info-list mt-8">
-        <div class="menu-row" onclick="showScreen('myinfo')">
-          <span class="label">내 정보</span>
-          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="menu-row" onclick="showScreen('notif-settings')">
-          <span class="label">알림 설정</span>
-          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="menu-row" onclick="goFaqList()">
-          <span class="label">인사 FAQ</span>
-          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
-
-      <div class="info-list mt-8">
-        <div class="menu-row" onclick="openSwitchWorkplacePopup()">
-          <span class="label c-accent">사업장 전환하기</span>
-        </div>
-        <div class="menu-row" onclick="openLogoutConfirm()">
-          <span class="label c-danger">로그아웃</span>
-        </div>
-      </div>
-
-      <div class="empty-state-note">© 2026 Webcash. MY인사 v5.0.0</div>
-    </div>
-
-    <!-- ============================================================
-         M-041 내 정보 (myinfo)
-    ============================================================ -->
-    <div class="screen pb-tabbar" data-screen="myinfo">
-      <div class="topbar with-back">
-        <button class="back" onclick="goBack()" aria-label="뒤로"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <span class="title">내 정보</span>
-        <div class="min-w-44"></div>
-      </div>
-      <div class="profile">
-        <div class="avatar">홍</div>
-        <div class="info">
-          <div class="name">홍길동</div>
-          <div class="role">PM · 마케팅팀</div>
-        </div>
-      </div>
-      <div class="info-list mt-8">
-        <div class="info-row"><div class="k">이름</div><div class="v">홍길동</div></div>
-        <div class="info-row"><div class="k">아이디</div><div class="v">gd.hong</div></div>
-        <div class="info-row"><div class="k">사번</div><div class="v">W2022-0314</div></div>
-        <div class="info-row"><div class="k">입사일</div><div class="v">2022.03.14</div></div>
-        <div class="info-row"><div class="k">부서</div><div class="v">마케팅팀</div></div>
-        <div class="info-row"><div class="k">직급</div><div class="v">PM (Project Manager)</div></div>
-        <div class="info-row"><div class="k">이메일</div><div class="v">gd.hong@webcash.co.kr</div></div>
-        <div class="info-row"><div class="k">연락처</div><div class="v">010-****-1234</div></div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         M-051 알림 설정 (notif-settings)
-    ============================================================ -->
-    <div class="screen pb-tabbar" data-screen="notif-settings">
-      <div class="topbar with-back">
-        <button class="back" onclick="goBack()" aria-label="뒤로"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <span class="title">알림 설정</span>
-        <div class="min-w-44"></div>
-      </div>
-
-      <div class="notif-section-header">앱 푸시 알림</div>
-      <div class="info-list">
-        <div class="notif-setting-row">
-          <div><div class="notif-setting-label">푸시 알림 받기</div><div class="notif-setting-sub">MY인사 앱의 모든 푸시 알림을 받습니다</div></div>
-          <div class="ns-toggle active" id="nsPushMaster" onclick="togglePushMaster(this)"><div class="ns-knob"></div></div>
-        </div>
-      </div>
-
-      <div class="notif-section-header">알림 항목</div>
-      <div class="info-list" id="nsItemSection">
-        <div class="notif-setting-row border-b">
-          <div><div class="notif-setting-label">연차 / 휴가</div><div class="notif-setting-sub">신청·승인·반려 알림</div></div>
-          <div class="ns-toggle active" onclick="toggleNs(this)"><div class="ns-knob"></div></div>
-        </div>
-        <div class="notif-setting-row border-b">
-          <div><div class="notif-setting-label">증명서</div><div class="notif-setting-sub">발급완료·반려 알림</div></div>
-          <div class="ns-toggle active" onclick="toggleNs(this)"><div class="ns-knob"></div></div>
-        </div>
-        <div class="notif-setting-row border-b">
-          <div><div class="notif-setting-label">결의서</div><div class="notif-setting-sub">전자결재 완료·반려 알림 (영수증 등록은 미발송)</div></div>
-          <div class="ns-toggle active" onclick="toggleNs(this)"><div class="ns-knob"></div></div>
-        </div>
-        <div class="notif-setting-row">
-          <div><div class="notif-setting-label">게시판 / 공지</div><div class="notif-setting-sub">새 공지사항 알림</div></div>
-          <div class="ns-toggle active" onclick="toggleNs(this)"><div class="ns-knob"></div></div>
-        </div>
-      </div>
-
-      <div class="notif-section-header">방해금지 모드</div>
-      <div class="info-list" id="nsDndSection">
-        <div class="notif-setting-row" id="dndToggleRow">
-          <div><div class="notif-setting-label">방해금지 모드</div><div class="notif-setting-sub">설정한 시간 동안 알림을 받지 않습니다</div></div>
-          <div class="ns-toggle" id="nsDnd" onclick="toggleDnd(this)"><div class="ns-knob"></div></div>
-        </div>
-        <div id="dndTimeSection" style="display:none">
-          <div class="dnd-time-row border-t">
-            <span class="notif-setting-label">시작 시간</span>
-            <span>
-              <select class="time-select" id="dndStartH" onchange="dndValidate()"><option>22</option><option>23</option><option>00</option><option>21</option><option>20</option></select>
-              <span class="dnd-time-sep">:</span>
-              <select class="time-select" id="dndStartM" onchange="dndValidate()"><option>00</option><option>30</option></select>
-            </span>
-          </div>
-          <div class="dnd-time-row border-t">
-            <span class="notif-setting-label">종료 시간</span>
-            <span>
-              <select class="time-select" id="dndEndH" onchange="dndValidate()"><option>07</option><option>08</option><option>09</option><option>06</option></select>
-              <span class="dnd-time-sep">:</span>
-              <select class="time-select" id="dndEndM" onchange="dndValidate()"><option>00</option><option>30</option></select>
-            </span>
-          </div>
-          <div class="empty-state-note">매일 반복 적용됩니다</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         M-006 인사 FAQ 목록 (faq) — 게시글 목록 재사용, 읽기 전용
-    ============================================================ -->
-    <div class="screen pb-tabbar" data-screen="faq">
-      <div class="topbar with-back">
-        <button class="back" onclick="goBack()" aria-label="뒤로"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <span class="title">인사 FAQ</span>
-        <div class="min-w-44"></div>
-      </div>
-      <div id="faqList">
-        <div class="flat-post-row" onclick="openFaq('f1')">
-          <div class="u-flex-fill">
-            <div class="board-new-title">연차는 언제부터 사용할 수 있나요?</div>
-            <div class="board-new-meta">한관리자 · 2026.05.28 · 댓글 2</div>
-          </div>
-          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="flat-post-row" onclick="openFaq('f2')">
-          <div class="u-flex-fill">
-            <div class="board-new-title">증명서 발급은 얼마나 걸리나요?</div>
-            <div class="board-new-meta">한관리자 · 2026.05.26 · 댓글 1</div>
-          </div>
-          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="flat-post-row no-border-b" onclick="openFaq('f3')">
-          <div class="u-flex-fill">
-            <div class="board-new-title">급여 명세서는 어디서 확인하나요?</div>
-            <div class="board-new-meta">한관리자 · 2026.05.22 · 댓글 0</div>
-          </div>
-          <svg class="bbs-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
          하단 탭바 (5개)
     ============================================================ -->
     <div class="tabbar" style="display:none">
@@ -1843,11 +1582,11 @@
         </div>
         <div class="sheet-body">
           <div class="field" id="certModalNameSection" style="display:none">
-            <label>증명서 명칭 <span class="req c-danger">*</span></label>
+            <label>증명서 명칭 <span class="req" style="color:var(--danger)">*</span></label>
             <input id="certModalName" maxlength="50" placeholder="예) 위촉 증명서">
           </div>
           <div class="field">
-            <label>용도 <span class="req c-danger">*</span></label>
+            <label>용도 <span class="req" style="color:var(--danger)">*</span></label>
             <input id="certModalPurpose" maxlength="100" placeholder="예) 금융기관 제출, 병원 보험 청구 등">
           </div>
           <div class="info-banner" id="certModalBanner" style="margin:4px 0 0">
@@ -1882,34 +1621,6 @@
         </div>
         <div class="sheet-foot">
           <button class="btn btn-primary" style="width:100%;height:46px" onclick="sendCertEmail()">발송하기</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 사업장 전환 팝업 (M-040-P)  [오버레이] -->
-    <div id="switchWorkplacePopup" class="modal-backdrop-center" style="display:none" onclick="if(event.target===this)closeSwitchWorkplacePopup()">
-      <div class="result-overlay-sm">
-        <div class="popup-header">
-          <div class="label-caps-alt">사업장 전환</div>
-          <div class="heading-alt">사업장을 전환하세요</div>
-          <div class="text-sm-sub-mt4">현재: <span id="swCurrentWp">(주)웹케시</span></div>
-        </div>
-        <div class="popup-list" id="swList"></div>
-        <div class="popup-footer">
-          <button class="wp-btn-cancel" onclick="closeSwitchWorkplacePopup()">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 로그아웃 확인  [오버레이] -->
-    <div id="logoutConfirmOverlay" class="modal-backdrop-center" style="display:none">
-      <div class="result-overlay-sm">
-        <div class="dialog-center-head-sm">
-          <div class="text-md-strong">로그아웃하시겠습니까?</div>
-        </div>
-        <div class="d-flex">
-          <button class="dialog-btn-left" onclick="closeLogoutConfirm()">취소</button>
-          <button class="dialog-btn-right c-danger" onclick="confirmLogout()">로그아웃</button>
         </div>
       </div>
     </div>
@@ -1973,43 +1684,9 @@ function syncTab(screenName){
                 'leave-approval':'leave','leave-apply':'leave','leave-cancel':'leave','leave-detail-wait':'leave','leave-detail-done':'leave','leave-detail-reject':'leave',
                 'expense-hub':'expense','receipt-form':'expense','receipt-detail':'expense','expense-form':'expense',
                 'cert-types':'cert','cert-status-detail':'cert','cert-done':'cert','cert-reject-detail':'cert',
-                more:'more','myinfo':'more','notif-settings':'more','faq':'more' };
-  // 인사 FAQ는 더보기에서 진입 — post-detail을 FAQ로 재사용 중이면 '더보기' 탭 유지
-  let tab = MAP[screenName];
-  if(screenName === 'post-detail' && _postDetailContext === 'faq') tab = 'more';
+                more:'more' };
+  const tab = MAP[screenName];
   if(tab) document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-}
-
-/* ===== 알림 (M-050) ===== */
-// 미읽음 알림 유무에 따라 게시판 홈 알림 뱃지(●) 노출/소멸
-function updateNotifBadge(){
-  const badge = document.getElementById('notifBadge');
-  if(!badge) return;
-  const hasUnread = document.querySelectorAll('#notifList .notif-row.unread').length > 0;
-  badge.style.display = hasUnread ? 'block' : 'none';
-  // 전체 읽음 상태면 [모두 읽음] 버튼 비활성화(dimmed)
-  const btn = document.getElementById('notifReadAllBtn');
-  if(btn){ btn.style.opacity = hasUnread ? '' : '.4'; btn.style.pointerEvents = hasUnread ? '' : 'none'; }
-}
-// 알림 행 탭 → 해당 행 읽음 처리 후 알림 유형별 메인 화면으로 이동
-function handleNotifClick(row, dest){
-  row.classList.remove('unread');
-  const dot = row.querySelector('.notif-unread-dot');
-  if(dot) dot.remove();
-  updateNotifBadge();
-  showScreen(dest);
-}
-// [모두 읽음] → 전체 읽음 처리 + 뱃지 소멸 + 토스트 (이미 전체 읽음이면 동작 없음)
-function markAllNotifRead(){
-  const unread = document.querySelectorAll('#notifList .notif-row.unread');
-  if(unread.length === 0) return;
-  unread.forEach(r => {
-    r.classList.remove('unread');
-    const dot = r.querySelector('.notif-unread-dot');
-    if(dot) dot.remove();
-  });
-  updateNotifBadge();
-  showToast('모든 알림을 읽음 처리했습니다');
 }
 
 /* ===== 로그인 (M-001) ===== */
@@ -2026,68 +1703,8 @@ function openWorkplacePopup(){ document.getElementById('workplacePopup').style.d
 function closeWorkplacePopup(){ document.getElementById('workplacePopup').style.display = 'none'; }
 function selectWorkplace(name){
   closeWorkplacePopup();
-  _curWorkplace = name;
-  var mw = document.getElementById('moreWorkplace'); if(mw) mw.textContent = name;
   showScreen('board');   // 게시판 홈(M-002)
   showToast(name + ' 사업장으로 로그인되었습니다');
-}
-
-/* ===== 더보기 (M-040) ===== */
-const _WORKPLACES = [
-  { n:'(주)웹케시', b:'123-45-67890' },
-  { n:'웹케시테크(주)', b:'234-56-78901' },
-  { n:'웹케시서비스(주)', b:'345-67-89012' }
-];
-let _curWorkplace = '(주)웹케시';
-
-/* 사업장 전환 팝업 (M-040-P) — 현재 사업장 제외 목록 */
-function openSwitchWorkplacePopup(){
-  document.getElementById('swCurrentWp').textContent = _curWorkplace;
-  const others = _WORKPLACES.filter(w => w.n !== _curWorkplace);
-  document.getElementById('swList').innerHTML = others.length
-    ? others.map(w => '<div class="select-item-row" onclick="switchWorkplace(\'' + w.n + '\')"><div class="u-flex-fill"><div class="text-body-strong">' + w.n + '</div><div class="text-hint">' + w.b + ' · we경리나라</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="c-tertiary"><polyline points="9 18 15 12 9 6"/></svg></div>').join('')
-    : '<div class="empty-state-note">전환 가능한 다른 사업장이 없습니다</div>';
-  document.getElementById('switchWorkplacePopup').style.display = 'flex';
-}
-function closeSwitchWorkplacePopup(){ document.getElementById('switchWorkplacePopup').style.display = 'none'; }
-function switchWorkplace(name){
-  _curWorkplace = name;
-  document.getElementById('moreWorkplace').textContent = name;
-  closeSwitchWorkplacePopup();
-  showToast(name + '으로 전환되었습니다');
-}
-
-/* 로그아웃 */
-function openLogoutConfirm(){ document.getElementById('logoutConfirmOverlay').style.display = 'flex'; }
-function closeLogoutConfirm(){ document.getElementById('logoutConfirmOverlay').style.display = 'none'; }
-function confirmLogout(){
-  closeLogoutConfirm();
-  showScreen('login');   // 세션 초기화·자동 로그인 해제(목업)
-}
-
-/* ===== 알림 설정 (M-051) — Auto-save(저장 버튼 없음) ===== */
-function toggleNs(el){ el.classList.toggle('active'); }
-// 푸시 알림 받기 OFF → 항목별·방해금지 섹션 비활성화(dimmed)
-function togglePushMaster(el){
-  el.classList.toggle('active');
-  const on = el.classList.contains('active');
-  ['nsItemSection', 'nsDndSection'].forEach(function(id){
-    const sec = document.getElementById(id);
-    sec.style.opacity = on ? '' : '.4';
-    sec.style.pointerEvents = on ? '' : 'none';
-  });
-}
-// 방해금지 모드 ON → 시간 설정 영역 펼침
-function toggleDnd(el){
-  el.classList.toggle('active');
-  document.getElementById('dndTimeSection').style.display = el.classList.contains('active') ? 'block' : 'none';
-}
-// 시작·종료 시간이 같으면 안내 후 미저장
-function dndValidate(){
-  const s = document.getElementById('dndStartH').value + ':' + document.getElementById('dndStartM').value;
-  const e = document.getElementById('dndEndH').value + ':' + document.getElementById('dndEndM').value;
-  if(s === e){ showToast('시작 시간과 종료 시간이 같을 수 없습니다'); return false; }
-  return true;
 }
 
 /* ===== 아이디 찾기 / 비밀번호 변경 (M-009) ===== */
@@ -2217,19 +1834,9 @@ const _POSTS = {
   p4:{board:'경조사게시판', notice:false, mine:false, title:'[결혼] 영업팀 이대리 결혼식 안내 🎉', author:'총무팀', datetime:'2026.05.15 08:30',
       body:'<p>영업팀 이대리님이 6월 14일(토) 결혼합니다.</p><p>장소: 강남 OO웨딩홀 그랜드볼룸 / 시간: 오후 1시. 많은 축하 부탁드립니다! 🎉</p>', comments:[]},
   p5:{board:'자유게시판', notice:false, mine:false, title:'지하철역 셔틀버스 시간표 변경 안내', author:'박과장', datetime:'2026.05.14 17:00',
-      body:'<p>6월부터 셔틀버스 배차 간격이 10분으로 조정됩니다. 자세한 시간표는 게시판 첨부를 확인해 주세요.</p>', comments:[]},
-  // 인사 FAQ (M-006/M-008) — 게시글 상세 재사용. board='인사 FAQ', mine:false(직원 수정/삭제 미노출), notice:false(공지핀 없음). 작성자=인사담당자 성명
-  f1:{board:'인사 FAQ', notice:false, mine:false, title:'연차는 언제부터 사용할 수 있나요?', author:'한관리자', datetime:'2026.05.28 10:00',
-      body:'<p>연차는 <b>입사일을 기준</b>으로 부여됩니다.</p><p>입사 첫 해에는 1개월 개근 시 1일씩 발생하며, 1년 근속 시 15일이 부여됩니다. 보유·사용 현황은 연차 관리 화면에서 확인하실 수 있습니다.</p>',
-      comments:[{author:'홍길동',text:'안내 감사합니다!',time:'5월 28일 11:00',mine:false},{author:'한관리자',text:'추가 문의는 댓글로 남겨주세요.',time:'5월 28일 14:00',mine:false}]},
-  f2:{board:'인사 FAQ', notice:false, mine:false, title:'증명서 발급은 얼마나 걸리나요?', author:'한관리자', datetime:'2026.05.26 09:30',
-      body:'<p>재직증명서·경력증명서는 신청 후 <b>당일~1영업일</b> 내 발급됩니다.</p><p>기타증명서는 인사 담당자 검토 후 1~2영업일이 소요될 수 있습니다. 발급이 완료되면 앱 알림으로 안내해 드립니다.</p>',
-      comments:[{author:'김영희',text:'빠른 발급 감사합니다.',time:'5월 26일 10:10',mine:false}]},
-  f3:{board:'인사 FAQ', notice:false, mine:false, title:'급여 명세서는 어디서 확인하나요?', author:'한관리자', datetime:'2026.05.22 16:00',
-      body:'<p>급여 명세서는 매월 <b>25일</b>에 등록된 이메일로 발송됩니다.</p><p>재발송이 필요하시면 인사 담당자에게 문의해 주세요.</p>', comments:[]}
+      body:'<p>6월부터 셔틀버스 배차 간격이 10분으로 조정됩니다. 자세한 시간표는 게시판 첨부를 확인해 주세요.</p>', comments:[]}
 };
 let _curPostId = null, _curCommentIdx = null, _composeMode = 'new', _postSeq = 0;
-let _postDetailContext = 'board';   // 'board' | 'faq' — post-detail 재사용 시 탭/제목 컨텍스트
 const _SPLIT_W = 900;   // 태블릿 분할 기준폭 (myinsa-mobile.css @media min-width:900px)
 
 // 등록 시각: yyyy.mm.dd hh:mm
@@ -2262,7 +1869,6 @@ function _markPostRead(id){
   if(row){ const b = row.querySelector('.post-new-badge'); if(b) b.remove(); }
 }
 function openPostFromBoard(id){
-  _postDetailContext = 'board';
   _curPostId = id;
   _markPostRead(id);
   _renderPostDetail(id);
@@ -2282,9 +1888,7 @@ function _renderPostDetail(id){
   const p = _POSTS[id]; if(!p) return;
   document.getElementById('postDetailBoardTitle').textContent = p.board;
   document.getElementById('pdTitle').innerHTML = (p.notice ? '<span class="tag-type-code">공지</span>' : '') + p.title;
-  // 인사 FAQ는 게시 날짜를 yyyy.mm.dd(날짜만)로 표시 / 일반 게시글은 등록일시(yyyy.mm.dd hh:mm)
-  const _meta = (p.board === '인사 FAQ') ? p.datetime.split(' ')[0] : p.datetime;
-  document.getElementById('pdMeta').textContent = p.author + ' · ' + _meta;
+  document.getElementById('pdMeta').textContent = p.author + ' · ' + p.datetime;
   document.getElementById('pdBody').innerHTML = p.body;
   document.getElementById('postDetailMoreBtn').style.display = p.mine ? 'grid' : 'none';
   document.getElementById('pdCommentHead').textContent = '댓글 ' + p.comments.length;
@@ -2301,15 +1905,6 @@ function _renderPostDetail(id){
     return `<div class="comment"><div class="row-between-start"><div class="who">${who}</div>${moreBtn}</div>`
       + `<div class="text">${c.text}</div><div class="when">${c.time}</div></div>`;
   }).join('');
-}
-
-/* ── 인사 FAQ (M-006/M-008) — 게시글 목록·상세 재사용, 읽기 전용 ── */
-function goFaqList(){ showScreen('faq'); }
-function openFaq(id){
-  _postDetailContext = 'faq';
-  _curPostId = id;
-  _renderPostDetail(id);     // board='인사 FAQ', mine:false → ⋯ 메뉴 미노출, 공지핀 없음
-  showScreen('post-detail');
 }
 
 // 글 수정/취소 후 상세로 복귀 — 태블릿이면 분할(has-detail) 복원, 모바일이면 상세 풀스크린
@@ -3222,7 +2817,6 @@ function showToast(msg){
 
 /* ===== 초기 렌더 ===== */
 _renderCertInline();
-updateNotifBadge();   // 초기 로드 시 미읽음 유무로 게시판 알림 뱃지(●) 동기화 (미읽음 0이면 미표시)
 </script>
 </body>
 </html>
