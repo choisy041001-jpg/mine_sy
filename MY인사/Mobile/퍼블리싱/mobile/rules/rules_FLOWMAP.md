@@ -1,11 +1,15 @@
 # MY인사 모바일 — 화면 플로우맵
 
-`data-screen` 기준 33개 화면 + 미구현 참조 화면 1개(`post-edit`)의 진입·이탈·오버레이를 정리한다.  
+`data-screen` 기준 31개 화면의 진입·이탈·오버레이를 정리한다.  
 화면 전환 메커니즘: `showScreen()` / `goBack()` (히스토리 스택) / `goTab()` (탭바).
 
 > 신규 화면의 진입·이탈 등록 절차는 `checklist_new_screen_mobile.md` 2~3단계를 따른다.
 
 > **태블릿(≥900px) 분할 플로우는 맨 아래 별도 섹션** 참고.
+
+> ⚠ **아래 화면들은 진입 경로가 없지만 "고립=정리 대상"이 아니다.** `rules_DECISIONS.md` 고립 화면 표에서 **"기획 보류, 삭제 금지"**로 확정된 화면이다. 마크업을 삭제하지 말 것.
+> `leave-history` · `cert-status` · `cert-form` · `faq` · `faq-detail` · `faq-write`
+> 보류 여부의 최종 권위는 DECISIONS이며, 이 플로우맵의 "⚠ 고립" 표기는 **진입 경로 부재**를 뜻할 뿐 삭제 신호가 아니다.
 
 ---
 
@@ -34,8 +38,9 @@
 
 #### `pw-find`
 - **진입**: `login` → `goPwFind('id'|'pw')`
-- **이탈**: 취소 버튼 → `login` / 처리 완료 1.5 s 후 → `login` / `pfResultOverlay` 로그인 버튼 → `login`
-- **오버레이**: `pfResultOverlay` (아이디 찾기 결과 팝업)
+- **이탈**: 취소 버튼 → `login` / 처리 완료 1.5 s 후 → `login` / `pfResultOverlay` 로그인 버튼 → `login` / 비밀번호 찾기: `pfValidate()` 통과 → `pfShowPanel('newpw')`(새 비밀번호 설정) → `pfSubmitNewPw()` → `login`
+- **오버레이**: `pfResultOverlay` (아이디 찾기 결과 팝업), `pfAlertOverlay` (입력·인증 검증 실패 알림)
+- **패널**: `pfShowPanel('id'|'pw'|'newpw')` — 한 화면 안에서 아이디찾기/비밀번호찾기/새비밀번호 패널 전환
 
 ---
 
@@ -53,13 +58,14 @@
 
 #### `post-detail`
 - **진입**: `board`·`post-list` → `openPost()` / `post-detail` 상단 공지 클릭 (히스토리 직접 push)
-- **이탈**: `goBack()` / 더보기 버튼 → `postActionSheet` → 수정 → `post-edit`*(미구현)* / 삭제 → `postDeleteConfirmOverlay` → 확인 → `goBack()`
-- **오버레이**: `postActionSheet` (수정·삭제 액션시트), `postDeleteConfirmOverlay` (삭제 확인 다이얼로그)
+- **이탈**: `goBack()` / 더보기 버튼 → `postActionSheet` → 수정 → `openPostEdit()` → `compose`(edit 모드) / 삭제 → `postDeleteConfirmOverlay` → 확인 → `goBack()`
+- **오버레이**: `postActionSheet` (수정·삭제 액션시트), `postDeleteConfirmOverlay` (삭제 확인 다이얼로그), `commentActionSheet` (댓글 더보기 — 수정·삭제), `commentDeleteConfirmOverlay` (댓글 삭제 확인)
+- **댓글**: 입력창 → `addComment()` 등록 / 본인 댓글 더보기 → `openCommentActions()` → `commentActionSheet` → 수정(`startEditComment()` 인라인 → `saveCommentEdit()`) / 삭제(`openCommentDeleteConfirm()` → `confirmDeleteComment()`). `_POST_DETAIL[id].comments` 세션 배열 + `_renderComments()` 재렌더
 
 #### `compose`
-- **진입**: `board`·`post-list` → 글쓰기 FAB → `showScreen('compose')`
-- **이탈**: 취소 버튼 → `goBack()` / 등록 버튼(`onSubmitPost()`) → `board`
-- **오버레이**: 없음
+- **진입**: `board`·`post-list` 글쓰기 FAB → `openComposeCreate()`(작성 모드) / `post-detail` 더보기 수정 → `openPostEdit()`(수정 모드)
+- **이탈**: 취소 버튼 → `onComposeCancel()`(작성 내용 있으면 `composeCancelConfirmOverlay` → `confirmComposeCancel()`) → `goBack()` / 등록 버튼(`onSubmitPost()`) → `board`
+- **오버레이**: `composeAttachSheet` (첨부 시트), `composeCancelConfirmOverlay` (작성 취소 확인)
 
 ---
 
@@ -190,7 +196,7 @@
 #### `receipt-form`
 - **진입**: `expense-hub` → imgPickModal 확인 / `receipt-detail` 수정 버튼
 - **이탈**: `goBack()` / 등록하기 → `expense-hub`
-- **오버레이**: `imgPickModal` (이미지 변경), `datetimePickerOverlay` (사용일시 선택)
+- **오버레이**: `imgPickModal` (이미지 변경), `datetimePickerOverlay` (사용일시 선택), `imgViewOverlay` (영수증 이미지 확대)
 
 #### `receipt-detail`
 - **진입**: `expense-hub` → 영수증 항목 클릭(`showReceiptDetail()`)
@@ -199,21 +205,16 @@
 
 #### `expense-form`
 - **진입**: `expense-hub` → `submitSelectedReceipts()` / `receipt-detail` 상신하기
-- **이탈**: `goBack()` / 상신하기 → `expense-hub`
+- **이탈**: `goBack()` / 상신·저장하기(`submitExpense()` — `toggleEapproval()` ON이면 상신, OFF면 저장) → `expense-hub`
 - **오버레이**: `approvalLinePopup` (결재선 변경)
 
 ---
 
-### 미구현 참조 화면
-
-#### `post-edit` ⚠ 미구현
-- **진입**: `post-detail` → `postActionSheet` → 수정하기 → `openPostEdit()` → `showScreen('post-edit')`
-- **상태**: `data-screen="post-edit"` HTML 없음. 입력 필드(`postEditTitleInput` 등)도 미정의.
-- **이탈**: 해당 화면 없음
-
 ---
 
 ## 고립·막힌 화면
+
+> 아래 화면은 전부 DECISIONS상 **보류 — 삭제 금지**다. "이유" 칸은 진입 부재 사유일 뿐 정리 사유가 아니다.
 
 ### 고립 화면 — 진입 경로가 없는 화면 (8개)
 
@@ -264,7 +265,7 @@ flowchart TD
     post-list --> compose
     compose -->|onSubmitPost| board
     %% overlay: boardFilterSheet / postActionSheet / postDeleteConfirmOverlay
-    post-detail -.->|미구현| post-edit
+    post-detail -->|수정 openPostEdit| compose
 
     %% ── 더보기 ───────────────────────────────────────────
     more --> myinfo
@@ -317,7 +318,6 @@ flowchart TD
     faq-write -->|등록하기| faq
 
     %% ── 스타일 ───────────────────────────────────────────
-    style post-edit fill:#fef3c7,stroke:#d97706
     style faq fill:#fef3c7,stroke:#d97706
     style faq-write fill:#fee2e2,stroke:#dc2626
     style faq-detail fill:#fee2e2,stroke:#dc2626
@@ -330,7 +330,8 @@ flowchart TD
 
 > **노드 색상 범례**  
 > 빨간 테두리 `#fee2e2` — 고립 화면 (진입 경로 없음)  
-> 노란 테두리 `#fef3c7` — 사실상 고립 / 미구현 화면
+> 노란 테두리 `#fef3c7` — 사실상 고립 / 미구현 화면  
+> ※ 빨강·노랑 노드 중 `leave-history`·`cert-status`·`cert-form`·`faq`·`faq-detail`·`faq-write`는 **보류(삭제 금지)** 화면이다. 색은 "진입 경로 없음"을 의미할 뿐 삭제 대상이 아니다.
 
 ---
 

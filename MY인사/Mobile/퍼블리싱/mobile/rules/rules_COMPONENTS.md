@@ -683,10 +683,122 @@ document.getElementById('postActionSheet').style.display = 'none';
 
 ---
 
+## 댓글 (post-detail)
+
+댓글 목록은 `_renderComments()`가 `#postDetailComments`에 동적으로 주입한다.  
+댓글 수정 중에는 `_editingCommentIdx` 인덱스 행에만 `<textarea>`가 렌더링된다.
+
+| 클래스 | 설명 |
+|--------|------|
+| `.comments` | 댓글 영역 전체 컨테이너. 상단 `<h3>` 헤더 포함. `padding:0 20px 20px` |
+| `.comment` | 댓글 단일 행. 하단 구분선(`border-bottom:1px solid var(--border-light)`). 자식: `.who` / `.text` / `.when` |
+| `.comment-input` | 댓글 입력 바. `position:absolute;bottom:64px` 하단 고정. 입력창 + 전송 버튼 포함 |
+| `.comment-who-row` | 작성자 이름 + 더보기(···) 버튼 가로 배치. `display:flex;justify-content:space-between` |
+| `.comment-edit-textarea` | 댓글 수정용 `<textarea>`. 최대 2줄(66px), `resize:none`, 둥근 테두리 |
+| `.comment-edit-actions` | 댓글 인라인 수정 시 취소/저장 버튼 묶음 래퍼. `display:flex;gap:8px;margin-top:8px`. 내부 버튼(`height:34px;font-size:13px`)은 `.pf-btn-cancel` / `.pf-btn-primary` 재사용 |
+
+---
+
+## 글쓰기 (compose)
+
+`compose` 화면 전용 컴포넌트. `_composeMode('create'|'edit')` 에 따라 타이틀·버튼 텍스트가 달라진다.
+
+| 클래스 | 설명 |
+|--------|------|
+| `.compose` | 글쓰기 화면 루트 컨테이너. `padding:0;background:#ffffff` |
+| `.compose-nav` | 상단 네비게이션 바. 취소 / 타이틀 / 등록 버튼 포함. `height:52px` |
+| `.compose-cancel-btn` | 취소 버튼 (좌측, text-secondary, border 없음) |
+| `.compose-title-span` | 화면 타이틀 텍스트 (`id="composeTitleSpan"`로 JS 교체) |
+| `.compose-submit-btn` | 등록/저장 버튼 (우측, 기본 비활성, `checkComposeReady()`로 색상 전환) |
+| `.compose-row` | 게시판 선택·항목 입력 행. `height:50px`, 하단 border |
+| `.compose-label` | 행 레이블 (44px 고정 너비, text-secondary) |
+| `.compose-select-wrap` | 게시판 드롭다운 감싸는 relative 컨테이너 |
+| `.compose-select` | 게시판 `<select>` (`appearance:none`, 100% 너비) |
+| `.compose-select-arrow` | 드롭다운 화살표 아이콘 (absolute, `pointer-events:none`) |
+| `.compose-title-wrap` | 제목 입력 행 영역 (`padding:0 16px`) |
+| `.compose-title-input` | 제목 입력 필드 (border 없음, `height:52px`) |
+| `.compose-body-input` | 본문 입력 필드 (border 없음, `height:260px`, `resize:none`) |
+| `.compose-toolbar` | 하단 툴바 (border-top, 첨부 버튼 포함) |
+| `.compose-attach-btn` | 첨부 버튼 (pill 형태, border, text-secondary) |
+
+---
+
+## 비밀번호 찾기 (pw-find)
+
+아이디 찾기 / 비밀번호 변경 화면. `pfShowPanel(name)`으로 패널 전환.  
+패널 ID: `pfPanel_id`, `pfPanel_pw`, `pfPanel_newpw`, `pfPanel_result`
+
+| 클래스 | 설명 |
+|--------|------|
+| `.pf-tab-bar` | 아이디찾기 / 비밀번호변경 상단 탭 바 |
+| `.pf-tab-active` | 선택된 탭 (white bg, accent 글씨) |
+| `.pf-tab-inactive` | 비선택 탭 (transparent bg, text-tertiary) |
+| `.pf-input-group` | 입력 필드 묶음 (border, `border-radius:4px`) |
+| `.pf-input` | 일반 입력 행 (`height:48px`, 하단 border) |
+| `.pf-input-last` | 마지막 입력 행 (하단 border 없음) |
+| `.pf-btn-row` | 버튼 행 (`display:flex`, `gap:10px`) |
+| `.pf-btn-primary` | 주요 버튼 (accent bg, 흰 글씨) |
+| `.pf-btn-cancel` | 보조 버튼 (btn-muted-bg, text-secondary) |
+| `.pf-phone-row` | 전화번호 입력 행 (국가코드 + 번호 + 전송 버튼 flex 배치) |
+| `.pf-country-code` | 국가 코드 선택 영역 (`min-width:80px`, `border-right`) |
+| `.pf-input-flex` | 플렉스 입력 필드 (border 없음, `flex:1`) |
+| `.pf-input-flex-sm` | 좁은 플렉스 입력 필드 (`padding:0 12px`) |
+| `.pf-send-btn` | 전송 버튼 (accent bg, `flex-shrink:0`) |
+| `.pf-verify-btn` | 인증 버튼 (accent bg) |
+| `.pf-captcha-wrap` | 캡차 영역 (dark gradient bg, `height:64px`) |
+| `.pf-captcha-inner` | 캡차 내부 flex 컨테이너 |
+| `.pf-captcha-text` | 캡차 텍스트 (monospace, 비틀림 효과) |
+| `.pf-captcha-lines` | 캡차 배경 선 레이어 |
+| `.pf-captcha-refresh` | 캡차 새로고침 버튼 |
+| `.pf-result-overlay` | 결과 팝업 패널 (white bg, rounded, shadow) |
+| `.pf-error-ul` | 에러 목록 `<ul>` (`margin-top:10px`, 들여쓰기) |
+| `.pf-alert-msg` | 알림 팝업 메시지 (`text-align:center`, `line-height:1.6`) |
+| `.pf-alert-overlay-bg` | 알림 팝업 배경 딤 (`rgba(0,0,0,.5)`, `z-index:400`) |
+
+---
+
+## 전자결재 토글 (expense-form)
+
+| 클래스 | 설명 |
+|--------|------|
+| `.btn-eapproval-toggle` | 전자결재 ON/OFF 토글 버튼. `border:1px solid var(--border)` |
+
+---
+
+## 영수증 이미지 · 이미지 뷰어
+
+| 클래스 | 설명 |
+|--------|------|
+| `.receipt-img-wrap` | 영수증 썸네일 컨테이너. `max-width:240px`, border, `border-radius:10px`, `cursor:pointer` |
+| `.receipt-img-center` | 영수증 이미지 중앙 정렬 래퍼 (`padding:6px 0 10px`) |
+| `.receipt-img-center-sm` | 작은 영수증 이미지 중앙 정렬 래퍼 (`padding:4px 0`) |
+| `.imgview-img` | 이미지 뷰어 내 확대 이미지. `width:calc(100vw - 72px)`, `max-height:78vh` |
+| `.imgview-close-btn` | 이미지 뷰어 닫기 버튼 (우상단 circle, rgba 반투명 배경) |
+| `.imgview-save-btn` | 이미지 뷰어 저장 버튼 (우하단 pill, white bg) |
+
+---
+
+## 이미지 선택 팝업 (imgPickModal)
+
+영수증 이미지 추가 방식(카메라 / 앨범)을 선택하는 바텀시트 팝업.
+
+| 클래스 | 설명 |
+|--------|------|
+| `.img-pick-modal` | 팝업 루트 컨테이너 (fixed, full-screen dim, `display:none` → flex + fadeIn) |
+| `.img-pick-box` | 흰 바텀시트 패널 (border-radius 상단, 하단 padding) |
+| `.img-pick-handle` | 손잡이 바 (`width:36px`, `height:4px`, 둥근 모서리) |
+| `.img-pick-title` | 팝업 타이틀 (`font-size:16px`, `font-weight:800`) |
+| `.img-pick-sub` | 부제 (text-tertiary, 하단 padding) |
+| `.img-pick-btns` | 2-컬럼 그리드 버튼 영역 |
+| `.img-pick-btn` | 각 선택 버튼 (border, rounded, 내부 아이콘+텍스트) |
+| `.img-pick-cancel` | 취소 버튼 (전체 너비, 하단) |
+
+---
+
 ## JS 함수 레퍼런스
 
 > `index_m.html` `<script>` 기준. 새 함수 추가 시 이 목록도 함께 업데이트할 것.  
-> 총 **100개** 함수 (미호출 12개 포함).
+> 총 **133개** 함수 (미호출 12개 포함). *신규 기능 함수 33개 추가 (2026.06 — 댓글·글쓰기·비밀번호찾기·전자결재·영수증·헬퍼)*
 
 ### 화면 전환
 
@@ -705,6 +817,7 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `handleNotifClick` | `screen` | 알림 항목 클릭 시 해당 화면으로 이동 |
 | `selectWorkplace` | `id` | 사업장 선택 완료 시 프로필 업데이트 후 게시판으로 이동 |
 | `switchToWorkplace` | `id` | 사업장 전환 팝업에서 다른 사업장 선택 시 프로필 업데이트 및 토스트 표시 |
+| `openComposeCreate` | — | FAB 클릭 시 `_composeMode='create'`·`_editPostId=null`로 초기화하고 `compose` 화면으로 이동 |
 
 ### 오버레이 제어
 
@@ -725,6 +838,11 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `openWorkplacePopup` / `closeWorkplacePopup` | — | 로그인 후 사업장 선택 팝업 빌드·표시/숨김 |
 | `openSwitchWorkplacePopup` / `closeSwitchWorkplacePopup` | — | 더보기 사업장 전환 팝업 빌드·표시/숨김 |
 | `closeSheet` | `name` | 지정 이름의 `.sheet-backdrop`을 `.show` 제거로 닫기 |
+| `openCommentActions` / `closeCommentActionSheet` | `idx` / — | 내 댓글 더보기(···) 클릭 시 `commentActionSheet` 표시. 대상 인덱스를 `_commentActionIdx`에 저장 / 숨김 |
+| `openCommentDeleteConfirm` / `closeCommentDeleteConfirm` | — | 댓글 삭제 확인 오버레이 표시 / 숨김 |
+| `openComposeAttachSheet` / `closeComposeAttachSheet` | — | 글쓰기 첨부 방식 선택 바텀시트 표시 / 숨김 |
+| `closeComposeCancelConfirm` | — | 글쓰기 취소 확인 오버레이 닫기 |
+| `showPfAlert` / `pfAlertConfirm` | `msg, onConfirm` / — | 비밀번호 찾기 전용 안내 팝업 표시·콜백 저장 / 팝업 닫기 및 콜백 실행 |
 
 ### 폼·입력 처리
 
@@ -754,6 +872,23 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `dtSelectDay` | `d` | 날짜 피커 날짜 선택 |
 | `dtPrevMonth` / `dtNextMonth` | — | 날짜 피커 월 이동 |
 | `dtSwitchToHour` / `dtSwitchToMin` | — | 시간 피커 시·분 모드 전환 |
+| `onCommentInput` | — | 댓글 입력 시 `commentSubmitBtn` 활성화 상태 업데이트 |
+| `addComment` | — | 댓글 등록. `_nowYMDHM()` 타임스탬프와 함께 `_POST_DETAIL` 댓글 배열에 추가 후 재렌더링 |
+| `startEditComment` | — | 댓글 수정 모드 진입. `_editingCommentIdx = _commentActionIdx` 설정 후 댓글 재렌더링 |
+| `cancelCommentEdit` | — | 댓글 수정 모드 취소. `_editingCommentIdx = -1` 후 재렌더링 |
+| `saveCommentEdit` | — | `#commentEditInput` 값을 `_POST_DETAIL` 댓글 배열에 반영 후 재렌더링 |
+| `confirmDeleteComment` | — | `_commentDeleteIdx` 댓글 삭제 실행 후 확인 오버레이 닫기 및 재렌더링 |
+| `onComposeCancel` | — | 글쓰기 취소 클릭. 제목·내용 dirty 여부에 따라 확인 오버레이 표시 또는 `goBack()` 직접 호출 |
+| `confirmComposeCancel` | — | 취소 확정. 폼 초기화 + `_composeMode='create'` + `_editPostId=null` + `goBack()` |
+| `pfShowPanel` | `name` | 비밀번호 찾기 패널 전환 (`id`/`pw`/`newpw`/`result`). 상단 타이틀도 업데이트 |
+| `pfValidate` | `mode` | 현재 탭의 필수 항목을 순서대로 검사. 첫 미입력 항목 `showPfAlert`로 안내 후 `false` 반환 |
+| `pfSubmitNewPw` | — | 새 비밀번호 설정. 두 필드 일치 검사 후 완료 알림 및 로그인 화면으로 이동 |
+| `toggleEapproval` | — | `_eapprovalOn` 플래그 반전 후 `applyEapprovalState()` 호출 |
+| `applyEapprovalState` | — | `_eapprovalOn` 상태에 따라 타이틀·제출버튼 텍스트, 결재선 섹션 표시, 토글 버튼 텍스트 업데이트 |
+| `submitExpense` | — | `_eapprovalOn` 상태에 따라 상신/저장 토스트 표시 후 `expense-hub`로 이동 |
+| `openReceiptCreate` | — | `_receiptMode='create'` 설정, 타이틀·버튼 텍스트를 '등록'으로 변경 후 `receipt-form`으로 이동 |
+| `openReceiptEdit` | — | `_receiptMode='edit'` 설정, 타이틀·버튼 텍스트를 '수정'으로 변경 후 `receipt-form`으로 이동 |
+| `onSubmitReceipt` | — | 영수증 제출. 사용일시·금액·사용처 유효성 검사(`_josaIGa` 메시지) 후 `expense-hub`로 이동 |
 
 ### 데이터 렌더링
 
@@ -771,6 +906,7 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `buildWorkplaceItem` | `wp, onClick, showBadge` | 사업장 선택/전환 팝업 카드 HTML 생성 반환 |
 | `updateMoreProfile` | — | 더보기 화면 상단 회사명·직급/부서 텍스트를 현재 사업장 데이터로 업데이트 |
 | `renderPanel` | `screenId` | *(no-op — 패널 제거 후 잔재. showScreen에서 호출만 됨)* no-op, 정리 예정 |
+| `_renderComments` | — | 현재 게시글(`_currentPostId`) 댓글 목록 HTML 렌더링. 내 댓글 행에 수정·삭제 더보기(···) 버튼 표시 |
 
 ### 유틸리티
 
@@ -788,6 +924,11 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `_bindCalDrag` | `calId, startId, endId` | 특정 캘린더에 마우스·터치 드래그 이벤트 등록 |
 | `initAllCalDrags` | — | 앱 초기 로드 시 3개 캘린더 드래그 이벤트 일괄 등록 (DOMContentLoaded) |
 | `_dayNum` | `el` | 날짜 셀에서 숫자 추출 반환. muted 셀은 null |
+| `_escapeHtml` | `s` | HTML 특수문자(`&`, `<`, `>`) 이스케이프. 댓글 렌더링 시 XSS 방지 |
+| `_josaIGa` | `word` | 단어 받침 유무에 따라 조사 `'가'` 또는 `'이'` 반환. 유효성 메시지 생성 시 사용 |
+| `_nowYMDHM` | — | 현재 시각을 `YYYY.MM.DD HH:MM` 형식으로 반환. 댓글 등록 시각 기록용 |
+| `_halfDayActive` | `calId` | 캘린더 ID로 연결된 화면의 반차 토글 활성 여부 반환. `_bindCalDrag` 범위 드래그 차단 조건 |
+| `_pfVal` | `id` | ID로 요소를 찾아 `.value` 반환. 비밀번호 찾기 내부 입력 값 참조 헬퍼 |
 
 ### 미호출 함수
 

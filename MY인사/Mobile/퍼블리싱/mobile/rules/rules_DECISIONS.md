@@ -27,6 +27,14 @@ AI가 다음 세션에서 맥락 없이 작업하더라도 이 파일을 통해 
 
 ## CSS 아키텍처
 
+> 🟦 **기획 작업자 규칙 — 인라인·CSS 둘 다 금지**
+> 화면을 수정·생성하는 기획 작업자는 다음을 지킨다.
+> 1. `myinsa-mobile.css` 등 어떤 CSS 파일도 수정하지 않는다.
+> 2. 인라인 `style=""`을 **새로 추가하지 않는다 — JS 템플릿 리터럴 안에서도 마찬가지다.** (기존 인라인은 그대로 둔다.)
+> 3. 화면은 **기존 클래스·컴포넌트만 조합**해서 만든다.
+> 4. **STOP 조건** — 기존 클래스만으로 시각·동작이 완성되지 않으면(새 스타일이 필요하거나, 모달 열기·화면 전환 등 JS 결선이 필요하면) **작업을 멈추고 퍼블리싱 파트에 필요한 클래스·결선을 요청**한다. 임의로 클래스를 지어내거나 인라인으로 우회하지 않는다.
+> ※ `rules_DECISIONS.md`의 "인라인 허용" 규칙은 **퍼블리싱 전용**이다. 기획 작업자에게는 위 1·2가 우선한다.
+
 ### `.panel-header` 그라디언트 스코핑
 - **결정**: `.panel-header` 그라디언트는 `.info-panel .panel-header`로 스코핑. 화면 단위의 `.panel-header`는 그라디언트 없음
 - **이유**: 원래 `.panel-header` 하나에 그라디언트를 선언하고 `[data-screen="X"] .panel-header{background:none}` 예외를 4개 추가하는 방식이었음. CSS 선택자 특이성(specificity)을 이용해 상위 컨텍스트(`.info-panel`)로 스코핑하면 예외 규칙 4개가 불필요해짐
@@ -36,11 +44,18 @@ AI가 다음 세션에서 맥락 없이 작업하더라도 이 파일을 통해 
 - **결정**: 마크업에 남아 있던 인라인 스타일을 CSS로 이전. 아래 두 경우만 인라인 유지
   1. `display:none` — JS가 `element.style.display`를 직접 조작
   2. JS가 상태에 따라 직접 값을 쓰는 스타일 (예: `dtHourTab`, `dtMinTab`의 border/background/color)
-- **이유**: 인라인 스타일이 혼재하면 CSS만 봐서는 전체 레이아웃 파악이 불가능. JS 템플릿 리터럴(`dtRenderCal`, `dtRenderClock`) 내부 인라인 스타일은 JS 리팩터링이 필요하므로 이번 범위 외
+- **이유**: 인라인 스타일이 혼재하면 CSS만 봐서는 전체 레이아웃 파악이 불가능. JS 템플릿 리터럴(`dtRenderCal`, `dtRenderClock`, `_renderComments`) 내부 인라인 스타일은 JS 리팩터링이 필요하므로 이번 범위 외
 
 ### JS 상태 제어 요소의 인라인 스타일 유지
 - **결정**: `#dtHourTab`, `#dtMinTab` 버튼의 border/background/color는 인라인 스타일 유지
 - **이유**: JS가 시간/분 탭 전환 시 `el.style.border`, `el.style.background`, `el.style.color`를 직접 덮어쓰는 구조. CSS로 분리하면 JS의 직접 조작이 인라인 > CSS 우선순위로 항상 이김 — 문제는 없으나, 어떤 상태가 "기본"인지가 CSS에도 인라인에도 양쪽에 나뉘어 혼란스러워짐. 원래 구조를 유지하는 게 안전
+
+### 프로토타입 잔존 인라인 — 수용된 예외 (이전 안 함)
+- **결정**: 아래 정적 인라인 스타일은 프로토타입 단계의 수용된 예외로, CSS 클래스로 이전하지 않는다. AI는 "인라인 정리"를 이유로 `index_m.html`을 수정하지 않는다.
+  - 영수증 이미지 표시 크기 `width:100%;max-width:200px;max-height:300px;height:auto;display:block` (imgview·영수증 본문)
+  - 오버레이 배경·z-index `display:none;background:rgba(...);z-index;overflow` — 오버레이마다 값이 달라 인라인 유지(`display:none` 정책과 동일 맥락)
+  - 단속성 유틸 `cursor:pointer` · `pointer-events:none` · `width:100%`
+- **이유**: 단일 HTML 모놀리식 파일 특성상 인라인 정리 편집은 회귀(재생성) 위험 대비 가치가 낮다. 자동 검사가 이들을 "OTHER"로 표기해도 의도된 수용 예외다.
 
 ---
 
@@ -96,10 +111,10 @@ AI가 다음 세션에서 맥락 없이 작업하더라도 이 파일을 통해 
 
 | 요소 | 화면 | 유형 | 비고 |
 |------|------|------|------|
-| 휴가 종류 토글 (종일/오전반차/오후반차) | `leave-apply` | 토글 | `selectToggle()` CSS .active 교체만, 선택값 미저장 |
+| 휴가 종류 토글 (종일/오전반차/오후반차) | `leave-apply` | 토글 | `selectToggle()` .active 교체. 선택값 미저장이나, `_halfDayActive()`가 .active를 읽어 반차 선택 시 캘린더 단일선택 제한(범위 드래그 차단)에 사용 |
 | 사유 텍스트에리어 | `leave-apply` | 입력 | 제출 시 값 미읽음 |
 | 비상 연락망 input | `leave-apply` | 입력 | JS 참조 없음 |
-| 취소할 휴가 종류 토글 (종일/오전반차/오후반차) | `leave-cancel` | 토글 | `selectToggle()` CSS .active 교체만, 선택값 미저장 |
+| 취소할 휴가 종류 토글 (종일/오전반차/오후반차) | `leave-cancel` | 토글 | `selectToggle()` .active 교체. 선택값 미저장이나, `_halfDayActive()`가 .active를 읽어 반차 선택 시 캘린더 단일선택 제한(범위 드래그 차단)에 사용 |
 | 취소 사유 선택 토글 (일정변경/업무일정/개인사정/기타) | `leave-cancel` | 토글 | `selectToggle()` CSS .active 교체만, 선택값 미저장 |
 | 취소 사유 직접입력 텍스트에리어 | `leave-cancel` | 입력 | JS 참조 없음 |
 | 계획 사유/메모 텍스트에리어 | `leave-plan` | 입력 | 제출 시 값 미읽음 |
@@ -117,7 +132,7 @@ AI가 다음 세션에서 맥락 없이 작업하더라도 이 파일을 통해 
 | 지급처 기타 직접입력 input | `receipt-form` | 입력 | JS 참조 없음 |
 | 결의서 제목 input | `expense-form` | 입력 | 제출 시 값 미읽음 |
 | 결의서 내용 텍스트에리어 | `expense-form` | 입력 | 제출 시 값 미읽음 |
-| 댓글 입력 input | `post-detail` | 입력 | 인접 등록 버튼에 onclick 없음 |
+| 댓글 등록/수정/삭제 | `post-detail` | 입력·버튼 | `addComment`·`saveCommentEdit`·`confirmDeleteComment` 구현. `_POST_DETAIL[id].comments` 세션 배열만 조작 + `_renderComments()` 재렌더 — 서버 영속만 범위 밖 |
 | 자동 로그인 체크박스 | `login` | 체크박스 | 로그인 로직에서 체크 상태 미읽음 |
 | 결재선 선택 라디오 (기본/임원) | 오버레이 (`#approvalLinePopup`) | 라디오 | `selectApprovalLine()` 배경색 변경만, 선택값 폼에 미반영 |
 
