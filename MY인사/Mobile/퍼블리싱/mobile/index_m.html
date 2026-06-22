@@ -133,39 +133,87 @@
       <!-- 인사 FAQ 안내 배너 제거됨 -->
 
       <div id="postListContent" class="surface-mt0">
-        <!-- 인사 FAQ 게시판 글 목록 (isFaqBoard=true 시 표시) -->
+        <!-- 인사 FAQ 게시판 글 목록 (isFaqBoard=true 시 표시) — 항목 탭 시 별도 상세 화면 없이 인라인 아코디언으로 답변 펼침 -->
         <div id="faqPostList" style="display:none">
-          <div class="post-row" onclick="openPost('faq_1')">
-            <div class="title"><span class="pin">공지</span>2026년 연차 부여 기준 및 사용 방법 안내</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 28일</span><span class="dot"></span><span>댓글 8</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_1')">
+              <div style="flex:1;min-width:0">
+                <div class="title">2026년 연차 부여 기준 및 사용 방법 안내</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.28</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_2')">
-            <div class="title"><span class="pin">공지</span>경조사 휴가 신청 절차 및 지원 기준 안내</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 25일</span><span class="dot"></span><span>댓글 3</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_2')">
+              <div style="flex:1;min-width:0">
+                <div class="title">경조사 휴가 신청 절차 및 지원 기준 안내</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.25</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_3')">
-            <div class="title">육아휴직 후 복직 시 연차 산정 방법은 어떻게 되나요?</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 22일</span><span class="dot"></span><span>댓글 5</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_3')">
+              <div style="flex:1;min-width:0">
+                <div class="title">육아휴직 후 복직 시 연차 산정 방법은 어떻게 되나요?</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.22</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_4')">
-            <div class="title">재직증명서·경력증명서 발급 소요 시간 및 방법</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 20일</span><span class="dot"></span><span>댓글 2</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_4')">
+              <div style="flex:1;min-width:0">
+                <div class="title">재직증명서·경력증명서 발급 소요 시간 및 방법</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.20</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_5')">
-            <div class="title">급여 명세서 확인 방법 및 공제 항목 설명</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 18일</span><span class="dot"></span><span>댓글 6</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_5')">
+              <div style="flex:1;min-width:0">
+                <div class="title">급여 명세서 확인 방법 및 공제 항목 설명</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.18</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_6')">
-            <div class="title">연말정산 제출 서류 및 일정 안내</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 15일</span><span class="dot"></span><span>댓글 11</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_6')">
+              <div style="flex:1;min-width:0">
+                <div class="title">연말정산 제출 서류 및 일정 안내</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.15</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_7')">
-            <div class="title">반차·연차 반려 시 재신청 절차 안내</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 10일</span><span class="dot"></span><span>댓글 4</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_7')">
+              <div style="flex:1;min-width:0">
+                <div class="title">반차·연차 반려 시 재신청 절차 안내</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.10</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
-          <div class="post-row" onclick="openPost('faq_8')">
-            <div class="title">입사 1년 미만 신입사원 연차 발생 기준 Q&amp;A</div>
-            <div class="meta"><span>인사팀</span><span class="dot"></span><span>4월 5일</span><span class="dot"></span><span>댓글 9</span></div>
+          <div class="faq-acc" style="border-bottom:1px solid var(--border)">
+            <div class="post-row" style="border-bottom:none;display:flex;align-items:flex-start;gap:10px" onclick="toggleFaqAcc(this,'faq_8')">
+              <div style="flex:1;min-width:0">
+                <div class="title">입사 1년 미만 신입사원 연차 발생 기준 Q&amp;A</div>
+                <div class="meta"><span>인사팀</span><span class="dot"></span><span>2026.04.05</span></div>
+              </div>
+              <svg class="faq-acc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="flex-shrink:0;margin-top:3px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-acc-panel" style="display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:var(--text-secondary)"></div>
           </div>
         </div>
         <!-- 일반 게시판 글 목록 (isFaqBoard=false 시 표시) -->
@@ -837,11 +885,6 @@
 
       <div class="form-screen pb-tabbar">
 
-        <!-- 안내 배너 -->
-        <div class="warning-banner">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-warning"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <div class="text-sm-body">이미 승인된 연차 중 취소할 날짜를 선택하세요. 캘린더에 점(●)으로 표시된 날짜가 취소 가능한 연차입니다.</div>
-        </div>
 
         <!-- 날짜 선택 -->
         <div class="form-section mt-8">
@@ -864,10 +907,6 @@
               <div class="cal-day weekend" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">13</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">14</div><div class="cal-day selected dot" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">15</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">16</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">17</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">18</div><div class="cal-day weekend" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">19</div>
               <div class="cal-day weekend dot" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">20</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">21</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">22</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">23</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">24</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">25</div><div class="cal-day weekend" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">26</div>
               <div class="cal-day weekend" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">27</div><div class="cal-day today" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">28</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">29</div><div class="cal-day" onclick="calSelect(this,'cal-leave-cancel','leaveCancelStart','leaveCancelEnd')">30</div><div class="cal-day muted">1</div><div class="cal-day muted">2</div><div class="cal-day muted weekend">3</div>
-            </div>
-            <div class="note-divider-row">
-              <span class="inline-flex-gap-4"><span class="dot-sm-accent"></span>승인된 연차</span>
-              <span id="cal-leave-cancel-selected" class="ml-8-c-accent">선택: 2026년 4월 15일 (수)</span>
             </div>
           </div>
         </div>
@@ -979,7 +1018,7 @@
           <div class="u-flex-fill">
             <div class="item-title">휴가신청서</div>
             <div class="text-sm-sub">2026.05.04 (월) — 종일 1일</div>
-            <div class="text-hint">상신 4월 29일 · 결재자 김팀장</div>
+            <div class="text-hint">상신 2026.04.29</div>
           </div>
           <div class="row-end-8">
             <span class="status-badge wait">진행중</span>
@@ -991,7 +1030,7 @@
           <div class="u-flex-fill">
             <div class="item-title">휴가신청서</div>
             <div class="text-sm-sub">2026.04.15 (수) — 오전 반차 0.5일</div>
-            <div class="text-hint">상신 4월 14일 · 결재자 김팀장</div>
+            <div class="text-hint">상신 2026.04.14</div>
           </div>
           <div class="row-end-8">
             <span class="status-badge done">승인</span>
@@ -999,23 +1038,12 @@
           </div>
         </div>
 
-        <div class="flat-hist-row" onclick="showLeaveDetail('done')">
-          <div class="u-flex-fill">
-            <div class="item-title">연차사용계획서</div>
-            <div class="text-sm-sub">2026 2분기 — 3일</div>
-            <div class="text-hint">상신 3월 28일 · 결재자 김팀장</div>
-          </div>
-          <div class="row-end-8">
-            <span class="status-badge done">승인</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </div>
 
         <div class="flat-hist-row no-border-b" onclick="showLeaveDetail('reject')">
           <div class="u-flex-fill">
             <div class="item-title">휴가신청서</div>
             <div class="text-sm-sub">2026.02.14 (금) — 종일 1일</div>
-            <div class="text-hint">상신 2월 11일 · 결재자 김팀장</div>
+            <div class="text-hint">상신 2026.02.11</div>
           </div>
           <div class="row-end-8">
             <span class="status-badge reject">반려</span>
@@ -1041,10 +1069,6 @@
           <div class="sfab-row" onclick="toggleLeaveFab();showScreen('leave-cancel')">
             <div class="sic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
             <div class="sbody"><div class="st">연차 취소 신청</div><div class="sd">승인된 연차 취소 요청</div></div>
-          </div>
-          <div class="sfab-row" onclick="toggleLeaveFab();showScreen('leave-plan')">
-            <div class="sic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
-            <div class="sbody"><div class="st">연차 사용계획서</div><div class="sd">분기·월별 계획 작성</div></div>
           </div>
         </div>
       </div>
@@ -3107,14 +3131,14 @@
           <input type="radio" name="approvalLine" checked class="alp-option-radio" />
           <div>
             <div class="text-body-strong">기본 결재선</div>
-            <div class="text-hint">홍길동 → 김팀장</div>
+            <div class="text-hint">홍길동(결재) → 김팀장(접수)</div>
           </div>
         </label>
         <label class="alp-option" onclick="selectApprovalLine(this)">
           <input type="radio" name="approvalLine" class="alp-option-radio" />
           <div>
             <div class="text-body-strong">임원 결재선</div>
-            <div class="text-hint">홍길동 → 김팀장 → 이대표</div>
+            <div class="text-hint">홍길동(결재) → 김팀장(결재) → 이대표(접수)</div>
           </div>
         </label>
       </div>
@@ -3417,7 +3441,9 @@ function goPostList(boardName, isFaqBoard, newCount){
       }
     });
   }
-  // 게시글 상세 내용은 openPost() 호출 시 세팅
+  // 인사 FAQ 진입 시 아코디언 열림 상태 초기화 (답변은 우측 패널 안에서 인라인으로 펼침)
+  if(isFaqBoard) _collapseFaqAcc();
+  // 태블릿(≥900px) 분할: 인사 FAQ는 더보기(좌) + FAQ 목록(우) 50:50 분할. 그 외/모바일은 단일 목록 화면
   if(window.innerWidth >= 900 && isFaqBoard){
     document.querySelector('.app').classList.add('has-faq');
   } else {
@@ -3864,6 +3890,31 @@ function toggleFAQ(el){
   document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
   if(!opened) item.classList.add('open');
 }
+/* 인사 FAQ 목록 — 항목 탭 시 별도 상세 화면 없이 인라인 아코디언으로 답변 펼침 (한 번에 1개) */
+function _collapseFaqAcc(){
+  document.querySelectorAll('#faqPostList .faq-acc.open').forEach(it=>{
+    it.classList.remove('open');
+    const p = it.querySelector('.faq-acc-panel'); if(p) p.style.display='none';
+    const a = it.querySelector('.faq-acc-arrow'); if(a) a.style.transform='';
+  });
+}
+function toggleFaqAcc(headerEl, id){
+  const item = headerEl.parentElement;            // .faq-acc
+  const panel = item.querySelector('.faq-acc-panel');
+  const arrow = headerEl.querySelector('.faq-acc-arrow');
+  const isOpen = item.classList.contains('open');
+  _collapseFaqAcc();                              // 다른 항목 닫기
+  if(!isOpen){
+    if(panel && !panel.dataset.loaded){           // 답변 본문은 _POST_DETAIL 재사용 (최초 1회 주입)
+      const data = _POST_DETAIL[id];
+      panel.innerHTML = (data && data.body) ? data.body : '';
+      panel.dataset.loaded = '1';
+    }
+    item.classList.add('open');
+    if(panel) panel.style.display = '';
+    if(arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+}
 function filterFAQ(el, cat){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
@@ -3987,21 +4038,21 @@ const _IMG_EXTS = ['jpg','jpeg','png','gif','webp','bmp'];
 function _attIconSvg(ext){
   const isImg = _IMG_EXTS.includes(String(ext||'').toLowerCase());
   return isImg
-    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.7" style="flex-shrink:0"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
-    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.7" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.7"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
 }
 // M-004: 게시글 최하단 첨부파일 목록 (클릭 시 다운로드)
 function _renderAttachList(atts){
   const rows = atts.map(a => {
     const full = _escapeHtml(`${a.name}.${a.ext}`);
-    return `<div onclick="downloadAttach('${full}')" style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border-light);cursor:pointer">
+    return `<div onclick="downloadAttach('${full}')" class="attach-dl-row">
       ${_attIconSvg(a.ext)}
-      <span style="flex:1;min-width:0;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${full}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="flex-shrink:0"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="attach-name">${full}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </div>`;
   }).join('');
-  return `<div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
-    <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:2px">첨부파일 ${atts.length}</div>
+  return `<div class="attach-section">
+    <div class="attach-section-title">첨부파일 ${atts.length}</div>
     ${rows}
   </div>`;
 }
@@ -4041,10 +4092,10 @@ function renderComposeAttachList(){
   if(!_composeAttachments.length){ el.innerHTML = ''; return; }
   el.innerHTML = _composeAttachments.map((a, i) => {
     const full = _escapeHtml(`${a.name}.${a.ext}`);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border-light)">
+    return `<div class="attach-compose-row">
       ${_attIconSvg(a.ext)}
-      <span style="flex:1;min-width:0;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${full}</span>
-      <button onclick="removeComposeAttachment(${i})" title="삭제" style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;padding:2px;line-height:0;flex-shrink:0">
+      <span class="attach-name">${full}</span>
+      <button onclick="removeComposeAttachment(${i})" title="삭제" class="attach-remove">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>`;

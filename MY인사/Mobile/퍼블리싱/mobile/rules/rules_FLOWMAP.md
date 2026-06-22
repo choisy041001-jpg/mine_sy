@@ -61,11 +61,13 @@
 - **이탈**: `goBack()` / 더보기 버튼 → `postActionSheet` → 수정 → `openPostEdit()` → `compose`(edit 모드) / 삭제 → `postDeleteConfirmOverlay` → 확인 → `goBack()`
 - **오버레이**: `postActionSheet` (수정·삭제 액션시트), `postDeleteConfirmOverlay` (삭제 확인 다이얼로그), `commentActionSheet` (댓글 더보기 — 수정·삭제), `commentDeleteConfirmOverlay` (댓글 삭제 확인)
 - **댓글**: 입력창 → `addComment()` 등록 / 본인 댓글 더보기 → `openCommentActions()` → `commentActionSheet` → 수정(`startEditComment()` 인라인 → `saveCommentEdit()`) / 삭제(`openCommentDeleteConfirm()` → `confirmDeleteComment()`). `_POST_DETAIL[id].comments` 세션 배열 + `_renderComments()` 재렌더
+- **첨부**: 본문 하단 첨부 목록(`_renderAttachList()`, 데이터 `attachments[]`) — 행 클릭 → `downloadAttach()`(프로토타입: 토스트). M-004
 
 #### `compose`
 - **진입**: `board`·`post-list` 글쓰기 FAB → `openComposeCreate()`(작성 모드) / `post-detail` 더보기 수정 → `openPostEdit()`(수정 모드)
 - **이탈**: 취소 버튼 → `onComposeCancel()`(작성 내용 있으면 `composeCancelConfirmOverlay` → `confirmComposeCancel()`) → `goBack()` / 등록 버튼(`onSubmitPost()`) → `board`
 - **오버레이**: `composeAttachSheet` (첨부 시트), `composeCancelConfirmOverlay` (작성 취소 확인)
+- **첨부**: `composeAttachSheet` → `addComposeAttachment(type)`(카메라/앨범/파일 → 숨김 file input) → `onComposeFilePicked()` 목록 추가(최대 5개·개당 10MB) → `renderComposeAttachList()`(`#composeAttachList`). 우측 X → `removeComposeAttachment(idx)`. 수정 모드 진입 시 기존 `attachments[]` 로드. M-005
 
 ---
 
@@ -111,8 +113,8 @@
 ### 연차
 
 #### `leave-approval` ★탭 루트
-- **진입**: `goTab('leave')` / `leave-apply` 신청하기 / `leave-plan` 제출하기 / `leave-cancel` 취소 신청하기 / `notifications` 알림 클릭
-- **이탈**: 이력 항목 클릭(`showLeaveDetail()`) → `leave-detail-wait` · `leave-detail-done` · `leave-detail-reject` / FAB → `leave-apply` · `leave-plan` · `leave-cancel`
+- **진입**: `goTab('leave')` / `leave-apply` 신청하기 / `leave-cancel` 취소 신청하기 / `notifications` 알림 클릭
+- **이탈**: 이력 항목 클릭(`showLeaveDetail()`) → `leave-detail-wait` · `leave-detail-done` · `leave-detail-reject` / FAB → `leave-apply` · `leave-cancel`
 - **오버레이**: 없음
 
 #### `leave-apply`
@@ -120,8 +122,8 @@
 - **이탈**: `goBack()` / 신청하기 → `leave-approval`
 - **오버레이**: `approvalLinePopup` (결재선 변경), 인라인 캘린더 UI (화면 내 날짜 선택)
 
-#### `leave-plan`
-- **진입**: `leave-approval` → FAB → 연차 사용계획서
+#### `leave-plan` ⚠ 보류 — 삭제 금지
+- **진입**: 없음 — 연차 FAB의 "연차 사용계획서" 진입 제거됨(기획 보류 2026.06.10). 마크업·JS·`syncTab` 매핑은 재도입 대비 유지.
 - **이탈**: `goBack()` / 제출하기 → `leave-approval`
 - **오버레이**: `approvalLinePopup` (결재선 변경), 인라인 캘린더 UI
 
@@ -216,7 +218,7 @@
 
 > 아래 화면은 전부 DECISIONS상 **보류 — 삭제 금지**다. "이유" 칸은 진입 부재 사유일 뿐 정리 사유가 아니다.
 
-### 고립 화면 — 진입 경로가 없는 화면 (8개)
+### 고립 화면 — 진입 경로가 없는 화면 (7개)
 
 | data-screen | 이유 |
 |-------------|------|
@@ -227,6 +229,7 @@
 | `faq-write` | FAQ 화면에 질문 등록 버튼 없음 |
 | `faq-detail` | FAQ 항목 클릭이 `toggleFAQ()`(인라인 토글)만 호출 |
 | `faq` | 진입 경로(`faq-write`)가 고립 화면이므로 사실상 고립 |
+| `leave-plan` | 연차 FAB의 사용계획서 진입 제거 (기획 보류 2026.06.10) — 재도입 시 복구 |
 
 > **참고**: `syncTab` 매핑과 user flow diagram에는 이 화면들이 등록되어 있으나, 실제 onclick/버튼 구현은 없는 상태.
 
@@ -279,13 +282,13 @@ flowchart TD
 
     %% ── 연차 ─────────────────────────────────────────────
     leave-approval --> leave-apply
-    leave-approval --> leave-plan
+    %% leave-approval --> leave-plan   (보류 — 진입 제거, 삭제 금지)
     leave-approval --> leave-cancel
     leave-approval --> leave-detail-wait
     leave-approval --> leave-detail-done
     leave-approval --> leave-detail-reject
     leave-apply -->|신청하기| leave-approval
-    leave-plan -->|제출하기| leave-approval
+    %% leave-plan -->|제출하기| leave-approval   (보류)
     leave-cancel -->|취소 신청하기| leave-approval
     %% overlay in leave-apply/plan/cancel: approvalLinePopup
 

@@ -723,6 +723,23 @@ document.getElementById('postActionSheet').style.display = 'none';
 
 ---
 
+## 게시글 첨부파일
+
+게시글 상세(M-004 다운로드 목록)와 글 작성·수정(M-005 첨부 목록)에서 공통으로 쓰는 첨부 행 컴포넌트. 파일명.확장자 표시.
+
+| 클래스 | 설명 |
+|--------|------|
+| `.attach-section` | 상세 첨부 목록 래퍼 (상단 구분선 + 여백). M-004 |
+| `.attach-section-title` | "첨부파일 N" 라벨 (text-secondary, weight 600) |
+| `.attach-dl-row` | 상세 다운로드 행 (클릭 가능, border-bottom). M-004 |
+| `.attach-compose-row` | 작성·수정 첨부 행 (border-bottom). M-005 |
+| `.attach-name` | 파일명 텍스트 (flex:1, 말줄임). 두 행 공용 |
+| `.attach-remove` | 작성·수정 행 우측 X 제거 버튼 |
+
+> 행 내 아이콘은 `.attach-dl-row svg, .attach-compose-row svg{flex-shrink:0}`로 처리(인라인 없음). 아이콘 분기는 `_attIconSvg()`.
+
+---
+
 ## 비밀번호 찾기 (pw-find)
 
 아이디 찾기 / 비밀번호 변경 화면. `pfShowPanel(name)`으로 패널 전환.  
@@ -798,7 +815,7 @@ document.getElementById('postActionSheet').style.display = 'none';
 ## JS 함수 레퍼런스
 
 > `index_m.html` `<script>` 기준. 새 함수 추가 시 이 목록도 함께 업데이트할 것.  
-> 총 **133개** 함수 (미호출 12개 포함). *신규 기능 함수 33개 추가 (2026.06 — 댓글·글쓰기·비밀번호찾기·전자결재·영수증·헬퍼)*
+> 총 **140개** 함수 (미호출 12개 포함). *신규 기능 함수 33개 추가 (2026.06 — 댓글·글쓰기·비밀번호찾기·전자결재·영수증·헬퍼) + 첨부파일 7개 (2026.06.10)*
 
 ### 화면 전환
 
@@ -929,6 +946,20 @@ document.getElementById('postActionSheet').style.display = 'none';
 | `_nowYMDHM` | — | 현재 시각을 `YYYY.MM.DD HH:MM` 형식으로 반환. 댓글 등록 시각 기록용 |
 | `_halfDayActive` | `calId` | 캘린더 ID로 연결된 화면의 반차 토글 활성 여부 반환. `_bindCalDrag` 범위 드래그 차단 조건 |
 | `_pfVal` | `id` | ID로 요소를 찾아 `.value` 반환. 비밀번호 찾기 내부 입력 값 참조 헬퍼 |
+
+### 게시글 첨부파일 (M-004 상세 다운로드 / M-005 작성·수정)
+
+> 상태값: `_composeAttachments`(작성/수정 첨부 배열), `_IMG_EXTS`(이미지 확장자 — 아이콘 분기용)
+
+| 함수 | 파라미터 | 용도 |
+|------|---------|------|
+| `_attIconSvg` | `ext` | 확장자로 이미지/문서 아이콘 SVG 문자열 반환 (`_IMG_EXTS` 기준 분기) |
+| `_renderAttachList` | `atts` | M-004: 게시글 상세 하단 첨부 목록 HTML 렌더. 행 클릭 시 `downloadAttach` |
+| `downloadAttach` | `name` | 첨부 다운로드 — 프로토타입(토스트만 표시) |
+| `addComposeAttachment` | `type` | 작성/수정 첨부 추가. type(camera/album/file)별 숨김 file input 클릭. 최대 5개 |
+| `onComposeFilePicked` | `input` | 선택 파일을 `_composeAttachments`에 추가(최대 5개·개당 10MB) 후 재렌더 |
+| `removeComposeAttachment` | `idx` | 해당 인덱스 첨부 제거 후 재렌더 |
+| `renderComposeAttachList` | — | `_composeAttachments`를 `#composeAttachList`에 렌더(없으면 비움) |
 
 ### 미호출 함수
 
