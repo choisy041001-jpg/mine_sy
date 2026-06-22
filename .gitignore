@@ -12,5 +12,11 @@ desktop.ini
 .vscode/
 *.swp
 
-# Claude Code worktrees (로컬 전용)
-.claude/worktrees/
+# Claude Code 로컬 설정/worktrees (로컬 전용)
+.claude/
+
+# 백업 압축본 (로컬 전용)
+*.zip
+
+# 별도 클론 저장소 (webyeonz/project_groupware_all)
+project_groupware_all/
